@@ -20,10 +20,10 @@ def distance(x1, x2, box, correct_drift=False):
     return numpy.linalg.norm(dx, axis=1)
 
 def self_overlap(x1, x2, box, tol=0.3):
-    return numpy.sum(distance(x1,x2,box,True) < tol) / len(x1)
+    return numpy.average(distance(x1,x2,box,True) < tol)
 
 def self_intermediate_scattering_function(x1, x2, box, q=2*numpy.pi):
-    return numpy.sum(numpy.sinc((q/numpy.pi)*distance(x1,x2,box,True))) / len(x1)
+    return numpy.average(numpy.sinc((q/numpy.pi)*distance(x1,x2,box,True)))
 
 def pdist(x, box):
     n,d = x.shape
