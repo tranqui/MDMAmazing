@@ -87,7 +87,7 @@ class Snapshot:
         except: return 0.
 
     @property
-    def density(self)
+    def density(self):
         """Density of configuration from box dimensions."""
         return self.n / self.volume
 
