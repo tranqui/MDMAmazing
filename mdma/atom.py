@@ -6,6 +6,8 @@ The module defines:
   - AtomSnapshot: the class the defining the file interface to this file format
   - read: shorthand for AtomSnapshot.read_single
   - read_trajectory: shorthand for AtomSnapshot.read_trajectory
+  - write: create a snapshot from coordinates to write to disk
+  - write_trajectory: shorthand to write a series of coordinates to disk
 """
 
 import sys, io, numpy, pandas
@@ -37,7 +39,9 @@ class AtomSnapshot(Snapshot):
 
                 # Timestep within a trajectory.
                 if item[1] == 'TIMESTEP':
-                    self.time = int(f.readline())
+                    line = f.readline()
+                    try: self.time = int(line)
+                    except ValueError: self.time = float(line)
 
                 # Number of atoms in the header
                 elif ' '.join(item[1:4]) == 'NUMBER OF ATOMS':
@@ -111,7 +115,10 @@ def read_trajectory(*args, **kwargs):
     """Read a trajectory (i.e. multiple snapshots) from the disk."""
     return AtomSnapshot.read_trajectory(*args, **kwargs)
 
-def write(x, box, out=sys.stdout, species=None):
+def write(x, box, out=sys.stdout, species=None, **kwargs):
     """Write a single configuration to the disk."""
-    snapshot = AtomSnapshot(x, box=box, species=species)
+    snapshot = AtomSnapshot(x, box=box, species=species, **kwargs)
     snapshot.write(out)
+def write_trajectory(trajectory, out=sys.stdout, **kwargs):
+    """Write a configuration container to the disk."""
+    for x in trajectory: write(x, out, **kwargs)
