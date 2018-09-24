@@ -79,3 +79,6 @@ def write(x, out=sys.stdout, species=None):
     """ Wrtie a single configuration to the disk."""
     snapshot = XYZSnapshot(x, species=species)
     snapshot.write(out)
+def write_trajectory(trajectory, out=sys.stdout, **kwargs):
+    """Write a configuration container to the disk."""
+    for x in trajectory: write(x, out, **kwargs)
