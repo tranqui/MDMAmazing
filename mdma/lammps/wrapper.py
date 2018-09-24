@@ -101,13 +101,13 @@ class LammpsExecutable(lammps.PyLammps):
                             [self.system.zlo, self.system.zhi]])
 
     @property
-    def box_size(self):
+    def box_dimensions(self):
         return numpy.array([self.system.xhi - self.system.xlo,
                             self.system.yhi - self.system.ylo,
                             self.system.zhi - self.system.zlo])
     @property
     def volume(self):
-        return numpy.prod(self.box_size)
+        return numpy.prod(self.box_dimensions)
 
     @property
     def density(self):

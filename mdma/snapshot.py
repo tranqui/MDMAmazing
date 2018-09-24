@@ -74,6 +74,23 @@ class Snapshot:
         """Dimensionality of configuration space."""
         return self.x.shape[1]
 
+    @property
+    def box_dimensions(self):
+        """Dimensions of box."""
+        try: return self.box[:,1] - self.box[:,0]
+        except: return self.box
+
+    @property
+    def volume(self):
+        """Volume of system box."""
+        try: return numpy.prod(self.box_dimensions)
+        except: return 0.
+
+    @property
+    def density(self):
+        """Density of configuration from box dimensions."""
+        return self.n / self.volume
+
     @classmethod
     def read_single(cls, path_or_file):
         """Read a single snapshot from the disk.
