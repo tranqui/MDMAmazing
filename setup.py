@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+import os
+from setuptools import setup, Extension, find_packages
+
+cpp_args = ['-std=c++14', '-mtune=native', '-march=native', '-Ofast']
+
+ext_modules = [
+    Extension('mdma/spatial/distance', ['src/spatial/distance.cc'],
+              include_dirs=['pybind11/include'],
+              language='c++',
+              extra_compile_args = cpp_args,
+    ),
+]
 
 setup(
     name='MDMAmazing',
@@ -10,7 +21,8 @@ setup(
     author_email='joshua.robinson@bristol.ac.uk',
     url='https://github.com/tranqui/MDMAmazing.git',
     license='GNU General Public License v3.0',
-    version='0.1dev',
+    version='0.1.dev0',
     packages=find_packages(),
-    install_requires=['numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar']
+    ext_modules=ext_modules,
+    install_requires=['numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'pybind11']
  )
