@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 from setuptools import setup, Extension, find_packages
 
 cpp_args = ['-std=c++14', '-mtune=native', '-march=native', '-Ofast']
@@ -24,5 +23,5 @@ setup(
     version='0.1.dev0',
     packages=find_packages(),
     ext_modules=ext_modules,
-    install_requires=['numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'pybind11']
+    install_requires=['pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar']
  )
