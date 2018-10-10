@@ -6,7 +6,7 @@ cpp_args = ['-std=c++14', '-mtune=native', '-march=native', '-Ofast']
 
 ext_modules = [
     Extension('mdma/spatial/distance', ['src/spatial/distance.cc'],
-              include_dirs=['pybind11/include'],
+              include_dirs=['pybind11/include', '/usr/include/eigen3'],
               language='c++',
               extra_compile_args = cpp_args,
     ),
