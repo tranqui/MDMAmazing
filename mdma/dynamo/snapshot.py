@@ -151,6 +151,10 @@ class DynamoSnapshot(Snapshot):
             self.species = numpy.empty(self.n, species.dtype)
             for species in self.xml['genus']:
                 id_range = species.find('IDRange').attrib
+                if id_range['Type'] == 'All':
+                    self.species[:] = species.attrib['Name']
+                    continue
+
                 start = int(id_range['Start'])
                 end = int(id_range['End'])
                 self.species[start:end+1] = species.attrib['Name']
@@ -159,8 +163,6 @@ class DynamoSnapshot(Snapshot):
             self.box = self.xml['simulation'].find('SimulationSize')
             box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in ['x','y','z']])
             self.box = numpy.array([[0.,length] for length in box_lengths])
-            self.volume = numpy.product(box_lengths)
-            self.density = self.n / self.volume
 
             ## Find the diameters of the particles, assuming additive interactions.
 
