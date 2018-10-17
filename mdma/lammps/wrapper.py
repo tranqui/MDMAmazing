@@ -12,10 +12,196 @@ def random_seed():
 
 atom_columns = ['id', 'type', 'x', 'y', 'z', 'fx', 'fy', 'fz'] #, 'vx', 'vy', 'vz']
 
+class PotentialBase:
+    def __init__(self, natoms, temperature, composition=None, d=3, **kwargs):
+        """If composition is None then it is either trivial (single component) or
+        must be specified with an initial snapshot."""
+        self.natoms = natoms
+        self.temperature = temperature
+        self.composition = composition
+        self.d = d
+
+        if 'density' in kwargs and 'pressure' in kwargs:
+            raise ValueError('must specify (at most) one of density or pressure (NVT vs NPT simulations)!')
+        elif 'density' in kwargs: self.density = kwargs['density']
+        elif 'pressure' in kwargs: self.pressure = kwargs['pressure']
+
+    @property
+    def units(self):
+        raise NotImplementedError("must specify simulation units!")
+
+    @property
+    def num_species(self):
+        raise NotImplementedError("must specify number of atomic species!")
+
+    @property
+    def masses(self):
+        raise NotImplementedError("must specify masses of atomic species!")
+
+    def initialise_potential(self, simulation):
+        raise NotImplementedError("must initialise potential!")
+
+    @property
+    def timestep(self):
+        raise NotImplementedError("must specify a timestep!")
+
+    @property
+    def initial_thermalisation_steps(self):
+        raise NotImplementedError("must specify timestep for initial thermalisation!")
+
+    @property
+    def thermostat_damping_interval(self):
+        raise NotImplementedError("must specify damping inverval for thermostat!")
+
+class KobAnderson(PotentialBase):
+    def __init__(self, *args, **kwargs):
+        if 'composition' not in kwargs:
+            kwargs['composition'] = [0.8, 0.2]
+
+    @property
+    def units(self):
+        return 'lj'
+
+    @property
+    def num_species(self):
+        return 2
+
+    @property
+    def masses(self):
+        return [1.0, 1.0]
+
+    def initialise_potential(self, simulation):
+        simulation.pair_style('lj/cut', 2.5)
+        simulation.pair_coeff(1, 1, 1.0, 1.00, 2.5)
+        simulation.pair_coeff(1, 2, 1.5, 0.80, 2.5)
+        simulation.pair_coeff(2, 2, 0.5, 0.88, 2.5)
+
+    @property
+    def timestep(self):
+        return 0.005
+
+    @property
+    def initial_thermalisation_steps(self):
+        return 1000
+
+    @property
+    def thermostat_damping_interval(self):
+        return 5
+
+class Ensemble:
+    NVT = 1
+    NPT = 2
+
 class LammpsExecutable(lammps.PyLammps):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.exec_id = 0
+
+    def initial_box(self, system, initial_snapshot, seed_density=1e-3):
+        try:
+            initial_box = initial_snapshot.box
+            initial_box_dimensions = (initial_box[:,1] - initial_box[:,0])**(1./system.d)
+
+            # If density is specified we need to rescale the box appropriately
+            try:
+                desired_volume = system.natoms / system.density
+                snapshot_volume = numpy.prod(initial_box_dimensions)
+                rescale = (desired_volume / snapshot_volume)**(1./system.d)
+
+                initial_box *= rescale
+                initial_box_dimensions *= rescale
+
+            # Density was not specified by system: ignore (we must be in NPT ensemble)
+            except AttributeError:
+                pass
+
+            return initial_box
+
+        # A box was not specified
+        except AttributeError:
+            unit_box = numpy.array([0, 1.]*system.d).reshape(system.d,2)
+            unit_box /= numpy.prod(unit_box[:,1] - unit_box[:,0])**(1./system.d)
+
+            initial_volume = natoms / seed_density
+            initial_box = unit_box * initial_volume**(1./d)
+
+            return initial_box
+
+    def initialise_system(self, system, initial_snapshot=None):
+        if self.initialised:
+            raise RuntimeError('cannot overwrite a previous simulation!')
+        self.initialised = True
+
+        self.units(system.units)
+        self.atom_style('atomic')
+        self.atom_modify('map', 'array')
+        self.boundary(' '.join(['p']*system.d))
+
+        # Determine ensemble based on system parameters.
+        try:
+            pressure = system.pressure
+            ensemble = Ensemble.NPT
+        except AttributeError:
+            final_density = system.density
+            ensemble = Ensemble.NVT
+        except AttributeError:
+            if initial_snapshot is None:
+                raise ValueError('without an initial snapshot (one of) density or pressure must be set (for NVT or NPT simulations respectively)')
+            else: ensemble = Ensemble.NVT
+
+        # Create the box (for now only cubic boxes are implemented)
+        initial_box = self.initial_box(self, system, initial_snapshot)
+        self.region('box', 'block', *initial_box.reshape(-1))
+        self.create_box(system.num_species, 'box')
+
+        # Initialise coordinates and species.
+        self.create_atoms(1, 'random', system.natoms, random_seed(), 'NULL')
+        if initial_snapshot is None:
+            self.composition = system.composition
+
+            # Minimise in case there are (high energy) overlaps from the random generation.
+            energy_tol, force_tol, max_iters, max_evals = 1e-4, 1e-6, 100, 1000
+            sim.minimize(energy_tol, force_tol, max_iters, max_evals)
+            sim.reset_timestep(0)
+        else:
+            self.coordinates = initial_snapshot.x.astype(numpy.double)
+            self.species = initial_snapshot.species            
+
+        # Initialise interactions.
+        for i,mass in zip(range(system.natoms), system.masses): self.mass(i+1, mass)
+        system.initialise_potential(self)
+        self.velocity('all', 'create', system.temperature, random_seed(), 'loop', 'geom')
+        # neighbour options?
+        self.run_style('verlet')
+
+        if ensemble == Ensemble.NVT:
+            self.fix(1, 'all', 'nvt', 'temp', temperature, temperature, system.thermostat_damping_interval)
+
+            if initial_snapshot is None:
+                desired_volume = system.natoms / system.density
+                initial_box_dimensions = (initial_box[:,1] - initial_box[:,0])**(1./system.d)
+                initial_volume = numpy.prod(initial_box_dimensions)
+                rescale = (desired_volume / initial_volume)**(1./system.d)
+                final_box = initial_box * rescale
+
+                final_box = initial_box
+                sim.fix(2, 'all', 'deform', 1,
+                        'x', 'final', final_box[0,0], final_box[0,1],
+                        'y', 'final', final_box[1,0], final_box[1,1],
+                        'z', 'final', final_box[2,0], final_box[2,1])
+                sim.run(system.thermalisation_steps)
+                sim.unfix(2)
+                sim.run(system.thermalisation_steps)
+                sim.reset_timestep(0)
+                
+        elif ensemble == Ensemble.NPT:
+            raise NotImplementedError("specify NPT fix!")
+
+        else:
+            raise RuntimeError('unknown ensemble encountered (ensemble=%d)!' % ensemble)
+
+        # Run for zero steps so lammps will compute thermodynamic properties for initial state.
+        self.run(0)
 
     def save(self, path, overwrite=True):
         os.makedirs(path, exist_ok=overwrite)
@@ -36,6 +222,10 @@ class LammpsExecutable(lammps.PyLammps):
             f.write(history)
 
     def resume(self, path):
+        if self.initialised:
+            raise RuntimeError('cannot overwrite a previous simulation!')
+        self.initialised = True
+
         latest_restart = natsorted(glob('%s/dumps/*.restart' % path))[-1]
         self.read_restart(latest_restart)
 
