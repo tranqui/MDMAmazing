@@ -22,6 +22,6 @@ setup(
     license='GNU General Public License v3.0',
     version='0.1.dev0',
     packages=find_packages(),
-    ext_modules=ext_modules,
+    #ext_modules=ext_modules,
     install_requires=['pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar']
  )
