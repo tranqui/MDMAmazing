@@ -1,0 +1,30 @@
+mdma\.lammps package
+====================
+
+Submodules
+----------
+
+mdma\.lammps\.potentials module
+-------------------------------
+
+.. automodule:: mdma.lammps.potentials
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mdma\.lammps\.wrapper module
+----------------------------
+
+.. automodule:: mdma.lammps.wrapper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mdma.lammps
+    :members:
+    :undoc-members:
+    :show-inheritance:

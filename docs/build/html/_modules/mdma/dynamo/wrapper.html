@@ -1,0 +1,389 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mdma.dynamo.wrapper &#8212; MDMAmazing 0.1.dev0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.dev0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
+        <h2 class="heading"><span>mdma.dynamo.wrapper</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for mdma.dynamo.wrapper</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">string</span><span class="o">,</span> <span class="nn">tempfile</span><span class="o">,</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">natsort</span> <span class="k">import</span> <span class="n">natsorted</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">jeli</span> <span class="k">import</span> <span class="n">periodic</span>
+
+<span class="kn">from</span> <span class="nn">progressbar</span> <span class="k">import</span> <span class="n">ProgressBar</span><span class="p">,</span> <span class="n">Percentage</span><span class="p">,</span> <span class="n">Bar</span><span class="p">,</span> <span class="n">ETA</span>
+<span class="n">widgets</span> <span class="o">=</span> <span class="p">[</span><span class="n">Percentage</span><span class="p">(),</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">Bar</span><span class="p">(),</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">ETA</span><span class="p">()]</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ElementTree</span>
+<span class="kn">from</span> <span class="nn">lxml.etree</span> <span class="k">import</span> <span class="n">Element</span>
+<span class="kn">import</span> <span class="nn">bz2</span>
+<span class="kn">import</span> <span class="nn">iniparser</span>
+
+<div class="viewcode-block" id="MonodisperseHardSpheres"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.MonodisperseHardSpheres">[docs]</a><span class="k">class</span> <span class="nc">MonodisperseHardSpheres</span><span class="p">:</span>
+    <span class="n">size_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">])</span>
+<div class="viewcode-block" id="MonodisperseHardSpheres.density"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.MonodisperseHardSpheres.density">[docs]</a>    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span> <span class="k">return</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">phi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
+<div class="viewcode-block" id="MonodisperseHardSpheres.volume_fraction"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.MonodisperseHardSpheres.volume_fraction">[docs]</a>    <span class="k">def</span> <span class="nf">volume_fraction</span><span class="p">(</span><span class="n">density</span><span class="p">):</span> <span class="k">return</span> <span class="n">density</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="PaddyPolydisperseHardSpheres"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres">[docs]</a><span class="k">class</span> <span class="nc">PaddyPolydisperseHardSpheres</span><span class="p">:</span>
+    <span class="c1"># 5-component system has these diameters</span>
+    <span class="n">size_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.7986</span><span class="p">,</span><span class="mf">0.8609</span><span class="p">,</span><span class="mf">0.8993</span><span class="p">,</span><span class="mf">0.9376</span><span class="p">,</span><span class="mf">1.0000</span><span class="p">])</span>
+    <span class="c1"># Effective volume of a single particle (mean of the sizes, as system is equimolar)</span>
+    <span class="c1">#effective_volume = np.pi*np.sum(size_ratios**3)/(6*len(size_ratios))</span>
+
+<div class="viewcode-block" id="PaddyPolydisperseHardSpheres.density"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.density">[docs]</a>    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span> <span class="k">return</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">phi</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
+<div class="viewcode-block" id="PaddyPolydisperseHardSpheres.volume_fraction"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.volume_fraction">[docs]</a>    <span class="k">def</span> <span class="nf">volume_fraction</span><span class="p">(</span><span class="n">density</span><span class="p">):</span> <span class="k">return</span> <span class="n">density</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span></div></div>
+
+<span class="c1"># Box size for a system with the above parameters.</span>
+<div class="viewcode-block" id="box_size"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.box_size">[docs]</a><span class="k">def</span> <span class="nf">box_size</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">MonodisperseHardSpheres</span><span class="p">):</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">system</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">volume</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory">[docs]</a><span class="k">class</span> <span class="nc">DynamoTrajectory</span><span class="p">:</span>
+<div class="viewcode-block" id="DynamoTrajectory.create"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ncells</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">MonodisperseHardSpheres</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">config_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/0.xml&#39;</span> <span class="o">%</span> <span class="n">path</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;dynamod -m0 --density </span><span class="si">%.12f</span><span class="s1"> -C </span><span class="si">%r</span><span class="s1"> -o </span><span class="si">%s</span><span class="s1"> &gt; /dev/null 2&gt;&amp;1&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">ncells</span><span class="p">,</span> <span class="n">config_path</span><span class="p">))</span>
+
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">DynamoTrajectory</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">trajectory</span><span class="o">.</span><span class="n">apply_uniform_dispersity</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">size_ratios</span><span class="p">)</span>
+        <span class="n">trajectory</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trajectory</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.growth_create"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.growth_create">[docs]</a>    <span class="k">def</span> <span class="nf">growth_create</span><span class="p">(</span><span class="n">old_path</span><span class="p">,</span> <span class="n">new_path</span><span class="p">,</span> <span class="n">target_phi</span><span class="p">,</span> <span class="n">num_relaxations</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">old_dynamo</span> <span class="o">=</span> <span class="n">DynamoTrajectory</span><span class="p">(</span><span class="n">old_path</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">old_dynamo</span><span class="o">.</span><span class="n">latest_snapshot</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/0.xml&#39;</span> <span class="o">%</span> <span class="n">new_path</span><span class="p">)</span>
+        <span class="n">collisions</span> <span class="o">=</span> <span class="n">num_relaxations</span><span class="o">*</span><span class="n">old_dynamo</span><span class="o">.</span><span class="n">relaxation_collisions</span>
+        <span class="n">growth_rate</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">collisions</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;dynamo_&#39;</span><span class="p">)</span>
+        <span class="c1">#command = &#39;(cd %s; dynarun %s --engine=3 --growth-rate %.8f --target-pack-frac %.4f -o %s &gt; /dev/null 2&gt;&amp;1)&#39; % (work_dir, start, growth_rate, target_phi, end)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;(cd </span><span class="si">%s</span><span class="s1">; dynarun </span><span class="si">%s</span><span class="s1"> --engine=3 --growth-rate </span><span class="si">%.8f</span><span class="s1"> --target-pack-frac </span><span class="si">%.4f</span><span class="s1"> -o </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">growth_rate</span><span class="p">,</span> <span class="n">target_phi</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">DynamoTrajectory</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trajectory</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_snapshot</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynamoTrajectory.parse_config"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.parse_config">[docs]</a>    <span class="k">def</span> <span class="nf">parse_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/settings.ini&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">iniparser</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+        <span class="c1"># If empty initialise</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">iniparser</span><span class="o">.</span><span class="n">ConfigFile</span><span class="p">()</span>
+            <span class="n">relaxation</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">relaxation</span><span class="p">[</span><span class="s1">&#39;equilibrated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Relaxation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relaxation</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.run"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collisions</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_snapshot</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_snapshot</span><span class="p">)</span>
+
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;dynamo_&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;(cd </span><span class="si">%s</span><span class="s1">; dynarun </span><span class="si">%s</span><span class="s1"> -E -c </span><span class="si">%d</span><span class="s1"> -o </span><span class="si">%s</span><span class="s1"> &gt; /dev/null 2&gt;&amp;1)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">collisions</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">(</span><span class="n">end</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.run_trajectory"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.run_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">run_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nframes</span><span class="p">,</span> <span class="n">dump_time</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_snapshot</span><span class="p">)</span>
+
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;dynamo_&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;(cd </span><span class="si">%s</span><span class="s1">; dynarun </span><span class="si">%s</span><span class="s1"> -E -f </span><span class="si">%f</span><span class="s1"> --snapshot </span><span class="si">%f</span><span class="s1"> -o dump.xml &gt; /dev/null 2&gt;&amp;1)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="p">(</span><span class="n">nframes</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="n">dump_time</span><span class="p">,</span> <span class="n">dump_time</span><span class="p">))</span>
+
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/*.xml.bz2&#39;</span> <span class="o">%</span> <span class="n">work_dir</span><span class="p">)</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="n">natsorted</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span> <span class="k">if</span> <span class="s1">&#39;output&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">==</span> <span class="n">nframes</span>
+
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nframes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">frame</span><span class="p">,</span><span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;output&#39;</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span> <span class="k">continue</span>
+
+            <span class="n">f</span> <span class="o">=</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="n">particles</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;//Pt/P&quot;</span><span class="p">)</span>
+            <span class="n">coordinates</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">coordinates</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.determine_relaxation_time"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.determine_relaxation_time">[docs]</a>    <span class="k">def</span> <span class="nf">determine_relaxation_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collisions_per_frame</span> <span class="o">=</span> <span class="mi">500</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Relaxation&#39;</span><span class="p">][</span><span class="s1">&#39;tau_collisions&#39;</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span> <span class="k">pass</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;finding equilibration time...&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;collisions</span><span class="se">\t</span><span class="s1">self-overlap&#39;</span><span class="p">)</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">while</span> <span class="n">Q</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">collisions_per_frame</span><span class="p">)</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_overlap</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="p">)</span>
+            <span class="n">frames</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%d</span><span class="se">\t</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">collisions_per_frame</span> <span class="o">*</span> <span class="n">frames</span><span class="p">,</span> <span class="n">Q</span><span class="p">))</span>
+
+        <span class="c1"># Estimate equilibration time</span>
+        <span class="n">tau_collisions</span> <span class="o">=</span> <span class="n">collisions_per_frame</span> <span class="o">*</span> <span class="n">frames</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;approximate equilibration time:&#39;</span><span class="p">,</span> <span class="n">tau_collisions</span><span class="p">,</span> <span class="s1">&#39;collisions&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Relaxation&#39;</span><span class="p">][</span><span class="s1">&#39;tau_collisions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau_collisions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">tau_collisions</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">relaxation_collisions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_relaxation_time</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">equilibrated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Relaxation&#39;</span><span class="p">][</span><span class="s1">&#39;equilibrated&#39;</span><span class="p">]</span>
+<div class="viewcode-block" id="DynamoTrajectory.equilibrate"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.equilibrate">[docs]</a>    <span class="k">def</span> <span class="nf">equilibrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_relaxations</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equilibrated</span><span class="p">:</span> <span class="k">return</span>
+
+        <span class="n">tau_collisions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relaxation_collisions</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;equilibrating over </span><span class="si">%d</span><span class="s1"> relaxation times...&#39;</span> <span class="o">%</span> <span class="n">num_relaxations</span><span class="p">)</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="n">widgets</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">progress</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_relaxations</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tau_collisions</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;Relaxation&#39;</span><span class="p">][</span><span class="s1">&#39;equilibrated&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.save"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_snapshot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pretty_print</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_settings</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.save_settings"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.save_settings">[docs]</a>    <span class="k">def</span> <span class="nf">save_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/settings.ini&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.clear_snapshots"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.clear_snapshots">[docs]</a>    <span class="k">def</span> <span class="nf">clear_snapshots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">snap</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/0.xml&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">snapshots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">natsorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/*.xml&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">latest_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">new_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">latest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latest_snapshot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">latest</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">latest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%d</span><span class="s1">.xml&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span><span class="n">latest</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">longdouble</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span>
+
+    <span class="nd">@coords</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">])</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span>
+            <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">P</span><span class="p">):</span> <span class="n">P</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">c</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_velocities</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">longdouble</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_velocities</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xyzr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span>
+                               <span class="mf">0.5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coords_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">(</span><span class="n">snap</span><span class="p">)</span>
+            <span class="n">trajectory</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">trajectory</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xyzr_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_xml</span><span class="p">(</span><span class="n">snap</span><span class="p">)</span>
+            <span class="n">trajectory</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xyzr</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">trajectory</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">effective_diameter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">effective_volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_fraction</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">density</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">effective_volume</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DynamoTrajectory.parse_xml"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.parse_xml">[docs]</a>    <span class="k">def</span> <span class="nf">parse_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span> <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span>
+        <span class="k">except</span><span class="p">:</span> <span class="k">pass</span>
+
+        <span class="c1"># Read the xml file</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">XMLParser</span><span class="p">(</span><span class="n">remove_blank_text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parser</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ParticleData&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Interactions&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Genus&#39;</span><span class="p">)</span>
+
+        <span class="c1"># System size information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getchildren</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;SimulationSize&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">][:</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">]])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
+
+        <span class="c1"># Find the diameters of the particles, assuming additive interactions.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">uij</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]:</span>
+            <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;IDPairRange&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Pair&#39;</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[:]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uij</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">])</span>
+                <span class="k">break</span>
+
+            <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">uij_range</span><span class="p">[</span><span class="s1">&#39;Start&#39;</span><span class="p">])</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">uij_range</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uij</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Compute exact volume fraction.</span>
+        <span class="n">intrinsic_volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume_fraction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intrinsic_volumes</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span></div>
+
+<div class="viewcode-block" id="DynamoTrajectory.apply_uniform_dispersity"><a class="viewcode-back" href="../../../mdma.dynamo.html#mdma.dynamo.wrapper.DynamoTrajectory.apply_uniform_dispersity">[docs]</a>    <span class="k">def</span> <span class="nf">apply_uniform_dispersity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">size_ratios</span><span class="p">):</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)[:</span><span class="nb">len</span><span class="p">(</span><span class="n">size_ratios</span><span class="p">)]</span>
+
+        <span class="n">bin_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">size_ratios</span><span class="p">))</span>
+        <span class="n">bin_indices</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="nb">bin</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">bin</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="nb">bin</span> <span class="ow">in</span> <span class="n">bin_indices</span><span class="p">]</span>
+        <span class="n">bin_widths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">+</span><span class="nb">int</span><span class="p">(</span><span class="nb">bin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="nb">bin</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="nb">bin</span> <span class="ow">in</span> <span class="n">bin_indices</span><span class="p">]</span>
+
+        <span class="c1"># Volume occupied by each partial component</span>
+        <span class="n">partial_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="n">s</span><span class="o">**</span><span class="mi">3</span>  <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bin_widths</span><span class="p">,</span><span class="n">size_ratios</span><span class="p">)]</span>
+        <span class="n">partial_volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">partial_weights</span><span class="p">)</span>
+        <span class="c1"># Effective one-component intrinsic volume</span>
+        <span class="n">effective_volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">partial_volumes</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+
+        <span class="c1"># Normalise the size distribution so we achieve the correct volume fraction.</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">/</span> <span class="p">(</span><span class="n">effective_volume</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">)</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="n">size_ratios</span> <span class="o">*</span> <span class="n">norm</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">),</span><span class="n">size</span><span class="p">,</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bin_indices</span><span class="p">,</span><span class="n">sizes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume_fraction</span> <span class="o">=</span> <span class="n">phi</span>
+
+        <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">diameter</span><span class="p">,(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">sizes</span><span class="p">,</span><span class="n">bin_indices</span><span class="p">):</span>
+            <span class="n">species</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;Species&quot;</span><span class="p">,</span> <span class="n">Mass</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">Name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Point&quot;</span><span class="p">)</span>
+            <span class="n">species</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;IDRange&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Ranged&quot;</span><span class="p">,</span> <span class="n">Start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">End</span><span class="o">=</span><span class="n">end</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">uij</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">uij</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">diameter</span><span class="p">,(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">sizes</span><span class="p">,</span><span class="n">bin_indices</span><span class="p">):</span>
+            <span class="n">interaction</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;Interaction&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;HardSphere&quot;</span><span class="p">,</span> <span class="n">Diameter</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">diameter</span><span class="p">),</span> <span class="n">Name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">Interaction&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">id_range</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;IDPairRange&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Single&quot;</span><span class="p">)</span>
+            <span class="n">id_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;IDRange&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Ranged&quot;</span><span class="p">,</span> <span class="n">Start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">End</span><span class="o">=</span><span class="n">end</span><span class="p">))</span>
+            <span class="n">interaction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_range</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">nameA</span><span class="p">,</span><span class="n">diameterA</span><span class="p">,(</span><span class="n">startA</span><span class="p">,</span><span class="n">endA</span><span class="p">)),</span> <span class="p">(</span><span class="n">nameB</span><span class="p">,</span><span class="n">diameterB</span><span class="p">,(</span><span class="n">startB</span><span class="p">,</span><span class="n">endB</span><span class="p">))</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">sizes</span><span class="p">,</span><span class="n">bin_indices</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">interaction</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;Interaction&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;HardSphere&quot;</span><span class="p">,</span> <span class="n">Diameter</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">diameterA</span><span class="o">+</span><span class="n">diameterB</span><span class="p">)),</span> <span class="n">Name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">Interaction&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nameA</span><span class="p">,</span><span class="n">nameB</span><span class="p">))</span>
+            <span class="n">id_range</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;IDPairRange&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Pair&quot;</span><span class="p">)</span>
+            <span class="n">id_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;IDRange&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Ranged&quot;</span><span class="p">,</span> <span class="n">Start</span><span class="o">=</span><span class="n">startA</span><span class="p">,</span> <span class="n">End</span><span class="o">=</span><span class="n">endA</span><span class="p">))</span>
+            <span class="n">id_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;IDRange&quot;</span><span class="p">,</span> <span class="n">Type</span><span class="o">=</span><span class="s2">&quot;Ranged&quot;</span><span class="p">,</span> <span class="n">Start</span><span class="o">=</span><span class="n">startB</span><span class="p">,</span> <span class="n">End</span><span class="o">=</span><span class="n">endB</span><span class="p">))</span>
+            <span class="n">interaction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_range</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span>
+
+        <span class="c1"># Permute the particles to randomise the size assignments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)]</span></div></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Joshua Robinson.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mdma.snapshot &#8212; MDMAmazing 0.1.dev0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.dev0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
+        <h2 class="heading"><span>mdma.snapshot</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for mdma.snapshot</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module defining interface for reading and writing snapshots in various file formats.</span>
+
+<span class="sd">The module defines:</span>
+<span class="sd">  - stream_safe_open: a context manager to facilitate parsing both open file streams and paths with the same interface</span>
+<span class="sd">  - NoSnapshotError: exception raised when a snapshot could not be read from the file</span>
+<span class="sd">  - snapshot: the class containing the general snapshot interface</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">numpy</span><span class="o">,</span> <span class="nn">contextlib</span>
+
+<span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+<div class="viewcode-block" id="stream_safe_open"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.stream_safe_open">[docs]</a><span class="k">def</span> <span class="nf">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Context manager for parsers which accept an open file stream or a file path to open.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_or_file: either an open file stream (in which case the context manager does nothing and returns it) or a path (in which case the context manager will open this, return a stream and then clean up)</span>
+<span class="sd">        mode: mode to open file in</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">file_to_close</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">path_or_file</span>
+        <span class="n">file_to_close</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">f</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file_to_close</span><span class="p">:</span>
+            <span class="n">file_to_close</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="NoSnapshotError"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.NoSnapshotError">[docs]</a><span class="k">class</span> <span class="nc">NoSnapshotError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception raised when not able to read a snapshot from a file.&quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Snapshot"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.Snapshot">[docs]</a><span class="k">class</span> <span class="nc">Snapshot</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Snapshot of a system of particles.</span>
+
+<span class="sd">    Variables:</span>
+<span class="sd">        n: number of particles</span>
+<span class="sd">        d: dimensionality of configuration space</span>
+<span class="sd">        x: particle coordinates (n by d container)</span>
+<span class="sd">        box: box containing the particles (d by 2 container)</span>
+<span class="sd">        species: labels of the particle species (string or container of strings)</span>
+<span class="sd">        time: time or frame of the snapshot within a trajectory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new snapshot.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: particle coordinates</span>
+<span class="sd">            box: box dimensions containing the particles</span>
+<span class="sd">            species: labels of the particle species</span>
+<span class="sd">            time: time or frame of the snapshot within a trajectory</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="n">box</span>
+        <span class="k">if</span> <span class="n">species</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">else</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">species</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
+
+<div class="viewcode-block" id="Snapshot.copy"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.Snapshot.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a deep copy of the snapshot.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of particles in snapshot.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dimensionality of configuration space.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">box_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dimensions of box.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Volume of system box.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span> <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Density of configuration from box dimensions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Snapshot.read_single"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.Snapshot.read_single">[docs]</a>    <span class="k">def</span> <span class="nf">read_single</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read a single snapshot from the disk.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        &gt;&gt;&gt; snapshot.read(&#39;snapshot.atom&#39;)</span>
+<span class="sd">        &lt;snapshot n=10976 t=0&gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cls: derived class defining specific file format</span>
+<span class="sd">            path_or_file: file stream or path to read snapshot from</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            snapshot: the snapshot read from disk</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NoSnapshotError: if could not read from file</span>
+<span class="sd">            RuntimeException: if did not recognise file format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">snap</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+            <span class="n">snap</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">snap</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Snapshot.read_trajectory"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.Snapshot.read_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">read_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">,</span> <span class="n">max_frames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read a trajectory (i.e. multiple snapshots) from the disk.</span>
+
+<span class="sd">        Example where trajectory.atom is an atom file containing two snapshots:</span>
+<span class="sd">        &gt;&gt;&gt; list(read(&#39;trajectory.atom&#39;, 2))</span>
+<span class="sd">        [&lt;snapshot n=10976 t=0&gt;, &lt;snapshot n=10976 t=1&gt;]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cls: derived class defining specific file format</span>
+<span class="sd">            path_or_file: file stream or path to read trajectory from</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            trajectory (generator): generator iterating through the snapshots in the trajectory</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NoSnapshotError: if could not read from file</span>
+<span class="sd">            RuntimeException: if did not recognise file format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span> <span class="n">snap</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">read_single</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">NoSnapshotError</span><span class="p">:</span> <span class="k">break</span>
+
+                <span class="k">yield</span> <span class="n">snap</span>
+                <span class="n">frames</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">max_frames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">frames</span> <span class="ow">is</span> <span class="n">max_frames</span><span class="p">:</span> <span class="k">break</span></div>
+
+<div class="viewcode-block" id="Snapshot.write"><a class="viewcode-back" href="../../mdma.html#mdma.snapshot.Snapshot.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump the snapshot to a file in LAMMPS (.atom) format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            out: file or path to write the snapshot to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">stream_safe_open</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Internal representation of the object for printing to debugger.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;snapshot n=</span><span class="si">%r</span><span class="s1"> t=</span><span class="si">%r</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;String representation of the snapshot in the chosen format not implemented in the base class, and must be written for specific formats.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Joshua Robinson.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

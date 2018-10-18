@@ -1,0 +1,22 @@
+mdma\.spatial package
+=====================
+
+Submodules
+----------
+
+mdma\.spatial\.periodic module
+------------------------------
+
+.. automodule:: mdma.spatial.periodic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mdma.spatial
+    :members:
+    :undoc-members:
+    :show-inheritance:

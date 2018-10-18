@@ -1,0 +1,38 @@
+mdma\.dynamo package
+====================
+
+Submodules
+----------
+
+mdma\.dynamo\.iniparser module
+------------------------------
+
+.. automodule:: mdma.dynamo.iniparser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mdma\.dynamo\.snapshot module
+-----------------------------
+
+.. automodule:: mdma.dynamo.snapshot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mdma\.dynamo\.wrapper module
+----------------------------
+
+.. automodule:: mdma.dynamo.wrapper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: mdma.dynamo
+    :members:
+    :undoc-members:
+    :show-inheritance:

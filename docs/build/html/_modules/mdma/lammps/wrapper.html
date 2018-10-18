@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mdma.lammps.wrapper &#8212; MDMAmazing 0.1.dev0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.dev0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
+        <h2 class="heading"><span>mdma.lammps.wrapper</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for mdma.lammps.wrapper</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">ctypes</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">natsort</span> <span class="k">import</span> <span class="n">natsorted</span>
+
+<span class="kn">import</span> <span class="nn">lammps</span>
+
+<div class="viewcode-block" id="random_seed"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.random_seed">[docs]</a><span class="k">def</span> <span class="nf">random_seed</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)</span></div>
+
+<span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;fx&#39;</span><span class="p">,</span> <span class="s1">&#39;fy&#39;</span><span class="p">,</span> <span class="s1">&#39;fz&#39;</span><span class="p">]</span> <span class="c1">#, &#39;vx&#39;, &#39;vy&#39;, &#39;vz&#39;]</span>
+
+<div class="viewcode-block" id="Ensemble"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.Ensemble">[docs]</a><span class="k">class</span> <span class="nc">Ensemble</span><span class="p">:</span>
+    <span class="n">NVT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">NPT</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+<div class="viewcode-block" id="LammpsExecutable"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable">[docs]</a><span class="k">class</span> <span class="nc">LammpsExecutable</span><span class="p">(</span><span class="n">lammps</span><span class="o">.</span><span class="n">PyLammps</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">*</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="LammpsExecutable.initialise_system"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable.initialise_system">[docs]</a>    <span class="k">def</span> <span class="nf">initialise_system</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">initial_snapshot</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;cannot overwrite a previous simulation!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_style</span><span class="p">(</span><span class="s1">&#39;atomic&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_modify</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;array&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;p&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">))</span>
+
+        <span class="c1"># Determine ensemble based on system parameters.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pressure</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">pressure</span>
+            <span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">NPT</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">final_density</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">density</span>
+            <span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">NVT</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">initial_snapshot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;without an initial snapshot (one of) density or pressure must be set (for NVT or NPT simulations respectively)&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> <span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">NVT</span>
+
+        <span class="c1"># Create the box (for now only cubic boxes are implemented)</span>
+        <span class="n">initial_box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_box</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">initial_snapshot</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="p">(</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="s1">&#39;block&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">initial_box</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_box</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">num_species</span><span class="p">,</span> <span class="s1">&#39;box&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Initialise coordinates and species.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">(),</span> <span class="s1">&#39;NULL&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">initial_snapshot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">composition</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">composition</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">initial_snapshot</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">initial_snapshot</span><span class="o">.</span><span class="n">species</span>            
+
+        <span class="c1"># Initialise interactions.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">mass</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">natoms</span><span class="p">),</span> <span class="n">system</span><span class="o">.</span><span class="n">masses</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">mass</span><span class="p">)</span>
+        <span class="n">system</span><span class="o">.</span><span class="n">initialise_potential</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Minimise in case there are (high energy) overlaps from the random generation.</span>
+        <span class="k">if</span> <span class="n">initial_snapshot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">energy_tol</span><span class="p">,</span> <span class="n">force_tol</span><span class="p">,</span> <span class="n">max_iters</span><span class="p">,</span> <span class="n">max_evals</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">energy_tol</span><span class="p">,</span> <span class="n">force_tol</span><span class="p">,</span> <span class="n">max_iters</span><span class="p">,</span> <span class="n">max_evals</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reset_timestep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">(),</span> <span class="s1">&#39;loop&#39;</span><span class="p">,</span> <span class="s1">&#39;geom&#39;</span><span class="p">)</span>
+        <span class="c1"># set neighbour options here? should maybe include an option to customise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_style</span><span class="p">(</span><span class="s1">&#39;verlet&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="o">==</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">NVT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fix</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;nvt&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">system</span><span class="o">.</span><span class="n">thermostat_damping_interval</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">initial_snapshot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">initial_box_dimensions</span> <span class="o">=</span> <span class="n">initial_box</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initial_box</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">initial_volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">initial_box_dimensions</span><span class="p">)</span>
+                <span class="n">desired_volume</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">natoms</span> <span class="o">/</span> <span class="n">system</span><span class="o">.</span><span class="n">density</span>
+
+                <span class="n">rescale</span> <span class="o">=</span> <span class="p">(</span><span class="n">desired_volume</span> <span class="o">/</span> <span class="n">initial_volume</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+                <span class="n">final_box</span> <span class="o">=</span> <span class="n">initial_box</span> <span class="o">*</span> <span class="n">rescale</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">fix</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;deform&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">final_box</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">final_box</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">final_box</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">final_box</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">final_box</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">final_box</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">initial_thermalisation_steps</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unfix</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">initial_thermalisation_steps</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reset_timestep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                
+        <span class="k">elif</span> <span class="n">ensemble</span> <span class="o">==</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">NPT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;specify NPT fix!&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unknown ensemble encountered (ensemble=</span><span class="si">%d</span><span class="s1">)!&#39;</span> <span class="o">%</span> <span class="n">ensemble</span><span class="p">)</span>
+
+        <span class="c1"># Run for zero steps so lammps will compute thermodynamic properties for initial state.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LammpsExecutable.initial_box"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable.initial_box">[docs]</a>    <span class="k">def</span> <span class="nf">initial_box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">system</span><span class="p">,</span> <span class="n">initial_snapshot</span><span class="p">,</span> <span class="n">seed_density</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">initial_box</span> <span class="o">=</span> <span class="n">initial_snapshot</span><span class="o">.</span><span class="n">box</span>
+            <span class="n">initial_box_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="n">initial_box</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">initial_box</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+
+            <span class="c1"># If density is specified we need to rescale the box appropriately</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">desired_volume</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">natoms</span> <span class="o">/</span> <span class="n">system</span><span class="o">.</span><span class="n">density</span>
+                <span class="n">snapshot_volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">initial_box_dimensions</span><span class="p">)</span>
+                <span class="n">rescale</span> <span class="o">=</span> <span class="p">(</span><span class="n">desired_volume</span> <span class="o">/</span> <span class="n">snapshot_volume</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+
+                <span class="n">initial_box</span> <span class="o">*=</span> <span class="n">rescale</span>
+                <span class="n">initial_box_dimensions</span> <span class="o">*=</span> <span class="n">rescale</span>
+
+            <span class="c1"># Density was not specified by system: ignore (we must be in NPT ensemble)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">return</span> <span class="n">initial_box</span>
+
+        <span class="c1"># Either no snapshot was given, or one was given without a box specified:</span>
+        <span class="c1"># we will have to generate coordinates from random so we must start with a low</span>
+        <span class="c1"># density box (which will later be shrunk to achieve the desired density).</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">unit_box</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]</span><span class="o">*</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">initial_volume</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">natoms</span> <span class="o">/</span> <span class="n">seed_density</span>
+            <span class="n">initial_box</span> <span class="o">=</span> <span class="n">unit_box</span> <span class="o">*</span> <span class="n">initial_volume</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">system</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">initial_box</span></div>
+
+<div class="viewcode-block" id="LammpsExecutable.save"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/dumps&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%d</span><span class="s1">.runs&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="p">:</span>
+                <span class="n">thermo_data</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="vm">__dict__</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">thermo_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_restart</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/dumps/*.restart&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/dumps/*.atom&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
+
+        <span class="n">history</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cmd_history</span><span class="p">)</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%d</span><span class="s1">.history&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">history</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LammpsExecutable.resume"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable.resume">[docs]</a>    <span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;cannot overwrite a previous simulation!&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialised</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">latest_restart</span> <span class="o">=</span> <span class="n">natsorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/dumps/*.restart&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_restart</span><span class="p">(</span><span class="n">latest_restart</span><span class="p">)</span>
+
+        <span class="n">previous_logs</span> <span class="o">=</span> <span class="n">natsorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/*.history&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">))</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="n">previous_logs</span><span class="p">:</span> <span class="n">history</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_script</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+
+        <span class="c1"># Neighbour list and fix commands need to be reissued</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restore_fixes</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">history</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;pair&#39;</span> <span class="ow">in</span> <span class="n">command</span> <span class="ow">or</span> <span class="s1">&#39;neigh&#39;</span> <span class="ow">in</span> <span class="n">command</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+        <span class="n">latest_log</span> <span class="o">=</span> <span class="n">previous_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span> <span class="o">=</span> <span class="n">latest_log</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.history&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LammpsExecutable.restore_fixes"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable.restore_fixes">[docs]</a>    <span class="k">def</span> <span class="nf">restore_fixes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="n">fix_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">command</span> <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">history</span> <span class="k">if</span> <span class="s1">&#39;fix&#39;</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">fix_labels</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">fix_history</span><span class="p">])</span>
+
+        <span class="n">unique_fixes</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">fix_labels</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_fixes</span><span class="p">:</span>
+            <span class="n">fixes</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fix_labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">latest_command</span> <span class="o">=</span> <span class="n">fix_history</span><span class="p">[</span><span class="n">fixes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+            <span class="c1"># Don&#39;t do anything if the last command with this label was an &#39;unfix&#39;</span>
+            <span class="n">active</span> <span class="o">=</span> <span class="n">latest_command</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;fix&#39;</span>
+            <span class="k">if</span> <span class="n">active</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">latest_command</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LammpsExecutable.read_script"><a class="viewcode-back" href="../../../mdma.lammps.html#mdma.lammps.wrapper.LammpsExecutable.read_script">[docs]</a>    <span class="k">def</span> <span class="nf">read_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">natoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">natoms</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">gather_atoms</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="nd">@coordinates</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">scatter_atoms</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">species</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">species</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">gather_atoms</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+
+    <span class="nd">@species</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">species</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">species</span><span class="p">):</span>
+        <span class="n">species</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">scatter_atoms</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">ctypes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">xlo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">xhi</span><span class="p">],</span>
+                            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ylo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">yhi</span><span class="p">],</span>
+                            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">zlo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">zhi</span><span class="p">]])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">box_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">xhi</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">xlo</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">yhi</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ylo</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">zhi</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">zlo</span><span class="p">])</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">composition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">species</span><span class="p">,</span> <span class="n">proportions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">species</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proportions</span><span class="p">[</span><span class="n">order</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span>
+
+    <span class="nd">@composition</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">composition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="n">composition</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">composition</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">species</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="o">*</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)()</span>
+            <span class="n">species</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)</span>
+
+            <span class="c1"># Maintain a list of atoms which have not been assigned a species so we can ensure the exact requested composition is achieved.</span>
+            <span class="n">remaining_atoms</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">proportion</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">composition</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                <span class="c1"># Atoms to convert to the new type chosen randomly without replacement.</span>
+                <span class="n">to_convert</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">remaining_atoms</span><span class="p">),</span>
+                                                 <span class="nb">int</span><span class="p">(</span><span class="n">proportion</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="p">),</span>
+                                                 <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                <span class="n">species</span><span class="p">[</span><span class="n">to_convert</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">2</span>
+                <span class="c1">#for j in to_convert: species[remaining_atoms[j]] = i+2</span>
+                <span class="c1"># Update the list of atoms which have not been assigned a type yet.</span>
+                <span class="n">remaining_atoms</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">remaining_atoms</span><span class="p">,</span> <span class="n">to_convert</span><span class="p">)</span>
+
+            <span class="n">species</span><span class="p">[</span><span class="n">remaining_atoms</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1">#for i in remaining_atoms: species[i] = 1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">species</span></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Joshua Robinson.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
