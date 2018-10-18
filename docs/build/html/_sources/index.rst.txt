@@ -18,12 +18,12 @@ Overview
 License
 #######
 
-CRIPES is released under the `GPLv3 <https://github.com/royallgroup/JELI/blob/refactor/LICENSE>`_ license.
+MDMAmazing is released under the `GPLv3 <https://github.com/royallgroup/JELI/blob/refactor/LICENSE>`_ license.
 
 Author
 ######
 
-CRIPES was created by Joshua Robinson:
+MDMAmazing was created by Joshua Robinson:
 
 * Email: `joshua.robinson@bristol.ac.uk <mailto:joshua.robinson@bristol.ac.uk>`_
 * GitHub: `github.com/tranqui <https://github.com/tranqui>`_
