@@ -96,11 +96,16 @@ class AtomSnapshot(Snapshot):
         f.write('ITEM: BOX BOUNDS')
         for _ in self.box: f.write(' pp')
         f.write('\n')
-        for dim in self.box:
-            if len(dim) == 2:
-                f.write('%.8f %.8f\n' % tuple(dim))
-            else:
-                f.write('0 %.8f\n' % dim)
+
+        # Full left boundary and right boundary box conditions are specified.
+        try:
+            for c in range(self.d):
+                f.write('%.8f %.8f\n' % tuple(self.box[c]))
+        # Only dimensions of box are specified
+        except TypeError:
+            for c in range(self.d):
+                f.write('0 %.8f\n' % self.box[c])
+
         f.write('ITEM: ATOMS id type x y z')
         for i,(name,x) in enumerate(zip(self.species,self.x)):
             f.write('\n')
