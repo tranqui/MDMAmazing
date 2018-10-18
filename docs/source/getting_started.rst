@@ -31,3 +31,8 @@ Optional: Installing LAMMPS
 
 To use the wrapper for LAMMPS, it must be compiled as a shared library and PyLammps must be installed.
 Follow the instructions  `here <https://lammps.sandia.gov/doc/Howto_pylammps.html#system-wide-installation>`_ for details of this process.
+
+Optional: Installing DynamO
+===========================
+
+Coming soon.
