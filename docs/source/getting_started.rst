@@ -1,6 +1,8 @@
 Getting started
 ###############
 
+.. warning:: I have only tried installing this on my own (GNU/Linux) machine, so some of these steps may fail on other systems particularly on Windows or Mac OS X operating systems. If you encounter any problems or have any suggestions please contact the `author <index.html#author>`_.
+
 Prerequisites
 =============
 
