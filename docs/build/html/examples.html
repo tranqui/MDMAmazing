@@ -53,11 +53,12 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="creating-and-a-lammps-simulation">
 <h2>Creating and a LAMMPS simulation<a class="headerlink" href="#creating-and-a-lammps-simulation" title="Permalink to this headline">¶</a></h2>
-<p>In this section we will create:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.2</span>
-<span class="n">system</span> <span class="o">=</span> <span class="n">KobAnderson</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">)</span>
+<p>In this section we will create a LAMMPS simulation of the Kob-Anderson binary Lennard-Jones potential:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
+<span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.2</span>
+<span class="n">system</span> <span class="o">=</span> <span class="n">potentials</span><span class="o">.</span><span class="n">KobAnderson</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">)</span>
 
-<span class="n">sim</span> <span class="o">=</span> <span class="n">LammpsExecutable</span><span class="p">()</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">LammpsExecutable</span><span class="p">()</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">initialise_system</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
 </pre></div>
 </div>

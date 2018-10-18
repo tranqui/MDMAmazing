@@ -4,12 +4,13 @@ Examples
 Creating and a LAMMPS simulation
 ================================
 
-In this section we will create::
+In this section we will create a LAMMPS simulation of the Kob-Anderson binary Lennard-Jones potential::
 
+  from mdma import potentials, wrapper
   natoms, temperature, density = 1024, 1, 1.2
-  system = KobAnderson(natoms, temperature, density=density)
+  system = potentials.KobAnderson(natoms, temperature, density=density)
 
-  sim = LammpsExecutable()
+  sim = wrapper.LammpsExecutable()
   sim.initialise_system(system)
 
 To run the simulation for 100 timesteps we perform::
