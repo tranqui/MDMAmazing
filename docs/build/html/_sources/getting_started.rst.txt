@@ -4,23 +4,7 @@ Getting started
 Prerequisites
 =============
 
-python modules
----------------
-
-Prerequisites:
-
-* numpy
-* scipy
-
-Install via pip::
-
-  pip install numpy scipy
-
-as superuser to install these system-wide or::
-
-  pip install --user numpy scipy
-
-to install without elevated privileges.
+Coming soon.
 
 Installation
 ============
