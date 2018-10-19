@@ -78,7 +78,7 @@ class AtomSnapshot(Snapshot):
                     if 'xs' in headings:
                         cols = ['xs','ys','zs'][:self.d]
                         self.x = table[cols].values.copy('c').astype(numpy.longdouble)
-                        for c in range(d): self.x[:,c] *= self.box[c]
+                        for c in range(d): self.x[:,c] *= self.box_dimensions[c]
                     else:
                         cols = ['x','y','z'][:self.d]
                         self.x = table[cols].values.copy('c').astype(numpy.longdouble)

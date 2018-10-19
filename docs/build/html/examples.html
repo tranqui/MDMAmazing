@@ -51,13 +51,16 @@
         
   <div class="section" id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="creating-and-a-lammps-simulation">
-<h2>Creating and a LAMMPS simulation<a class="headerlink" href="#creating-and-a-lammps-simulation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="creating-and-running-a-lammps-simulation">
+<h2>Creating and running a LAMMPS simulation<a class="headerlink" href="#creating-and-running-a-lammps-simulation" title="Permalink to this headline">¶</a></h2>
 <p>In this section we will create a LAMMPS simulation of the Kob-Anderson binary Lennard-Jones potential:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma.lammps</span> <span class="k">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
+
+<span class="c1"># Define the system parameters to simulate.</span>
 <span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.2</span>
 <span class="n">system</span> <span class="o">=</span> <span class="n">potentials</span><span class="o">.</span><span class="n">KobAnderson</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">)</span>
 
+<span class="c1"># Create the simulation.</span>
 <span class="n">sim</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">LammpsExecutable</span><span class="p">()</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">initialise_system</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
 </pre></div>
@@ -66,13 +69,40 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>To write a snapshot to a file we must use the atom module:</p>
+<p>To write a snapshot to a file we can use the atom module:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will create a file in the current directory named <cite>dump.atom</cite> storing the snapshot in LAMMPS&#8217;
+atom format.</p>
+<p>Sometimes it is desirable to save the coordinates in rescaled
+coordinates which are bounded between 0 and 1, in which case we can do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="s1">&#39;zs&#39;</span><span class="p">]</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, we can use the atom module to write the coordinates. This has the advantage of
+being more transparent and flexible due to being written in python, at the cost of slower
+performance:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">atom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The created file can be inspected with visualisation software (e.g. <a class="reference external" href="https://ovito.org/">ovito</a>).</p>
+<p>Created atom files can be inspected with visualisation software (e.g. <a class="reference external" href="https://ovito.org/">ovito</a>).
+To read a snapshot previously stored as an atom file we can do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
+<span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Comparison of this snapshot with the simulation will confirm that the snapshot is identical (up to rounding errors):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="computing-intermediate-scattering-functions">
 <h2>Computing intermediate scattering functions<a class="headerlink" href="#computing-intermediate-scattering-functions" title="Permalink to this headline">¶</a></h2>
