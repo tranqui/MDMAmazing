@@ -162,7 +162,7 @@ class DynamoSnapshot(Snapshot):
             # System size information
             self.box = self.xml['simulation'].find('SimulationSize')
             box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in ['x','y','z']])
-            self.box = numpy.array([[0.,length] for length in box_lengths])
+            self.box = numpy.array([[-0.5*length,0.5*length] for length in box_lengths])
 
             ## Find the diameters of the particles, assuming additive interactions.
 

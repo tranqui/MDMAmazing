@@ -12,18 +12,18 @@ mdma\.dynamo\.iniparser module
     :undoc-members:
     :show-inheritance:
 
-mdma\.dynamo\.snapshot module
------------------------------
-
-.. automodule:: mdma.dynamo.snapshot
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 mdma\.dynamo\.wrapper module
 ----------------------------
 
 .. automodule:: mdma.dynamo.wrapper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mdma\.dynamo\.xmlsnapshot module
+--------------------------------
+
+.. automodule:: mdma.dynamo.xmlsnapshot
     :members:
     :undoc-members:
     :show-inheritance:
