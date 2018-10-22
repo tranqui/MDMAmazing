@@ -18,7 +18,7 @@ Overview
 License
 #######
 
-MDMAmazing is released under the `GPLv3 <https://github.com/royallgroup/JELI/blob/refactor/LICENSE>`_ license.
+MDMAmazing is released under the `GPLv3 <https://github.com/tranqui/MDMAmazing/blob/master/LICENSE>`_ license.
 
 Author
 ######
