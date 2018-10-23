@@ -85,3 +85,64 @@ Computing intermediate scattering functions
 ===========================================
 
 Coming soon.
+
+Parallel analysis with MPI
+==========================
+
+The following program gives an example of how to chunk data for speed up with mpi:
+
+.. code-block:: python
+   :caption: example.py
+   :name: mpi-example
+
+   from mdma import mpi
+   from glob import glob
+
+   files_to_process = glob('*.txt')
+   print(mpi.rank, list(mpi.chunk(files_to_process)))
+
+   def analysis_function(path):
+       with open(path) as f:
+           data = int(f.read())
+       print(mpi.rank, 'file %s contains:' % path, data)
+
+       return data
+
+   data = mpi.parallel_map(analysis_function, files_to_process)
+   print(mpi.rank, 'return:', data)
+
+Suppose we have created 8 files each containing a number, which we can create on the Linux/Mac command line via::
+
+  for i in $(seq 8); do echo $i > $i.txt; done
+
+Then, running the program above with 3 cores produces the following output::
+
+  >>> mpirun -n 3 python3 example.py
+  0 ['6.txt', '1.txt', '8.txt']
+  1 ['3.txt', '4.txt', '7.txt']
+  2 ['5.txt', '2.txt']
+  0 file 6.txt contains: 6
+  1 file 3.txt contains: 3
+  2 file 5.txt contains: 5
+  0 file 1.txt contains: 1
+  1 file 4.txt contains: 4
+  0 file 8.txt contains: 8
+  2 file 2.txt contains: 2
+  1 file 7.txt contains: 7
+  2 return: None
+  1 return: None
+  0 return: [6, 1, 8, 3, 4, 7, 5, 2]
+
+Note that running the program without the :code:`mpirun` command will use normal serial analysis::
+
+  >>> python3 example.py
+  0 ['1.txt', '2.txt', '3.txt', '4.txt', '5.txt', '6.txt', '7.txt', '8.txt']
+  0 file 1.txt contains: 1
+  0 file 2.txt contains: 2
+  0 file 3.txt contains: 3
+  0 file 4.txt contains: 4
+  0 file 5.txt contains: 5
+  0 file 6.txt contains: 6
+  0 file 7.txt contains: 7
+  0 file 8.txt contains: 8
+  0 return: [1, 2, 3, 4, 5, 6, 7, 8]
