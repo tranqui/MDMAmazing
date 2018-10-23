@@ -23,5 +23,5 @@ setup(
     version='0.1.dev0',
     packages=find_packages(),
     #ext_modules=ext_modules,
-    install_requires=['pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar']
+    install_requires=['pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'lxml']
  )
