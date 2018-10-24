@@ -24,7 +24,7 @@ Clone the repository and install it via::
   git clone https://github.com/tranqui/MDMAmazing>
   cd MDMAmazing
   python3 setup.py build
-  python3 setup.py --user install
+  python3 setup.py install --user
 
 Optional: Installing LAMMPS
 ===========================
