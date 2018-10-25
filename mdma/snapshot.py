@@ -85,6 +85,11 @@ class Snapshot:
         return self.x.shape[1]
 
     @property
+    def shape(self):
+        """Shape of particle coordinates, i.e. [n, d]."""
+        return self.x.shape
+
+    @property
     def box_dimensions(self):
         """Dimensions of box."""
         try: return self.box[:,1] - self.box[:,0]
