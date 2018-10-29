@@ -65,6 +65,16 @@ class Snapshot:
         return snapshot(self.x.copy(), self.box.copy(), self.species.copy(), self.time)
 
     @property
+    def coordinates(self):
+        """Alias for snapshot coordinates."""
+        return self.x
+
+    @coordinates.setter
+    def coordinates(self, x):
+        """Alias for snapshot coordinates."""
+        self.x = x
+
+    @property
     def n(self):
         """Number of particles in snapshot."""
         return len(self.x)
