@@ -6,6 +6,8 @@ The module defines:
   - DynamoSnapshot: the class the defining the file interface to this file format
   - read: shorthand for DynamoSnapshot.read_single
   - read_trajectory: shorthand for DynamoSnapshot.read_trajectory
+  - write: create a snapshot from coordinates to write to disk
+  - write_trajectory: shorthand to write a series of coordinates to disk
 """
 
 import sys, io, numpy
@@ -257,3 +259,11 @@ def read(*args, **kwargs):
 def read_trajectory(*args, **kwargs):
     """Read a trajectory (i.e. multiple snapshots) from the disk."""
     return DynamoSnapshot.read_trajectory(*args, **kwargs)
+
+def write(x, box, out=sys.stdout, **kwargs):
+    """Write a single configuration to the disk."""
+    snapshot = DynamoSnapshot(x, box=box, **kwargs)
+    snapshot.write(out)
+def write_trajectory(trajectory, out=sys.stdout, **kwargs):
+    """Write a configuration container to the disk."""
+    for x in trajectory: write(x, out, **kwargs)
