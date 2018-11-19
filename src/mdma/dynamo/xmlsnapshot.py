@@ -11,6 +11,7 @@ The module defines:
 import sys, io, numpy
 from mdma.snapshot import stream_safe_open, NoSnapshotError, Snapshot
 
+from bs4 import BeautifulSoup
 from lxml import etree as ElementTree
 from lxml.etree import Element
 
@@ -161,7 +162,7 @@ class DynamoSnapshot(Snapshot):
 
             # System size information
             self.box = self.xml['simulation'].find('SimulationSize')
-            box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in ['x','y','z']])
+            box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in 'xyz'[:self.d]])
             self.box = numpy.array([[-0.5*length,0.5*length] for length in box_lengths])
 
             ## Find the diameters of the particles, assuming additive interactions.
@@ -201,7 +202,54 @@ class DynamoSnapshot(Snapshot):
 
     def __str__(self):
         """To be implemented."""
-        raise NotImplementedError
+        tree = BeautifulSoup("<DynamOconfig version=\"1.5.0\"></DynamOconfig>", 'lxml-xml')
+        root = tree.DynamOconfig
+
+        simulation = tree.new_tag("Simulation")
+        particles = tree.new_tag("ParticleData")
+        scheduler = tree.new_tag("Scheduler", Type="NeighbourList")
+        sorter = tree.new_tag("Sorter", Type="BoundedPQMinMax3")
+        simulation_size = tree.new_tag("SimulationSize", **{label: length for label, length in zip('xyz', self.box_dimensions)})
+        genus = tree.new_tag("Genus")
+        species = tree.new_tag("Species", Mass="1", Name="A", Type="All")
+        boundary = tree.new_tag("BC", Type="PBC")
+        topology = tree.new_tag("Topology")
+        interactions = tree.new_tag("Interactions")
+        interaction = tree.new_tag("Interaction", Diameter="1", Name="AAInteraction", Type="HardSphere")
+        interaction_range = tree.new_tag("IDPairRange", Type="All")
+        locals = tree.new_tag("Locals")
+        globals = tree.new_tag("Globals")
+        system_events = tree.new_tag("SystemEvents")
+        dynamics = tree.new_tag("Dynamics", Type="Newtonian")
+
+        root.append(simulation)
+        simulation.append(scheduler)
+        scheduler.append(sorter)
+        simulation.append(simulation_size)
+        simulation.append(genus)
+        genus.append(species)
+        simulation.append(boundary)
+        simulation.append(topology)
+        simulation.append(interactions)
+        interactions.append(interaction)
+        interaction.append(interaction_range)
+        simulation.append(locals)
+        simulation.append(globals)
+        simulation.append(system_events)
+        simulation.append(dynamics)
+
+        # Generate velocities from Maxwell-Boltzmann distribution, assumining unit temperature
+        # and masses of particles.
+        velocities = numpy.random.normal(0, 1, self.shape)
+
+        root.append(particles)
+        for i,(pos,vel) in enumerate(zip(self.x, velocities)):
+            particle = tree.new_tag("Pt", ID=str(i))
+            particle.append(tree.new_tag("P", **{label: x for label, x in zip('xyz', pos)}))
+            particle.append(tree.new_tag("V", **{label: v for label, v in zip('xyz', vel)}))
+            particles.append(particle)
+
+        return tree.prettify()
 
 def read(*args, **kwargs):
     """Read a single snapshot from the disk."""
