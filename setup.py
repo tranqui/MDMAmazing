@@ -10,6 +10,7 @@ ext_modules = [
               include_dirs=['pybind11/include', '/usr/include/eigen3'],
               language='c++',
               extra_compile_args = cpp_args,
+              extra_link_args = link_args
     ),
 ]
 
@@ -24,6 +25,6 @@ setup(
     version='0.1.dev0',
     package_dir={'': 'src'},
     packages=find_packages('src'),
-    #ext_modules=ext_modules,
-    install_requires=['pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
+    ext_modules=ext_modules,
+    install_requires=['sphinx', 'pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
  )
