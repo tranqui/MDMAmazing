@@ -5,6 +5,9 @@
 #include <pybind11/eigen.h>
 namespace py = pybind11;
 
+#include <mdma/spatial/cell-lists.h>
+using namespace mdma;
+
 // Define matrix types in row major format for compatibility with numpy.
 namespace Eigen
 {
@@ -105,9 +108,27 @@ void define_functions(Module m)
     }
 }
 
-PYBIND11_MODULE(distance, m) {
-    m.doc() = "Pairwise distances module";
+PYBIND11_MODULE(distance, module)
+{
+    module.doc() = "Pairwise distances module";
 
-    define_functions<double>(m);
-    define_functions<long double>(m);
+    define_functions<double>(module);
+    define_functions<long double>(module);
+
+    using Cells = spatial::CellLists<long double>;
+    py::class_<Cells>(module, "CellLists")
+        .def(py::init<long double,
+             const Eigen::Ref<const Cells::Coordinate>&,
+             const Eigen::Ref<const Cells::Domain>&>(),
+             py::arg("neighbour_cutoff"),
+             py::arg("box_dimensions").noconvert(),
+             py::arg("coordinates").noconvert())
+        .def_property_readonly("n", &Cells::n)
+        .def_property_readonly("d", [](const Cells&)
+                               { return spatial::details::DimensionsAtCompileTime; })
+        .def_property_readonly("shape", &Cells::shape)
+        .def_property_readonly("cell_dimensions", &Cells::cell_dimensions)
+        .def_property_readonly("cells", &Cells::get_cells, py::return_value_policy::move)
+        .def("find_displacements", &Cells::find_displacements, py::return_value_policy::move)
+        .def("find_distances", &Cells::find_distances, py::return_value_policy::move);
 }

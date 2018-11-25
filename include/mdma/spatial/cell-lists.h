@@ -6,281 +6,263 @@
 
 namespace mdma
 {
-    namespace details
+    namespace spatial
     {
-        static constexpr size_t SpatialDimensions = 3;
-        static constexpr int NumberOfPoints = Eigen::Dynamic;
-
-        template <typename Coordinate>
-        struct Pair
+        namespace details
         {
-            const Coordinate& a;
-            const Coordinate& b;
-        };
+            static constexpr int AtomsAtCompileTime = Eigen::Dynamic;
+            static constexpr int DimensionsAtCompileTime = 3;
 
-        template <typename Scalar>
-        class NeighbourIter
+            template <typename Scalar>
+            using Domain = Eigen::Matrix<Scalar, AtomsAtCompileTime,
+                                         DimensionsAtCompileTime, Eigen::RowMajor>;
+
+            template <typename Scalar>
+            using Coordinate = Eigen::Matrix<Scalar, 1, DimensionsAtCompileTime>;
+
+            template <typename Scalar>
+            using Axis = Eigen::Matrix<Scalar, AtomsAtCompileTime, 1>;
+        }
+
+        template <typename Scalar, template<typename,size_t> typename GridType = PeriodicGrid>
+        class CellLists
         {
         public:
+            using Domain = details::Domain<Scalar>;
+            using Coordinate = details::Coordinate<Scalar>;
+            using Axis = details::Axis<Scalar>;
+
+            static constexpr size_t d = details::DimensionsAtCompileTime;
+
+            using Grid = GridType<size_t,d>;
+            using ArrayIndex = typename Grid::ArrayIndex;
+            using EigenIndex = typename Grid::EigenIndex;
+
+            struct Particle
+            {
+                Particle(int cell, const Coordinate& position)
+                    : cell(cell), position(position)
+                { }
+
+                int cell;
+                const Coordinate& position;
+            };
+
+            CellLists(Scalar neighbour_cutoff,
+                      const Eigen::Ref<const Coordinate>& box_dimensions,
+                      const Eigen::Ref<const Domain>& coordinates)
+                : neighbour_cutoff(neighbour_cutoff),
+                  box_dimensions(box_dimensions),
+                  coordinates(coordinates),
+                  grid(optimal_grid(neighbour_cutoff, box_dimensions))
+            {
+                for (size_t c = 0; c < d; ++c)
+                    cell_widths[c] = box_dimensions[c] / this->shape()[c];
+
+                this->particles.reserve(this->n());
+
+                for (size_t atom = 0; atom < this->n(); ++atom)
+                {
+                    const auto& coordinate = this->coordinates.row(atom);
+
+                    EigenIndex index;
+                    for (size_t c = 0; c < d; ++c)
+                        index[c] = std::floor(coordinate[c] / this->cell_widths[c]);
+
+                    auto offset = this->grid.offset(index);
+                    this->grid[offset].children.push_back(atom);
+                    this->particles.emplace_back(offset, coordinate);
+                }
+            }
+
             /**
-             * Main constructor is fairly self-explanatory.
+             * Determine optimal number of cells in each spatial dimension for determining
+             *   neighbours up to a cutoff.
+             *
+             * Optimal condition is such that (maximum) cell widths are half the cutoff
+             *   length. Neighbours are thus guaranteed to be in the current or adjacent
+             *   cells.
+             *
+             * @param neighbour_cutoff: cutoff to optimise for.
+             * @param box_dimensions: physical size of bounding box cells should span in each dimension.
+             * @return array giving number of cells in each dimension
              */
-            inline ConstCoordsIter(const Vector& coords, size_t position=0)
-                : coords(coords), current_position(position)
+            inline EigenIndex optimal_grid(Scalar neighbour_cutoff,
+                                           const Eigen::Ref<const Coordinate>& box_dimensions)
+            {
+                EigenIndex ncells;
+                for (size_t c = 0; c < d; ++c)
+                    ncells[c] = std::floor(box_dimensions[c] / neighbour_cutoff);
+
+                return ncells;
+            }
+
+            inline size_t n() const
+            {
+                return this->coordinates.rows();
+            }
+
+            inline EigenIndex shape() const
+            {
+                return this->grid.shape();
+            }
+
+            inline auto get_cells() const
+            {
+                Eigen::Matrix<int, details::AtomsAtCompileTime, 1> cells(this->n());
+
+                for (size_t atom = 0; atom < this->n(); ++atom)
+                    cells(atom) = this->particles[atom].cell;
+
+                return cells;
+            }
+
+            inline Coordinate cell_dimensions() const
+            {
+                return this->cell_widths;
+            }
+
+            class Neighbours;
+            friend class Neighbours;
+
+            inline Neighbours neighbours() const
+            {
+                return Neighbours(*this);
+            }
+
+            Domain find_displacements() const
+            {
+                std::list<Coordinate> displacements;
+
+                auto function = [&](Coordinate&& delta)
+                    { displacements.push_back(delta); };
+                this->neighbours().for_each(function);
+
+                Domain delta(displacements.size(), d);
+                size_t index = 0;
+                for (auto dr : displacements)
+                {
+                    delta.row(index) = dr;
+                    ++index;
+                }
+
+                return delta;
+            }
+
+            auto find_distances() const
+            {
+                Domain displacements = this->find_displacements();
+
+                Eigen::Matrix<Scalar, details::AtomsAtCompileTime, 1>
+                    distances(displacements.rows());
+
+                for (int i = 0; i < displacements.rows(); ++i)
+                    distances(i) = displacements.row(i).norm();
+
+                return distances;
+            }
+
+        protected:
+            Scalar neighbour_cutoff;
+            Coordinate box_dimensions;
+            Domain coordinates;
+
+            Grid grid;
+            Coordinate cell_widths;
+
+            std::vector<Particle> particles;
+        };
+
+        template <typename Scalar, template<typename,size_t> typename GridType>
+        class CellLists<Scalar, GridType>::Neighbours
+        {
+        public:
+            Neighbours(const CellLists<Scalar, GridType>& cell_lists)
+                : cell_lists(cell_lists)
             { }
 
-            /**
-             * Copy constructor is trivial.
-             */
-            inline ConstCoordsIter(const ConstCoordsIter&) = default;
-
-            /**
-             * Value referencing: returns the row of the matrix, which is the coordinate
-             *  of the current particle.
-             */
-            inline const Pair<Scalar>& operator*() const
+            inline void for_each(std::function<void (Coordinate&&)> function) const
             {
-                return block<d>(this->coords, this->current_position);
+                for (auto& cell : this->cell_lists.grid)
+                    this->for_each(cell, function);
             }
 
-            /**
-             * Test for equality, for loop stopping criteria etc.
-             */
-            inline bool operator==(const ConstCoordsIter& ref) const
+            inline void for_each(const Cell<size_t,d>& cell,
+                                 std::function<void (Coordinate&&)> function) const
             {
-                return this->current_position == ref.current_position;
+                this->for_each_internal(cell, function);
+
+                Coordinate offset;
+                for (auto& neighbour : cell.forward_neighbours)
+                {
+                    for (size_t c = 0; c < d; ++c)
+                        offset(c) = neighbour.image_offset(c) *
+                            this->cell_lists.cell_widths(c);
+                    this->for_each_external(cell, *neighbour.cell, offset, function);
+                }
             }
 
-            /**
-             * Test for inequality, for loop stopping criteria etc.
-             */
-            inline bool operator!=(const ConstCoordsIter& ref) const
+            inline void for_each_internal(const Cell<size_t,d>& cell,
+                                          std::function<void (Coordinate&&)> function) const
             {
-                return !(*this == ref);
+                auto it = std::begin(cell);
+                auto end = std::end(cell);
+                if (it == end) return;
+
+                for (; it != std::prev(end); ++it)
+                    for (auto it2 = std::next(it); it2 != cell.end(); ++it2)
+                        function(this->cell_lists.coordinates.row(*it) -
+                                 this->cell_lists.coordinates.row(*it2));
             }
 
-            /**
-             * Increment the operator in the prefix case, i.e. ++iter;
-             */
-            inline ConstCoordsIter& operator++()
+            inline void for_each_external(const Cell<size_t,d>& cell_a,
+                                          const Cell<size_t,d>& cell_b,
+                                          const Eigen::Ref<const Coordinate>& offset,
+                                          std::function<void (Coordinate&&)> function) const
             {
-                ++this->current_position;
-                return *this;
+                for (auto i : cell_a)
+                    for (auto j : cell_b)
+                        function(this->cell_lists.coordinates.row(i) -
+                                 this->cell_lists.coordinates.row(j) - offset);
             }
 
-            /**
-             * Increment the operator in the postfix case, i.e. iter++;
-             * NB: the (int) parameter signals this is a postfix, an awkward C++ syntax.
-             */
-            inline ConstCoordsIter operator++( int )
+            inline bool for_particle_neighbours(size_t particle,
+                                                std::function<bool (Coordinate&&)> function) const
             {
-                ConstCoordsIter clone(*this);
-                ++this->current_position;
-                return clone;
+                auto &cells = this->cell_lists;
+                auto& cell = cells.grid[cells.particles[particle].cell];
+                bool abort;
+
+                for (auto neighbour : cell)
+                {
+                    if (neighbour == particle) continue;
+                    abort = function(cells.coordinates.row(particle) -
+                                     cells.coordinates.row(neighbour));
+                    if (abort) return true;
+                }
+
+                Coordinate offset;
+                for (auto& adjacent_cell : cell.neighbours)
+                {
+                    for (size_t c = 0; c < d; ++c)
+                        offset(c) = adjacent_cell.image_offset(c) *
+                            cells.cell_widths(c);
+
+                    for (auto neighbour : adjacent_cell.cell->children)
+                    {
+                        abort = function(cells.coordinates.row(particle) -
+                                         cells.coordinates.row(neighbour) - offset);
+                        if (abort) return true;
+                    }
+                }
+
+                return false;
             }
 
         private:
-            // The reference coordinate data we iterate through.
-            const Vector& coords;
-            // The current particle within said coordinates.
-            size_t current_position;
+            const CellLists<Scalar, GridType>& cell_lists;
         };
     }
-
-    template <typename Scalar>
-    class CellListMap :
-        public CartesianBasis<Scalar, SpatialDimensions, NumberOfPoints>
-    {
-    public:
-        using Base = CartesianBasis<Scalar, SpatialDimensions, NumberOfPoints>;
-        using typename Base::Point;
-        using typename Base::Axis;
-        using typename Base::Representation;
-
-        using ArrayIndex = std::array<size_t, SpatialDimensions>;
-        using EigenIndex = Eigen::Matrix<size_t, 1, SpatialDimensions>;
-
-        static constexpr size_t d = details::SpatialDimensions;
-
-        CellListMap(Scalar neighbour_cutoff,
-                    Eigen::Ref<const Point> box_dimensions,
-                    Eigen::Ref<const Representation> coordinates)
-            : neighbour_cutoff(neighbour_cutoff),
-              cells(optimal_cells(neighbour_cutoff, box_dimensions)),
-              coordinates(coordinates)
-        {
-            for (size_t c = 0; c < SpatialDimensions; ++c)
-                cell_widths[c] = box_dimensions[c] / cells.shape()[0];
-
-            for (int atom = 0; atom < coordinates.rows(); ++atom)
-            {
-                const auto& point = coordinates.row(atom);
-
-                EigenIndex cell_index;
-                for (size_t c = 0; c < SpatialDimensions; ++c)
-                    cell_index[c] = std::floor(point[c] / this->cell_widths[c]);
-
-                std::list<size_t>& list = this->cells(cell_index);
-                list.push_back(atom);
-            }
-        }
-
-        /**
-         * Determine optimal number of cells in each spatial dimension for determining
-         *   neighbours up to a cutoff.
-         *
-         * Optimal condition is such that (maximum) cell widths are half the cutoff
-         *   length. Neighbours are thus guaranteed to be in the current or adjacent
-         *   cells.
-         *
-         * @param neighbour_cutoff: cutoff to optimise for.
-         * @param box_dimensions: physical size of bounding box cells should span in each dimension.
-         * @return array giving number of cells in each dimension
-         */
-        EigenIndex
-        optimal_cells(Scalar neighbour_cutoff, Eigen::Ref<const Point> box_dimensions)
-        {
-            EigenIndex ncells;
-            for (size_t c = 0; c < SpatialDimensions; ++c)
-                ncells[c] = std::floor(box_dimensions[c] / neighbour_cutoff);
-
-            return ncells;
-        }
-
-        //std::
-        // friend std::ostream& operator<< (std::ostream& stream, const CellList& cells)
-        // {
-        // }
-        // void assignCell(long i);
-        // void assignAllCells();
-        // void rebuild();
-        // void forAllPotentialNeighbours() //long i, Neighbour& operation)
-        // {
-        //     for (size_t i = 0; i < this->
-        // }
-        //void updateCell(long i, &cell);
-
-        int neighbour_check(const std::list<size_t>& cell_a,
-                            const std::list<size_t>& cell_b) const
-        {
-            int count = 0;
-
-            for (auto i : cell_a)
-            {
-                for (auto j : cell_b)
-                {
-                    Scalar dr = Base::distance(this->coordinates.row(i),
-                                               this->coordinates.row(j));
-                    if (dr < this->neighbour_cutoff) count++;
-                }
-            }
-
-            return count;
-        }
-
-        int neighbour_check(const std::list<size_t>& cell) const
-        {
-            int count = 0;
-
-            auto it = std::begin(cell);
-            auto end = std::end(cell);
-            if (it == end) return count;
-
-            for (; it != std::prev(end); ++it)
-            {
-                for (auto it2 = std::next(it); it2 != cell.end(); ++it2)
-                {
-                    Scalar dr = Base::distance(this->coordinates.row(*it),
-                                               this->coordinates.row(*it2));
-                    if (dr < this->neighbour_cutoff) count++;
-                }
-            }
-
-            return count;
-        }
-
-        void find_neighbours()
-        {
-            // for (size_t i = 0; i < this->cells.size(); ++i)
-            // {
-            //     //cell : this->
-            // }
-
-            size_t num_neighbours = std::pow(2,SpatialDimensions) - 1;
-            std::cout << this->cells.stride() << std::endl;
-
-
-            std::list<EigenIndex> neighbours;
-            char mask = 1;
-            for (size_t i = 1; i <= num_neighbours; ++i)
-            {
-                neighbours.push_back(EigenIndex());
-                auto& index = neighbours.back();
-
-                for (size_t c = 0; c < SpatialDimensions; ++c)                    
-                    index[c] = (i >> c) & mask;
-
-                std::cout << i << ":" << index << ":" << this->cells.offset(index) << std::endl;
-            }
-
-            size_t index = 0;
-            for (auto cell : this->cells)
-            {
-                EigenIndex i1 = this->cells.index_from_offset(index);
-                for (auto& nb : neighbours)
-                {
-                    EigenIndex i2 = i1 + nb;
-                    size_t offset = this->cells.offset(i2);
-                    if (offset > this->cells.size())
-                        offset = offset % this->cells.size();
-                    EigenIndex i3 = this->cells.index_from_offset(offset);
-                    std::cout << i1 << ":" << i2 << ":" << i3 << std::endl;
-                }
-                //int n = cell.size();
-                //std::cout << this->cells.index_from_offset(index) << ": "
-                //          << this->neighbour_check(cell) << ": "
-                //          << n << " " << n*(n-1)/2 << "\n";
-                // std::cout << index << ":\t"
-                //           << this->cells.index_from_offset(index) << "\t:"
-                //           << cell.size() << std::endl;
-                index += 1;
-            }
-        }
-
-        Point cell_dimensions() const
-        {
-            return this->cell_widths;
-        }
-
-    protected:
-        Scalar neighbour_cutoff;
-        Grid<std::list<size_t>, SpatialDimensions> cells;
-        Representation coordinates;
-
-        Point cell_widths;
-    };
-
-
-    template <typename Scalar>
-    class CellList : public CellListMap<Scalar>
-    {
-    public:
-        using Base = CellListMap<Scalar, SpatialDimensions, NumberOfPoints>;
-        using typename Base::Point;
-        using typename Base::Axis;
-        using typename Base::Representation;
-
-        CellList(Scalar neighbour_cutoff,
-                 Eigen::Ref<const Point> box_dimensions,
-                 Eigen::Ref<const Representation> coordinates)
-            : Base(neighbour_cutoff, box_dimensions, coordinates),
-              coordinates(coordinates)
-        {
-        }
-
-    protected:
-        Representation coordinates;
-    };
 }
 
 #endif

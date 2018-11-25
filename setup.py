@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 
 from setuptools import setup, Extension, find_packages
+from glob import glob
 
 cpp_args = ['-std=c++14', '-mtune=native', '-march=native', '-Ofast', '-Wall', '-Wextra']
 link_args =  ['-Wl,--unresolved-symbols=report-all']
 
+ext_source = glob('src/pybind11/**/*.cc', recursive=True)
+ext_path = [path.replace('src/pybind11', 'mdma').replace('.cc','') for path in ext_source]
 ext_modules = [
-    Extension('mdma/spatial/distance', ['src/pybind11/spatial/distance.cc'],
-              include_dirs=['pybind11/include', '/usr/include/eigen3'],
+    Extension(module_path, [source_path],
+              include_dirs=['include', 'pybind11/include', '/usr/include/eigen3'],
               language='c++',
               extra_compile_args = cpp_args,
-              extra_link_args = link_args
-    ),
+              extra_link_args = link_args)
+    for module_path, source_path in zip(ext_path, ext_source)
 ]
 
 setup(
