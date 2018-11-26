@@ -18,7 +18,7 @@ class Ensemble:
 
 class LammpsExecutable(lammps.PyLammps):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, *kwargs)
+        super().__init__(*args, **kwargs)
         self.exec_id = 0
         self.initialised = False
 

@@ -33,5 +33,5 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     ext_modules=ext_modules,
-    install_requires=['sphinx', 'pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
+    install_requires=['pybind11', 'numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
  )
