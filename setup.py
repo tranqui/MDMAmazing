@@ -14,7 +14,7 @@ ext_path = [path.replace('src/pybind11', 'mdma').replace('.cc','') for path in e
 
 ext_modules = [
     Extension(module_path, [source_path],
-              include_dirs=['include', pybind11.get_include(), '/usr/include/eigen3'],
+              include_dirs=['include', pybind11.get_include(False), pybind11.get_include(True), '/usr/include/eigen3'],
               language='c++',
               extra_compile_args = cpp_args,
               extra_link_args = link_args)
