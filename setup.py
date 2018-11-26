@@ -2,12 +2,16 @@
 
 from setuptools import setup, Extension, find_packages
 from glob import glob
+import os
 
 cpp_args = ['-std=c++14', '-mtune=native', '-march=native', '-Ofast', '-Wall', '-Wextra']
 link_args =  ['-Wl,--unresolved-symbols=report-all']
 
-ext_source = glob('src/pybind11/**/*.cc', recursive=True)
+ext_source = []
+for root,dirs,files in os.walk('src/pybind11'):
+    ext_source += ['%s/%s' % (root,f) for f in files]
 ext_path = [path.replace('src/pybind11', 'mdma').replace('.cc','') for path in ext_source]
+
 ext_modules = [
     Extension(module_path, [source_path],
               include_dirs=['include', 'pybind11/include', '/usr/include/eigen3'],
