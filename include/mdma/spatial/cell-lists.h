@@ -124,10 +124,16 @@ namespace mdma
 
             class Neighbours;
             friend class Neighbours;
+            class Neighbourhood;
+            friend class Neighbourhood;
 
             inline Neighbours neighbours() const
             {
                 return Neighbours(*this);
+            }
+            inline Neighbourhood neighbourhood(int atom) const
+            {
+                return Neighbourhood(*this, atom);
             }
 
             Domain find_displacements() const
@@ -187,6 +193,9 @@ namespace mdma
                     this->for_each(cell, function);
             }
 
+        private:
+            const CellLists<Scalar, GridType>& cell_lists;
+
             inline void for_each(const Cell<size_t,d>& cell,
                                  std::function<void (Coordinate&&)> function) const
             {
@@ -225,19 +234,51 @@ namespace mdma
                         function(this->cell_lists.coordinates.row(i) -
                                  this->cell_lists.coordinates.row(j) - offset);
             }
+        };
 
-            inline bool for_particle_neighbours(size_t particle,
-                                                std::function<bool (Coordinate&&)> function) const
+        template <typename Scalar, template<typename,size_t> typename GridType>
+        class CellLists<Scalar, GridType>::Neighbourhood
+        {
+        public:
+            Neighbourhood(const CellLists<Scalar, GridType>& cell_lists, size_t particle)
+                : cell_lists(cell_lists), particle(particle)
+            { }
+
+            inline void for_each(std::function<void (Coordinate&&)> function) const
             {
                 auto &cells = this->cell_lists;
                 auto& cell = cells.grid[cells.particles[particle].cell];
-                bool abort;
+                auto&& x = cells.coordinates.row(this->particle);
 
                 for (auto neighbour : cell)
                 {
                     if (neighbour == particle) continue;
-                    abort = function(cells.coordinates.row(particle) -
-                                     cells.coordinates.row(neighbour));
+                    function(x - cells.coordinates.row(neighbour));
+                }
+
+                Coordinate offset;
+                for (auto& adjacent_cell : cell.neighbours)
+                {
+                    for (size_t c = 0; c < d; ++c)
+                        offset(c) = adjacent_cell.image_offset(c) *
+                            cells.cell_widths(c);
+
+                    for (auto neighbour : adjacent_cell.cell->children)
+                        function(x - cells.coordinates.row(neighbour) - offset);
+                }
+            }
+
+            inline bool for_each_terminating(std::function<bool (Coordinate&&)> function) const
+            {
+                auto& cells = this->cell_lists;
+                auto& cell = cells.grid[cells.particles[particle].cell];
+                auto&& x = cells.coordinates.row(this->particle);
+                bool abort;
+
+                for (auto neighbour : cell)
+                {
+                    if (neighbour == this->particle) continue;
+                    abort = function(x - cells.coordinates.row(neighbour));
                     if (abort) return true;
                 }
 
@@ -250,8 +291,7 @@ namespace mdma
 
                     for (auto neighbour : adjacent_cell.cell->children)
                     {
-                        abort = function(cells.coordinates.row(particle) -
-                                         cells.coordinates.row(neighbour) - offset);
+                        abort = function(x - cells.coordinates.row(neighbour) - offset);
                         if (abort) return true;
                     }
                 }
@@ -261,6 +301,7 @@ namespace mdma
 
         private:
             const CellLists<Scalar, GridType>& cell_lists;
+            const size_t particle;
         };
     }
 }

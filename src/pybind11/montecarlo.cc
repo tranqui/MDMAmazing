@@ -32,15 +32,23 @@ public:
                                      this->random_generator) ),
           random_step_distribution(-step_size, step_size),
           random_step( std::bind(this->random_step_distribution,
-                                 this->random_generator) )
+                                 this->random_generator) ),
+          total_steps(0), successful_steps(0)
     {
+    }
+
+    inline Scalar acceptance_ratio() const
+    {
+        return static_cast<Scalar>(this->successful_steps) / this->total_steps;
     }
 
     inline void step(int atom)
     {
         auto&& x = this->coordinates.row(atom);
         Coordinate x0(x);
+        this->total_steps++;
 
+        // Step in a random direction.
         for (size_t c = 0; c < d; ++c)
         {
             x(c) += this->random_step();
@@ -48,10 +56,9 @@ public:
             else if (x(c) < 0) x(c) += this->box_dimensions(c);
         }
 
+        // Update the particle cell if it has changed.
         EigenIndex index;
-        for (size_t c = 0; c < d; ++c)
-            index[c] = std::floor(x[c] / this->cell_widths[c]);
-
+        for (size_t c = 0; c < d; ++c) index[c] = std::floor(x[c] / this->cell_widths[c]);
         auto new_cell = this->grid.offset(index);
         auto old_cell = this->particles[atom].cell;
         if (new_cell != old_cell)
@@ -61,22 +68,29 @@ public:
             this->grid[new_cell].children.push_back(atom);
         }
 
-        auto check_overlaps =
+        // Check for any overlaps.
+        auto does_overlap =
             [&](Coordinate&& delta)
             {
                 return (delta.squaredNorm() < particle_diameter_squ);
             };
-        bool overlap = this->neighbours().for_particle_neighbours(atom, check_overlaps);
-        if (not overlap) return;
+        bool overlap = this->neighbourhood(atom).for_each_terminating(does_overlap);
 
-        x = x0;
-
-        if (new_cell != old_cell)
+        // Metropolis rule for hard spheres: undo any move which causes an overlap.
+        if (overlap)
         {
-            this->particles[atom].cell = old_cell;
-            this->grid[new_cell].children.remove(atom);
-            this->grid[old_cell].children.push_back(atom);
+            x = x0;
+            if (new_cell != old_cell)
+            {
+                this->particles[atom].cell = old_cell;
+                this->grid[new_cell].children.remove(atom);
+                this->grid[old_cell].children.push_back(atom);
+            }
+
+            return;
         }
+
+        this->successful_steps++;
     }
 
     inline void sweep()
@@ -103,6 +117,9 @@ protected:
 
     std::uniform_real_distribution<Scalar> random_step_distribution;
     std::function<Scalar (void)> random_step;
+
+private:
+    size_t total_steps, successful_steps;
 };
 
 PYBIND11_MODULE(montecarlo, module)
@@ -127,5 +144,6 @@ PYBIND11_MODULE(montecarlo, module)
         .def("find_displacements", &MonteCarlo::find_displacements, py::return_value_policy::move)
         .def("find_distances", &MonteCarlo::find_distances, py::return_value_policy::move)
         .def("run", &MonteCarlo::run)
-        .def_property_readonly("coordinates", &MonteCarlo::get_coordinates, py::return_value_policy::move);
+        .def_property_readonly("coordinates", &MonteCarlo::get_coordinates, py::return_value_policy::move)
+        .def_property_readonly("acceptance_ratio", &MonteCarlo::acceptance_ratio);
 }
