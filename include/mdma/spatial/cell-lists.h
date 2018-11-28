@@ -63,11 +63,17 @@ namespace mdma
 
                 for (size_t atom = 0; atom < this->n(); ++atom)
                 {
-                    const auto& coordinate = this->coordinates.row(atom);
+                    auto&& coordinate = this->coordinates.row(atom);
 
                     EigenIndex index;
                     for (size_t c = 0; c < d; ++c)
+                    {
+                        while (coordinate[c] > this->box_dimensions[c])
+                            coordinate[c] -= box_dimensions[c];
+                        while (coordinate[c] < 0)
+                            coordinate[c] += box_dimensions[c];
                         index[c] = std::floor(coordinate[c] / this->cell_widths[c]);
+                    }
 
                     auto offset = this->grid.offset(index);
                     this->grid[offset].children.push_back(atom);
