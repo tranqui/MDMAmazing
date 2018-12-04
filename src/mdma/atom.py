@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Module for reading and writing snapshots from and to LAMMPS (.atom) file formats. The main class is AtomSnapshot, but some additional functions are defined to provide a simplified interface to this class.
+Module for reading and writing snapshots from and to LAMMPS (.atom) file formats.
+The main class is AtomSnapshot, but some additional functions are defined to provide
+a simplified interface to this class.
 
 The module defines:
   - AtomSnapshot: the class the defining the file interface to this file format
@@ -89,7 +91,7 @@ class AtomSnapshot(Snapshot):
                 else: raise RuntimeError('unknown header: %s' % item)
 
     def __str__(self):
-        """String representation of the snapshot in LAMMPS (.atom) format"""
+        """String representation of the snapshot in LAMMPS (.atom) format."""
         f = io.StringIO()
         f.write('ITEM: TIMESTEP\n%r\n' % self.time)
         f.write('ITEM: NUMBER OF ATOMS\n%r\n' % self.n)

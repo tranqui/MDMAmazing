@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Module for reading and writing snapshots from and to XYZ (.xyz) file formats. The main class is XYZSnapshot, but some additional functions are defined to provide a simplified interface to this class.
+Module for reading and writing snapshots from and to XYZ (.xyz) file formats. The
+main class is XYZSnapshot, but some additional functions are defined to provide a
+simplified interface to this class.
 
 The module defines:
   - XYZSnapshot: the class the defining the file interface to this file format
@@ -47,7 +49,7 @@ class XYZSnapshot(Snapshot):
             self.time = self.box = None
 
     def __str__(self):
-        """String representation of the snapshot in XYZ (.xyz) format"""
+        """String representation of the snapshot in XYZ (.xyz) format."""
         f = io.StringIO()
 
         # Header states number of particles (we have ignored comment line)
