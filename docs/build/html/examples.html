@@ -1,36 +1,24 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Examples &#8212; MDMAmazing 0.1.dev0 documentation</title>
-    
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.1.dev0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mdma" href="modules.html" />
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
           <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
         <h2 class="heading"><span>Examples</span></h2>
@@ -56,7 +44,7 @@
 <div class="section" id="initialising-and-running-the-simulations">
 <h3>Initialising and running the simulations<a class="headerlink" href="#initialising-and-running-the-simulations" title="Permalink to this headline">¶</a></h3>
 <p>In this section we will create a LAMMPS simulation of the Kob-Anderson binary Lennard-Jones potential:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma.lammps</span> <span class="k">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma.lammps</span> <span class="k">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
 
 <span class="c1"># Define the system parameters to simulate.</span>
 <span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.2</span>
@@ -68,41 +56,41 @@
 </pre></div>
 </div>
 <p>To run the simulation for 100 timesteps we perform:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="processing-the-results">
 <h3>Processing the results<a class="headerlink" href="#processing-the-results" title="Permalink to this headline">¶</a></h3>
 <p>To write a snapshot to a file we can use the atom module:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This will create a file in the current directory named <cite>dump.atom</cite> storing the snapshot in LAMMPS&#8217;
+<p>This will create a file in the current directory named <cite>dump.atom</cite> storing the snapshot in LAMMPS’
 atom format.</p>
 <p>Sometimes it is desirable to save the coordinates in rescaled
 coordinates which are bounded between 0 and 1, in which case we can do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="s1">&#39;zs&#39;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="s1">&#39;zs&#39;</span><span class="p">]</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Alternatively, we can use the atom module to write the coordinates. This has the advantage of
 being more transparent and flexible due to being written in python, at the cost of slower
 performance:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">atom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Created atom files can be inspected with visualisation software (e.g. <a class="reference external" href="https://ovito.org/">ovito</a>).
 To read a snapshot previously stored as an atom file we can do:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
 <span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Comparison of this snapshot with the simulation will confirm that the snapshot is identical (up to rounding errors):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">)</span>
@@ -119,7 +107,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 <div class="section" id="id2">
 <h3>Processing the results<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>Suppose we have simulated a hard sphere system and produced a configuration file <cite>config.end.xml</cite> in the current directory. To read this file and convert it into the more flexible LAMMPS format we can try:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">dynamo</span><span class="p">,</span> <span class="n">atom</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">dynamo</span><span class="p">,</span> <span class="n">atom</span>
 <span class="n">snap</span> <span class="o">=</span> <span class="n">dynamo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;config.end.xml&#39;</span><span class="p">)</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">atom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">snap</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
@@ -137,7 +125,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 <p>The following program gives an example of how to chunk data for speed up with mpi:</p>
 <div class="literal-block-wrapper docutils container" id="mpi-example">
 <div class="code-block-caption"><span class="caption-text">example.py</span><a class="headerlink" href="#mpi-example" title="Permalink to this code">¶</a></div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">mpi</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">mpi</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
 
 <span class="n">files_to_process</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.txt&#39;</span><span class="p">)</span>
@@ -156,11 +144,11 @@ To read a snapshot previously stored as an atom file we can do:</p>
 </div>
 </div>
 <p>Suppose we have created 8 files each containing a number, which we can create on the Linux/Mac command line via:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>for i in $(seq 8); do echo $i &gt; $i.txt; done
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>for i in $(seq 8); do echo $i &gt; $i.txt; done
 </pre></div>
 </div>
 <p>Then, running the program above with 3 cores produces the following output:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="n">python3</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="n">python3</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
 <span class="go">0 [&#39;6.txt&#39;, &#39;1.txt&#39;, &#39;8.txt&#39;]</span>
 <span class="go">1 [&#39;3.txt&#39;, &#39;4.txt&#39;, &#39;7.txt&#39;]</span>
 <span class="go">2 [&#39;5.txt&#39;, &#39;2.txt&#39;]</span>
@@ -177,8 +165,8 @@ To read a snapshot previously stored as an atom file we can do:</p>
 <span class="go">0 return: [6, 1, 8, 3, 4, 7, 5, 2]</span>
 </pre></div>
 </div>
-<p>Note that running the program without the <code class="code docutils literal"><span class="pre">mpirun</span></code> command will use normal serial analysis:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
+<p>Note that running the program without the <code class="code docutils literal notranslate"><span class="pre">mpirun</span></code> command will use normal serial analysis:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
 <span class="go">0 [&#39;1.txt&#39;, &#39;2.txt&#39;, &#39;3.txt&#39;, &#39;4.txt&#39;, &#39;5.txt&#39;, &#39;6.txt&#39;, &#39;7.txt&#39;, &#39;8.txt&#39;]</span>
 <span class="go">0 file 1.txt contains: 1</span>
 <span class="go">0 file 2.txt contains: 2</span>
@@ -210,7 +198,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Joshua Robinson.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
     </div>
   </body>
 </html>

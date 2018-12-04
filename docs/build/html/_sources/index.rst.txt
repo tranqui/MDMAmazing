@@ -29,6 +29,16 @@ MDMAmazing was created by Joshua Robinson:
 * GitHub: `github.com/tranqui <https://github.com/tranqui>`_
 * Blog: `joshuaferobinson.wordpress.com <https://joshuaferobinson.wordpress.com>`_
 
+Additional contributors
+#######################
+
+Christopher Brasnett contributed a
+`Protein Data Bank <https://en.wikipedia.org/wiki/Protein_Data_Bank>`_ file parser
+(available `here <https://github.com/tranqui/MDMAmazing/blob/master/src/mdma/pdb.py>`_):
+
+* Email: `christopher.brasnett@bristol.ac.uk <mailto:christopher.brasnett@bristol.ac.uk>`_
+* GitHub: `github.com/csbrasnett <https://github.com/csbrasnett>`_
+
 Indices and tables
 ==================
 
