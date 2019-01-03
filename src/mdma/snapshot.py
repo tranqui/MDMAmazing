@@ -75,6 +75,11 @@ class Snapshot:
         self.x = x
 
     @property
+    def natoms(self):
+        """Number of particles in snapshot."""
+        return len(self.x)
+
+    @property
     def n(self):
         """Number of particles in snapshot."""
         return len(self.x)
@@ -105,6 +110,17 @@ class Snapshot:
     def density(self):
         """Density of configuration from box dimensions."""
         return self.n / self.volume
+
+    @property
+    def composition(self):
+        """Compositional make up of each species."""
+        species,counts = numpy.unique(self.species, return_counts=True)
+        return {s: count / self.n for s,count in zip(species,counts)}
+
+    @property
+    def concentration(self):
+        """Concentrations of each species."""
+        return {species: composition * self.density for species,composition in self.composition.items()}
 
     @classmethod
     def read_single(cls, path_or_file):
