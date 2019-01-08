@@ -69,3 +69,33 @@ class KobAnderson(PotentialBase):
     @property
     def thermostat_damping_interval(self):
         return 5
+
+class CuZr(PotentialBase):
+    def __init__(self, *args, **kwargs):
+        if 'composition' not in kwargs:
+            kwargs['composition'] = [0.5, 0.5]
+        super().__init__(*args, **kwargs)
+
+    @property
+    def units(self):
+        return 'metal'
+
+    @property
+    def num_species(self):
+        return 2
+
+    def initialise_potential(self, simulation):
+        simulation.pair_style('eam/fs')
+        simulation.pair_coeff('* * Cu-Zr_2.eam.fs Cu Zr')
+
+    @property
+    def timestep(self):
+        return 0.002
+
+    @property
+    def initial_thermalisation_steps(self):
+        return 1000
+
+    @property
+    def thermostat_damping_interval(self):
+        return 2
