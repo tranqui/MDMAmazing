@@ -37,12 +37,13 @@ class LammpsExecutable(lammps.PyLammps):
             pressure = system.pressure
             ensemble = Ensemble.NPT
         except AttributeError:
-            final_density = system.density
-            ensemble = Ensemble.NVT
-        except AttributeError:
-            if initial_snapshot is None:
-                raise ValueError('without an initial snapshot (one of) density or pressure must be set (for NVT or NPT simulations respectively)')
-            else: ensemble = Ensemble.NVT
+            try:
+                final_density = system.density
+                ensemble = Ensemble.NVT
+            except AttributeError:
+                if initial_snapshot is None:
+                    raise ValueError('without an initial snapshot (one of) density or pressure must be set (for NVT or NPT simulations respectively)')
+                else: ensemble = Ensemble.NVT
 
         # Create the box (for now only cubic boxes are implemented)
         initial_box = self.initial_box(system, initial_snapshot)
@@ -58,7 +59,6 @@ class LammpsExecutable(lammps.PyLammps):
             self.species = initial_snapshot.species            
 
         # Initialise interactions.
-        for i,mass in zip(range(system.natoms), system.masses): self.mass(i+1, mass)
         system.initialise_potential(self)
 
         # Minimise in case there are (high energy) overlaps from the random generation.

@@ -22,10 +22,6 @@ class PotentialBase:
     def num_species(self):
         raise NotImplementedError("must specify number of atomic species!")
 
-    @property
-    def masses(self):
-        raise NotImplementedError("must specify masses of atomic species!")
-
     def initialise_potential(self, simulation):
         raise NotImplementedError("must initialise potential!")
 
@@ -55,11 +51,8 @@ class KobAnderson(PotentialBase):
     def num_species(self):
         return 2
 
-    @property
-    def masses(self):
-        return [1.0, 1.0]
-
     def initialise_potential(self, simulation):
+        for i in range(self.num_species): simulation.mass(i+1, 1.0)
         simulation.pair_style('lj/cut', 2.5)
         simulation.pair_coeff(1, 1, 1.0, 1.00, 2.5)
         simulation.pair_coeff(1, 2, 1.5, 0.80, 2.5)
