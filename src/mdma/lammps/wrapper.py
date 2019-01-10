@@ -64,6 +64,8 @@ class LammpsExecutable(lammps.PyLammps):
 
         # Initialise interactions.
         system.initialise_potential(self)
+        self.timestep(system.timestep)
+        self.dt = system.timestep
 
         # Minimise in case there are (high energy) overlaps from the random generation.
         if initial_snapshot is None:
@@ -193,6 +195,11 @@ class LammpsExecutable(lammps.PyLammps):
             if 'pair' in command or 'neigh' in command:
                 self.command(command)
 
+        # Integration timestep dt needs to be restored
+        timestep_commands = [command for command in history if command.split()[0] == 'timestep']
+        self.dt = float(timestep_commands[-1].split()[1])
+        self.timestep(self.dt)
+
         latest_log = previous_logs[-1]
         self.exec_id = latest_log.split('/')[-1]
         self.exec_id = self.exec_id.split('.history')[0]
@@ -242,6 +249,9 @@ class LammpsExecutable(lammps.PyLammps):
         if self.ensemble == Ensemble.NPT:
             headings += ['Density']
             table['Density'] = self.natoms / numpy.array(table['Volume'])
+
+        headings.insert(1, 'Time')
+        table['Time'] = numpy.array(table['Step']) * self.dt
 
         return pandas.DataFrame(data=table, columns=headings)
 
