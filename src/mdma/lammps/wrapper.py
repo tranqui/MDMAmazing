@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import numpy
-import os, json, ctypes
+import numpy, pandas
+import os, ast, json, string, ctypes
 from glob import glob
 from natsort import natsorted
 
 import lammps
+from mdma import atom
 
 def random_seed():
     return numpy.random.randint(numpy.iinfo(ctypes.c_int).max)
@@ -56,7 +57,10 @@ class LammpsExecutable(lammps.PyLammps):
             self.composition = system.composition
         else:
             self.coordinates = initial_snapshot.x.astype(numpy.double)
-            self.species = initial_snapshot.species            
+            try: self.species = initial_snapshot.species
+            except:
+                species = [1+string.ascii_uppercase.index(s) for s in initial_snapshot.species]
+                self.species = numpy.array(species)
 
         # Initialise interactions.
         system.initialise_potential(self)
@@ -72,7 +76,9 @@ class LammpsExecutable(lammps.PyLammps):
         self.run_style('verlet')
 
         if ensemble == Ensemble.NVT:
-            self.fix(1, 'all', 'nvt', 'temp', system.temperature, system.temperature, system.thermostat_damping_interval)
+            self.fix(1, 'all', 'nvt',
+                     'temp', system.temperature, system.temperature,
+                     system.thermostat_damping_interval)
 
             if initial_snapshot is None:
                 initial_box_dimensions = initial_box[:,1] - initial_box[:,0]
@@ -90,12 +96,21 @@ class LammpsExecutable(lammps.PyLammps):
                 self.unfix(2)
                 self.run(system.initial_thermalisation_steps)
                 self.reset_timestep(0)
-                
+                self.runs = []
+
         elif ensemble == Ensemble.NPT:
-            raise NotImplementedError("specify NPT fix!")
+            self.fix(1, 'all', 'npt',
+                     'temp', system.temperature, system.temperature,
+                     system.thermostat_damping_interval,
+                     'iso', system.pressure, system.pressure,
+                     system.barostat_damping_interval)
+
+            if initial_snapshot is None:
+                raise RuntimeError('must give initial snapshot for NPT run!')
 
         else:
             raise RuntimeError('unknown ensemble encountered (ensemble=%d)!' % ensemble)
+        self.ensemble = ensemble
 
         # Run for zero steps so lammps will compute thermodynamic properties for initial state.
         self.run(0)
@@ -134,6 +149,11 @@ class LammpsExecutable(lammps.PyLammps):
         os.makedirs(path, exist_ok=overwrite)
         os.makedirs('%s/dumps' % path, exist_ok=overwrite)
 
+        # run_path = '%s/%d.runs' % (path,self.exec_id)
+        # history_path = '%s/%d.history' % (path,self.exec_id)
+        # if not overwrite and (os.path.exists(run_path) or os.path.exists(history_path)):
+        #     raise RuntimeError('saving to %s will overwrite previous simulation!' % path)
+
         with open('%s/%d.runs' % (path,self.exec_id), 'w') as f:
             for run in self.runs:
                 thermo_data = run.thermo.__dict__
@@ -155,6 +175,13 @@ class LammpsExecutable(lammps.PyLammps):
 
         latest_restart = natsorted(glob('%s/dumps/*.restart' % path))[-1]
         self.read_restart(latest_restart)
+
+        for run_path in natsorted(glob('%s/*.runs' % path)):
+            with open(run_path) as f:
+                for line in f.readlines():
+                    dictionary = ast.literal_eval(line)
+                    del dictionary['_name']
+                    self.runs += [{'thermo': dictionary}]
 
         previous_logs = natsorted(glob('%s/*.history' % path))
         history = []
@@ -182,11 +209,45 @@ class LammpsExecutable(lammps.PyLammps):
 
             # Don't do anything if the last command with this label was an 'unfix'
             active = latest_command.split()[0] == 'fix'
-            if active: self.command(latest_command)
+            if active:
+                self.command(latest_command)
+
+                fix_type = latest_command.split()[3]
+                if  fix_type == 'nvt':
+                    self.ensemble = Ensemble.NVT
+                elif fix_type == 'npt':
+                    self.ensemble = Ensemble.NPT
 
     def read_script(self, path):
         with open(path) as f:
             return f.read().splitlines()
+
+    @property
+    def thermodynamics(self):
+        headings = ['Step', 'Temp', 'Press', 'TotEng']
+        if self.ensemble == Ensemble.NPT: headings += ['Volume']
+
+        table = {key: [] for key in headings}
+        for run in self.runs:
+            if type(run) is not dict:
+                run_data = run.thermo.__dict__
+            else: run_data = run['thermo']
+
+            for key in headings:
+                val = run_data[key]
+                if len(val) > 1: val = val[-1]
+                else: val = val[0]
+                table[key] += [val]
+
+        if self.ensemble == Ensemble.NPT:
+            headings += ['Density']
+            table['Density'] = self.natoms / numpy.array(table['Volume'])
+
+        return pandas.DataFrame(data=table, columns=headings)
+
+    @property
+    def snapshot(self):
+        return atom.AtomSnapshot(self.coordinates, self.box, self.species)
 
     @property
     def natoms(self):

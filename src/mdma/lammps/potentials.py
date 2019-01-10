@@ -99,3 +99,7 @@ class CuZr(PotentialBase):
     @property
     def thermostat_damping_interval(self):
         return 2
+
+    @property
+    def barostat_damping_interval(self):
+        return 100
