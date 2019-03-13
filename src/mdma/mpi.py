@@ -27,22 +27,25 @@ def chunk_indices(size, n=num_cpus, i=rank):
     The chunks are made as equal as possible but this is only possible exactly when the number of
     elements can be evenly divided by the number of cpus.
 
-    for i in range(3): print(i, chunk_indices(10, 3, i))
-    >>> 0 [0, 1, 2, 3]
-    >>> 1 [4, 5, 6]
-    >>> 2 [7, 8, 9]
-
-    for i in range(3): print(i, chunk_indices(12, 3, i))
-    >>> 0 [0, 1, 2, 3]
-    >>> 1 [4, 5, 6, 7]
-    >>> 2 [8, 9, 10, 11]
-
     Args:
         size: length of data to break up
         n (int): number of cpus to divide the data amongst
         i (int): which cpu to chunk for
     Returns:
         indices: numpy array containing indices for this chunk
+
+    Examples
+    --------
+
+    >>> for i in range(3): print(i, chunk_indices(10, 3, i))
+    0 [0, 1, 2, 3]
+    1 [4, 5, 6]
+    2 [7, 8, 9]
+
+    >>> for i in range(3): print(i, chunk_indices(12, 3, i))
+    0 [0, 1, 2, 3]
+    1 [4, 5, 6, 7]
+    2 [8, 9, 10, 11]
     """
     k, m = size // n, size % n
     return numpy.arange(i*k + min(i, m), (i+1)*k + min(i+1, m))
@@ -53,22 +56,25 @@ def chunk(data, n=num_cpus, i=rank):
     The chunks are made as equal as possible but this is only possible exactly when the number of
     elements can be evenly divided by the number of cpus.
 
-    for i in range(3): print(i, list(chunk(range(10), 3, i)))
-    >>> 0 [0, 1, 2, 3]
-    >>> 1 [4, 5, 6]
-    >>> 2 [7, 8, 9]
-
-    for i in range(3): print(i, list(chunk(range(12), 3, i)))
-    >>> 0 [0, 1, 2, 3]
-    >>> 1 [4, 5, 6, 7]
-    >>> 2 [8, 9, 10, 11]
-
     Args:
         data (list or similar): data to divide
         n (int): number of cpus to divide the data amongst
         i (int): which cpu to chunk for
     Returns:
         chunk (iterator): chunk for the ith cpu
+
+    Examples
+    --------
+
+    >>> for i in range(3): print(i, list(chunk(range(10), 3, i)))
+    0 [0, 1, 2, 3]
+    1 [4, 5, 6]
+    2 [7, 8, 9]
+
+    >>> for i in range(3): print(i, list(chunk(range(12), 3, i)))
+    0 [0, 1, 2, 3]
+    1 [4, 5, 6, 7]
+    2 [8, 9, 10, 11]
     """
     k, m = len(data) // n, len(data) % n
     for l in range(i*k + min(i, m), (i+1)*k + min(i+1, m)): yield data[l]
@@ -76,13 +82,16 @@ def chunk(data, n=num_cpus, i=rank):
 def flatten(data):
     """Flatten a list of lists into a single list.
 
-    flatten([[1, 2, 3], [4, 5, 6]])
-    >>> [1, 2, 3, 4, 5, 6]
-
     Args:
         data: a list of lists
     Returns:
         list: flattened list
+
+    Examples
+    --------
+
+    >>> flatten([[1, 2, 3], [4, 5, 6]])
+    [1, 2, 3, 4, 5, 6]
     """
     if data is None: return
     else: return list(itertools.chain(*data))
@@ -119,24 +128,27 @@ def chunk_pairs(data, dt=1, max_samples=None, min_samples=1):
     By spreading the pairs out we maximise the independence of the measured
     correlations.
 
-    list(pair_chunk(range(5)))
-    >>> [(0, 1), (1, 2), (2, 3), (3, 4)]
-
-    list(pair_chunk(range(5), 2))
-    >>> [(0, 2), (1, 3), (2, 4)]
-
-    list(pair_chunk(range(5), 2, min_samples=4))
-    >>> []
-
-    list(pair_chunk(range(10), 2, 3))
-    >>> [(0, 2), (3, 5), (6, 8)]
-
     Args:
         data: container of samples with some sort of linear order e.g. a trajectory composed of snapshots of equal time separation.
         dt: distance between pairs inside the data
         max_samples: maximum number of pairs to return (for details see description above)
     Returns:
         pairs (iterator): collection of pairs of data points for analysis
+
+    Examples
+    --------
+
+    >>> list(pair_chunk(range(5)))
+    [(0, 1), (1, 2), (2, 3), (3, 4)]
+
+    >>> list(pair_chunk(range(5), 2))
+    [(0, 2), (1, 3), (2, 4)]
+
+    >>> list(pair_chunk(range(5), 2, min_samples=4))
+    []
+
+    >>> list(pair_chunk(range(10), 2, 3))
+    [(0, 2), (3, 5), (6, 8)]
     """
     usable_length = len(data)-dt
     if max_samples is None: use_samples = usable_length
@@ -150,17 +162,20 @@ def chunk_pairs(data, dt=1, max_samples=None, min_samples=1):
 def takespread(sequence, num):
     """Evenly sample data points from a sequence.
 
-    list(takespread(range(10),2))
-    >>> [0, 5]
-
-    list(takespread(range(10),3))
-    >>> [0, 4, 7]
-
     Args:
         sequence: data points to sample
         num: number of points to sample from sequence.
     Returns:
         points (iterator): sampled data points
+
+    Examples
+    --------
+
+    >>> list(takespread(range(10),2))
+    [0, 5]
+
+    >>> list(takespread(range(10),3))
+    [0, 4, 7]
     """
     for i in range(num):
         yield sequence[int(math.ceil(i * len(sequence) / num))]
