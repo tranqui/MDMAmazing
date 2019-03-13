@@ -17,7 +17,10 @@ from bs4 import BeautifulSoup
 from lxml import etree as ElementTree
 from lxml.etree import Element
 
-class NonadditiveError(RuntimeError): pass
+class NonadditiveError(RuntimeError):
+    """Error thrown when a snapshot file features non-additive hard sphere
+    diameters which are currently not handled."""
+    pass
 
 class DynamoSnapshot(Snapshot):
     """Snapshot of a system of particles in DynamO (.xml) file format.

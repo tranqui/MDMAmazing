@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Note: This is some old code I hacked together a long time, and it needs to be updated heavily. It should be made to use the newer modules (like the new XmlSnapshot) and documented thoroughly."""
 
 import os, string, tempfile, shutil
 import numpy as np

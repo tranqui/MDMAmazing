@@ -63,6 +63,7 @@
 </div>
 <div class="section" id="module-mdma.dynamo.wrapper">
 <span id="mdma-dynamo-wrapper-module"></span><h2>mdma.dynamo.wrapper module<a class="headerlink" href="#module-mdma.dynamo.wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Note: This is some old code I hacked together a long time, and it needs to be updated heavily. It should be made to use the newer modules (like the new XmlSnapshot) and documented thoroughly.</p>
 <dl class="class">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory">
 <em class="property">class </em><code class="descclassname">mdma.dynamo.wrapper.</code><code class="descname">DynamoTrajectory</code><span class="sig-paren">(</span><em>path</em>, <em>d=3</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory" title="Permalink to this definition">¶</a></dt>
@@ -362,6 +363,8 @@ match this expectation then the interaction is not additive.</p>
 <dt id="mdma.dynamo.xmlsnapshot.NonadditiveError">
 <em class="property">exception </em><code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">NonadditiveError</code><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+<p>Error thrown when a snapshot file features non-additive hard sphere
+diameters which are currently not handled.</p>
 </dd></dl>
 
 <dl class="function">

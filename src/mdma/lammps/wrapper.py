@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Module defining a wrapper on top of the python interface to LAMMPS in order to
+streamline the process of creating and running molecular dynamics simulations.
+"""
 
 import numpy, pandas
 import os, ast, json, string, ctypes
@@ -9,21 +13,62 @@ import lammps
 from mdma import atom
 
 def random_seed():
+    """Generate a random seed for use by LAMMPS."""
     return numpy.random.randint(numpy.iinfo(ctypes.c_int).max)
 
+# Default columns when dumping snapshots in .atom format.
 atom_columns = ['id', 'type', 'x', 'y', 'z', 'fx', 'fy', 'fz'] #, 'vx', 'vy', 'vz']
 
 class Ensemble:
-    NVT = 1
-    NPT = 2
+    """Numerical identifiers for the possible ensembles.
+
+    This is intended as a simple enumeration implementation.
+    """
+    NVT = 1 # canonical ensemble
+    NPT = 2 # isobaric ensemble
 
 class LammpsExecutable(lammps.PyLammps):
+    """
+    Executable for LAMMPS simulations.
+
+    This is the main entry point for starting new simulations or resuming old ones.
+    """
+
     def __init__(self, *args, **kwargs):
+        """Constructor defaults to PyLammps base class.
+
+        For most applications this should be called without arguments.
+
+        See `PyLammps documentation <https://lammps.sandia.gov/doc/Howto_pylammps.html#creating-a-new-instance-of-pylammps>`_
+        for information on possible arguments.
+        """
         super().__init__(*args, **kwargs)
-        self.exec_id = 0
         self.initialised = False
+        # exec_id keeps track of whether this is a new instance of a trajectory
+        # or a continuation of a previous one (i.e. resumed from disk).
+        self.exec_id = 0
 
     def initialise_system(self, system, initial_snapshot=None):
+        """Initialise a new LAMMPS simulation from parameters.
+
+        Args:
+            system (mdma.lammps.PotentialBase):
+                The parameters of the model system to simulate, as well as 
+                simulation parameters e.g. the thermostat or neighbour detection.
+            initial_snapshot (mdma.Snapshot or None):
+                The starting configuration for the simulation.
+                If None then one will be generated from a random seed.
+        Raises:
+            RuntimeError:
+                When attempting to initialise an existing simulation.
+            ValueError:
+                When system contains a partial description of a simulation.
+                This happens when:
+
+                    * Neither a density, pressure or an initial configuration is given so a starting configuration cannot be generated.
+                    * Pressure is specified but not an initial configuration.
+                    * An unknown ensemble is specified (this should never happen as the ensemble is chosen from parsing the incoming data).
+        """
         if self.initialised:
             raise RuntimeError('cannot overwrite a previous simulation!')
         self.initialised = True
@@ -108,16 +153,42 @@ class LammpsExecutable(lammps.PyLammps):
                      system.barostat_damping_interval)
 
             if initial_snapshot is None:
-                raise RuntimeError('must give initial snapshot for NPT run!')
+                raise ValueError('must give initial snapshot for NPT run!')
 
         else:
-            raise RuntimeError('unknown ensemble encountered (ensemble=%d)!' % ensemble)
+            raise ValueError('unknown ensemble encountered (ensemble=%d)!' % ensemble)
         self.ensemble = ensemble
 
-        # Run for zero steps so lammps will compute thermodynamic properties for initial state.
+        # Running for zero steps does not actually run the simulation, but it
+        # forces lammps to compute thermodynamic properties for initial state which
+        # can be retrieved (otherwise an error occurs).
         self.run(0)
 
     def initial_box(self, system, initial_snapshot, seed_density=1e-3):
+        """Determine size of initial box for system.
+
+        This is an internal helper function for initialise_system, so the typical
+        end user should not need to touch this.
+
+        There are three (valid) scenarios:
+
+            1. An initial snapshot is specified but not a density: the snapshots box is returned.
+            2. An initial snapshot is specified as well as a density: the snapshots box is rescaled to match the target density and returned.
+            3. A snapshot is not specified but a density is: a cubic box of the target density is returned.
+
+        Args:
+            system (mdma.lammps.PotentialBase):
+                The parameters of the model system to simulate, as well as 
+                simulation parameters e.g. the density which will be used to set
+                the box dimensions if specified.
+            initial_snapshot (mdma.Snapshot or None):
+                The starting configuration for the simulation.
+                If None then that means one should be generated from a random seed,
+                and a cubic box will be chosen for this purpose.
+        Returns:
+            initial_box (numpy.ndarray):
+                The box boundaries in each dimension.
+        """
         try:
             initial_box = initial_snapshot.box
             initial_box_dimensions = (initial_box[:,1] - initial_box[:,0])**(1./system.d)
@@ -131,7 +202,7 @@ class LammpsExecutable(lammps.PyLammps):
                 initial_box *= rescale
                 initial_box_dimensions *= rescale
 
-            # Density was not specified by system: ignore (we must be in NPT ensemble)
+            # Density was not specified by system: ignore (we *could* be in NPT ensemble so not necessarily an error).
             except AttributeError:
                 pass
 
@@ -148,6 +219,18 @@ class LammpsExecutable(lammps.PyLammps):
             return initial_box
 
     def save(self, path, overwrite=True):
+        """Save the simulation to the disk.
+
+        If the simulation is a continuation of a previous trajectory, then this
+        will only append to existing data.
+
+        Args:
+            path (str): Path to write to.
+            overwrite (bool):
+                Whether it is okay to overwrite an existing trajectory.
+                Should be set to false the first time writing a new trajectory to
+                disk to avoid deleting old data.
+        """
         os.makedirs(path, exist_ok=overwrite)
         os.makedirs('%s/dumps' % path, exist_ok=overwrite)
 
@@ -171,6 +254,16 @@ class LammpsExecutable(lammps.PyLammps):
             f.write(history)
 
     def resume(self, path):
+        """Resume a saved trajectory from the disk.
+
+        Args:
+            path (str): Location of the trajectory to load.
+        Raises:
+            RuntimeError:
+               If attempting to load a trajectory over an existing simulation;
+               this should only be called on new LammpsExecutable objects to
+               prevent loss of data.
+        """
         if self.initialised:
             raise RuntimeError('cannot overwrite a previous simulation!')
         self.initialised = True
@@ -206,6 +299,14 @@ class LammpsExecutable(lammps.PyLammps):
         self.exec_id = 1 + int(self.exec_id)
 
     def restore_fixes(self, history):
+        """Implementation detail when resuming from the disk: restores thermostat
+        fixes from the command history.
+
+        Args:
+            history (list):
+                Command history from the trajectory.
+                Active fixes are determined and applied from this.
+        """
         fix_history = [command for command in history if 'fix' in command.split()[0]]
         fix_labels = numpy.array([command.split()[1] for command in fix_history])
 
@@ -226,14 +327,28 @@ class LammpsExecutable(lammps.PyLammps):
                     self.ensemble = Ensemble.NPT
 
     def read_script(self, path):
+        """Implementation detail for resume: reads e.g. history files.
+
+        Args:
+            path (str): Location of the file to read.
+        Returns:
+            lines (list): List of the lines (strings) in the file.
+        """
         with open(path) as f:
             return f.read().splitlines()
 
     @property
     def thermodynamics(self):
+        """Return table of summary thermodynamic data from trajectory's history.
+
+        Returns:
+            A pandas.DataFrame object summarising the thermodynamics.
+        """
+        # Headings of selected data columns.
         headings = ['Step', 'Temp', 'Press', 'TotEng']
         if self.ensemble == Ensemble.NPT: headings += ['Volume']
 
+        # Populate the table with data.
         table = {key: [] for key in headings}
         for run in self.runs:
             if type(run) is not dict:
@@ -246,69 +361,140 @@ class LammpsExecutable(lammps.PyLammps):
                 else: val = val[0]
                 table[key] += [val]
 
+        # Extra inferred data which is handy for summarising.
         if self.ensemble == Ensemble.NPT:
             headings += ['Density']
             table['Density'] = self.natoms / numpy.array(table['Volume'])
-
         headings.insert(1, 'Time')
         table['Time'] = numpy.array(table['Step']) * self.dt
 
+        # Return in an easily printable pandas format.
         return pandas.DataFrame(data=table, columns=headings)
 
     @property
     def snapshot(self):
+        """Current snapshot of simulation state.
+        
+        Returns:
+            snapshot (mdma.atom.AtomSnapshot): The current state.
+        """
         return atom.AtomSnapshot(self.coordinates, self.box, self.species)
 
     @property
     def natoms(self):
+        """Total number of atoms.
+        
+        Returns:
+            natoms (int): The number of atoms.
+        """
         return self.system.natoms
 
     @property
     def coordinates(self):
+        """Atom coordinates.
+        
+        Returns:
+            x (numpy.ndarray): n by d array giving coordinates of the atoms.
+        """
         x = self.lmp.gather_atoms('x', 1, 3)
         return numpy.array(x).reshape(-1, 3)
 
     @coordinates.setter
     def coordinates(self, x):
+        """Atom coordinates.
+        
+        Args:
+            x (numpy.ndarray): n by d array giving coordinates of the atoms.
+        """
         self.lmp.scatter_atoms('x', 1, 3, x.ctypes)
 
     @property
     def species(self):
+        """Species of each atom.
+        
+        Returns:
+            x (numpy.ndarray): n-dimensional array giving species of the atoms.
+        """
         species = self.lmp.gather_atoms('type', 0, 1)
         return numpy.array(species)
 
     @species.setter
     def species(self, species):
+        """Species of each atom.
+        
+        Args:
+            x (numpy.ndarray): n-dimensional array giving species of the atoms.
+        """
         species = species.astype(ctypes.c_int)
         self.lmp.scatter_atoms('type', 0, 1, species.ctypes)
 
     @property
     def box(self):
+        """The simulation box.
+        
+        Returns:
+            box (numpy.ndarray): a 2 by d array giving the boundaries in each dimension.
+        """
         return numpy.array([[self.system.xlo, self.system.xhi],
                             [self.system.ylo, self.system.yhi],
                             [self.system.zlo, self.system.zhi]])
 
     @property
     def box_dimensions(self):
+        """The simulation box's dimensions.
+        
+        Returns:
+            box (numpy.ndarray): a d-dimensional array giving the width of each dimension.
+        """
         return numpy.array([self.system.xhi - self.system.xlo,
                             self.system.yhi - self.system.ylo,
                             self.system.zhi - self.system.zlo])
     @property
     def volume(self):
+        """Total system volume.
+        
+        Returns:
+            volume (scalar): total system volume.
+        """
         return numpy.prod(self.box_dimensions)
 
     @property
     def density(self):
+        """The number density.
+        
+        Returns:
+            density (scalar): atoms per unit volume.
+        """
         return self.natoms / self.volume
 
     @property
     def composition(self):
+        """Get composition of system, i.e. the number of atoms of each species as
+        a fraction of the total number of particles.
+        
+        Returns:
+            composition (numpy.ndarray):
+                An m dimensional array where m in the total number of unique species,
+                giving the compositional make-up of each species.
+                The array is ordered by species number.
+        """
         species, proportions = numpy.unique(self.species, return_counts=True)
         order = numpy.argsort(species)
         return proportions[order] / self.natoms
 
     @composition.setter
     def composition(self, composition):
+        """Set composition of system, i.e. the number of atoms of each species as
+        a fraction of the total number of particles.
+
+        Particles are randomly assigned species to achieve the desired composition.
+
+        Args:
+            composition (numpy.ndarray):
+                An m dimensional array where m in the total number of unique species,
+                giving the compositional make-up of each species.
+                The array should be ordered by species number.
+        """
         assert sum(composition) == 1
 
         if len(composition) > 1:
