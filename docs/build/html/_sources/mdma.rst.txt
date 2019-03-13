@@ -13,32 +13,40 @@ Subpackages
 Submodules
 ----------
 
-mdma\.atom module
------------------
+mdma.atom module
+----------------
 
 .. automodule:: mdma.atom
     :members:
     :undoc-members:
     :show-inheritance:
 
-mdma\.mpi module
-----------------
+mdma.mpi module
+---------------
 
 .. automodule:: mdma.mpi
     :members:
     :undoc-members:
     :show-inheritance:
 
-mdma\.snapshot module
----------------------
+mdma.pdb module
+---------------
+
+.. automodule:: mdma.pdb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+mdma.snapshot module
+--------------------
 
 .. automodule:: mdma.snapshot
     :members:
     :undoc-members:
     :show-inheritance:
 
-mdma\.xyz module
-----------------
+mdma.xyz module
+---------------
 
 .. automodule:: mdma.xyz
     :members:

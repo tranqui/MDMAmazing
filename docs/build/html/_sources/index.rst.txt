@@ -13,7 +13,7 @@ Overview
    overview
    getting_started
    examples
-   modules
+   mdma
 
 License
 #######

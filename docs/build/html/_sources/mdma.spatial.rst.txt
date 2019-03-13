@@ -1,11 +1,11 @@
-mdma\.spatial package
-=====================
+mdma.spatial package
+====================
 
 Submodules
 ----------
 
-mdma\.spatial\.periodic module
-------------------------------
+mdma.spatial.periodic module
+----------------------------
 
 .. automodule:: mdma.spatial.periodic
     :members:
