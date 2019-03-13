@@ -5,7 +5,7 @@ import numpy as np
 from glob import glob
 from natsort import natsorted
 from itertools import combinations
-from jeli import periodic
+from mdma.spatial import periodic
 
 from progressbar import ProgressBar, Percentage, Bar, ETA
 widgets = [Percentage(), ' ', Bar(), ' ', ETA()]
@@ -14,7 +14,7 @@ from copy import deepcopy
 from lxml import etree as ElementTree
 from lxml.etree import Element
 import bz2
-import iniparser
+from . import iniparser
 
 class MonodisperseHardSpheres:
     size_ratios = np.array([1.])

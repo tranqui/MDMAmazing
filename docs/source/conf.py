@@ -156,7 +156,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'MDMAmazing', 'MDMAmazing Documentation',
-     author, 'MDMAmazing', 'One line description of project.',
+     author, 'MDMAmazing', 'Tools for molecular dynamics management and analysis.',
      'Miscellaneous'),
 ]
 
