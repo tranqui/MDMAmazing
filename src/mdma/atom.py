@@ -52,20 +52,19 @@ class AtomSnapshot(Snapshot):
 
                 # Item containing the bounding box.
                 elif ' '.join(item[1:3]) == 'BOX BOUNDS':
-                    d = len(item[3:])
-                    self.x = numpy.empty((self.n,d))
-                    boundaries = [f.readline().split() for _ in range(d)]
+                    box_headings = item[3:]
+                    triclinic = box_headings[0] == 'xy'
 
-                    try:
+                    if not triclinic:
+                        d = len(box_headings)
                         self.box = numpy.zeros((d,2), dtype=numpy.longdouble)
-
-                        for c,boundary in enumerate(boundaries):
-                            self.box[c][:] = [float(b) for b in boundary]
-                    except:
+                    else:
+                        d = len(box_headings)//2
                         self.box = numpy.zeros((d,3), dtype=numpy.longdouble)
 
-                        for c,boundary in enumerate(boundaries):
-                            self.box[c][:] = [float(b) for b in boundary]
+                    self.x = numpy.empty((self.n,d))
+                    for c in range(d):
+                        self.box[c][:] = [float(b) for b in f.readline().split()]
 
                 # Main table contains the per-atom data. Should come at the end.
                 elif item[1] == 'ATOMS':
@@ -81,13 +80,16 @@ class AtomSnapshot(Snapshot):
                     for i in range(n): c.write(f.readline())
                     c.seek(0)
                     table = pandas.read_table(c, index_col=0, sep='\s+', names=headings, nrows=n)
-                    #try: table = table.sort_values('id')
-                    #except: table = table.sort('id')
+                    try: table = table.sort_values('id')
+                    except: table = table.sort('id')
 
                     if 'xs' in headings:
                         cols = ['xs','ys','zs'][:self.d]
                         self.x = table[cols].values.copy('c').astype(numpy.longdouble)
-                        for c in range(d): self.x[:,c] *= self.box_dimensions[c]
+                        if not self.triclinic:
+                            for c in range(d):
+                                self.x[:,c] *= self.box_dimensions[c]
+                                self.x[:,c] += self.box[c,0]
                     else:
                         cols = ['x','y','z'][:self.d]
                         self.x = table[cols].values.copy('c').astype(numpy.longdouble)
@@ -97,12 +99,22 @@ class AtomSnapshot(Snapshot):
 
                 else: raise RuntimeError('unknown header: %s' % item)
 
+    @property
+    def triclinic(self):
+        return len(self.box.shape) > 1 and self.box.shape[1] == 3
+
     def __str__(self):
         """String representation of the snapshot in LAMMPS (.atom) format."""
         f = io.StringIO()
         f.write('ITEM: TIMESTEP\n%r\n' % self.time)
         f.write('ITEM: NUMBER OF ATOMS\n%r\n' % self.n)
         f.write('ITEM: BOX BOUNDS')
+
+        # Make sure to give extra information for triclinic boxes.
+        if self.triclinic:
+            for col in ['xy', 'xz', 'yz'][:self.d]:
+                f.write(' %s' % col)
+
         for _ in self.box: f.write(' pp')
         f.write('\n')
 
@@ -110,14 +122,15 @@ class AtomSnapshot(Snapshot):
         try:
             for c in range(self.d):
                 for b in self.box[c]:
-                    f.write('%.8f' % b)
+                    f.write('%.8f ' % b)
                 f.write('\n')
         # Only dimensions of box are specified
         except TypeError:
             for c in range(self.d):
                 f.write('0 %.8f\n' % self.box[c])
 
-        f.write('ITEM: ATOMS id type x y z')
+        if self.triclinic: f.write('ITEM: ATOMS id type xs ys zs')
+        else: f.write('ITEM: ATOMS id type x y z')
         for i,(name,x) in enumerate(zip(self.species,self.x)):
             f.write('\n')
             f.write('%r %s' % (i,name))
