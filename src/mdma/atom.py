@@ -59,12 +59,12 @@ class AtomSnapshot(Snapshot):
                     try:
                         self.box = numpy.zeros((d,2), dtype=numpy.longdouble)
 
-                        for boundary in boundaries:
+                        for c,boundary in enumerate(boundaries):
                             self.box[c][:] = [float(b) for b in boundary]
                     except:
                         self.box = numpy.zeros((d,3), dtype=numpy.longdouble)
 
-                        for boundary in boundaries:
+                        for c,boundary in enumerate(boundaries):
                             self.box[c][:] = [float(b) for b in boundary]
 
                 # Main table contains the per-atom data. Should come at the end.
