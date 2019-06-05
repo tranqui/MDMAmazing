@@ -54,11 +54,18 @@ class AtomSnapshot(Snapshot):
                 elif ' '.join(item[1:3]) == 'BOX BOUNDS':
                     d = len(item[3:])
                     self.x = numpy.empty((self.n,d))
-                    self.box = numpy.zeros((d,2), dtype=numpy.longdouble)
+                    boundaries = [f.readline().split() for _ in range(d)]
 
-                    for c in range(d):
-                        boundary = f.readline().split()
-                        self.box[c][:] = [float(b) for b in boundary]
+                    try:
+                        self.box = numpy.zeros((d,2), dtype=numpy.longdouble)
+
+                        for boundary in boundaries:
+                            self.box[c][:] = [float(b) for b in boundary]
+                    except:
+                        self.box = numpy.zeros((d,3), dtype=numpy.longdouble)
+
+                        for boundary in boundaries:
+                            self.box[c][:] = [float(b) for b in boundary]
 
                 # Main table contains the per-atom data. Should come at the end.
                 elif item[1] == 'ATOMS':
@@ -102,7 +109,9 @@ class AtomSnapshot(Snapshot):
         # Full left boundary and right boundary box conditions are specified.
         try:
             for c in range(self.d):
-                f.write('%.8f %.8f\n' % tuple(self.box[c]))
+                for b in self.box[c]:
+                    f.write('%.8f' % b)
+                f.write('\n')
         # Only dimensions of box are specified
         except TypeError:
             for c in range(self.d):
