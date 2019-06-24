@@ -138,16 +138,16 @@ def chunk_pairs(data, dt=1, max_samples=None, min_samples=1):
     Examples
     --------
 
-    >>> list(pair_chunk(range(5)))
+    >>> list(chunk_pairs(range(5)))
     [(0, 1), (1, 2), (2, 3), (3, 4)]
 
-    >>> list(pair_chunk(range(5), 2))
+    >>> list(chunk_pairs(range(5), 2))
     [(0, 2), (1, 3), (2, 4)]
 
-    >>> list(pair_chunk(range(5), 2, min_samples=4))
+    >>> list(chunk_pairs(range(5), 2, min_samples=4))
     []
 
-    >>> list(pair_chunk(range(10), 2, 3))
+    >>> list(chunk_pairs(range(10), 2, 3))
     [(0, 2), (3, 5), (6, 8)]
     """
     usable_length = len(data)-dt
