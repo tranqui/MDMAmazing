@@ -338,7 +338,7 @@ py::array_t<Scalar> periodic_triplet_correlations(const Eigen::Ref<const CoordTy
     Scalar left_edge = min;
     for (size_t i = 0; i < nbins; ++i)
     {
-        r[i] = left_edge + 0.5*bin_width;
+        r[i] = left_edge;// + 0.5*bin_width;
         left_edge += bin_width;
     }
 
@@ -357,7 +357,10 @@ py::array_t<Scalar> periodic_triplet_correlations(const Eigen::Ref<const CoordTy
         for (size_t j = i; j < nbins; ++j)
             for (size_t k = j; k < nbins; ++k)
             {
-                Scalar dV = 8*pi*pi * r[i] * r[j] * r[k] * bin_width*bin_width*bin_width;
+                Scalar dV = 8*pi*pi; //* r[i] * r[j] * r[k] * bin_width*bin_width*bin_width;
+                dV *= 0.5*(r[i+1]*r[i+1] - r[i]*r[i]);
+                dV *= 0.5*(r[j+1]*r[j+1] - r[j]*r[j]);
+                dV *= 0.5*(r[k+1]*r[k+1] - r[k]*r[k]);
                 data[l] = static_cast<Scalar>(histogram_data[l]) / (n*density*density*dV);
                 l++;
             }
