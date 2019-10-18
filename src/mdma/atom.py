@@ -105,7 +105,9 @@ class AtomSnapshot(Snapshot):
 
     def __str__(self):
         """String representation of the snapshot in LAMMPS (.atom) format."""
-        f = io.StringIO()
+        if (sys.version_info > (3, 0)): f = io.StringIO()
+        else: f = io.BytesIO()
+
         f.write('ITEM: TIMESTEP\n%r\n' % self.time)
         f.write('ITEM: NUMBER OF ATOMS\n%r\n' % self.n)
         f.write('ITEM: BOX BOUNDS')

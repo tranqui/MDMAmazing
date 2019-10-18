@@ -50,7 +50,8 @@ class XYZSnapshot(Snapshot):
 
     def __str__(self):
         """String representation of the snapshot in XYZ (.xyz) format."""
-        f = io.StringIO()
+        if (sys.version_info > (3, 0)): f = io.StringIO()
+        else: f = io.BytesIO()
 
         # Header states number of particles (we have ignored comment line)
         f.write('%d\n' % self.n)
