@@ -21,10 +21,18 @@ The repository is hosted at `<https://github.com/tranqui/MDMAmazing>`_.
 
 Clone the repository and install it via::
 
-  git clone https://github.com/tranqui/MDMAmazing>
+  git clone https://github.com/tranqui/MDMAmazing.git
   cd MDMAmazing
   python3 setup.py build
   python3 setup.py install --user
+
+If you wish to make use of python bindings to C++ optimised routines you must install `pybind11 <https://github.com/pybind/pybind11>`_ and build this package with the ``--with-pybind11`` flag::
+
+  python3 setup.py build --with-pybind11
+
+NB: if you are reinstalling the same version of MDMAmazing (with e.g. pybind11 enabled) the install step may ignore this command. To force the install you must then add the ``--force`` flag i.e.::
+
+  python3 setup.py install --user --force
 
 Optional: Installing LAMMPS
 ===========================

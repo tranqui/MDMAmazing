@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Examples &#8212; MDMAmazing 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mdma package" href="mdma.html" />
@@ -34,7 +33,7 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <div class="section" id="examples">
@@ -44,7 +43,7 @@
 <div class="section" id="initialising-and-running-the-simulations">
 <h3>Initialising and running the simulations<a class="headerlink" href="#initialising-and-running-the-simulations" title="Permalink to this headline">¶</a></h3>
 <p>In this section we will create a LAMMPS simulation of the Kob-Anderson binary Lennard-Jones potential:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma.lammps</span> <span class="k">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma.lammps</span> <span class="kn">import</span> <span class="n">potentials</span><span class="p">,</span> <span class="n">wrapper</span>
 
 <span class="c1"># Define the system parameters to simulate.</span>
 <span class="n">natoms</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">density</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.2</span>
@@ -78,14 +77,14 @@ coordinates which are bounded between 0 and 1, in which case we can do:</p>
 <p>Alternatively, we can use the atom module to write the coordinates. This has the advantage of
 being more transparent and flexible due to being written in python, at the cost of slower
 performance:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">atom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Created atom files can be inspected with visualisation software (e.g. <a class="reference external" href="https://ovito.org/">ovito</a>).
 To read a snapshot previously stored as an atom file we can do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">atom</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span>
 <span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -107,7 +106,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 <div class="section" id="id2">
 <h3>Processing the results<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>Suppose we have simulated a hard sphere system and produced a configuration file <cite>config.end.xml</cite> in the current directory. To read this file and convert it into the more flexible LAMMPS format we can try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="k">import</span> <span class="n">dynamo</span><span class="p">,</span> <span class="n">atom</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">dynamo</span><span class="p">,</span> <span class="n">atom</span>
 <span class="n">snap</span> <span class="o">=</span> <span class="n">dynamo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;config.end.xml&#39;</span><span class="p">)</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">atom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">snap</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
@@ -129,17 +128,17 @@ To read a snapshot previously stored as an atom file we can do:</p>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
 
 <span class="n">files_to_process</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.txt&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">files_to_process</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">files_to_process</span><span class="p">)))</span>
 
 <span class="k">def</span> <span class="nf">analysis_function</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="s1">&#39;file </span><span class="si">%s</span><span class="s1"> contains:&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="s1">&#39;file </span><span class="si">%s</span><span class="s1"> contains:&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">mpi</span><span class="o">.</span><span class="n">parallel_map</span><span class="p">(</span><span class="n">analysis_function</span><span class="p">,</span> <span class="n">files_to_process</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="s1">&#39;return:&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mpi</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="s1">&#39;return:&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -198,7 +197,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Joshua Robinson.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

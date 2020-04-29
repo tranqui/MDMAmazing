@@ -8,31 +8,31 @@ mdma.dynamo.iniparser module
 ----------------------------
 
 .. automodule:: mdma.dynamo.iniparser
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mdma.dynamo.wrapper module
 --------------------------
 
 .. automodule:: mdma.dynamo.wrapper
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mdma.dynamo.xmlsnapshot module
 ------------------------------
 
 .. automodule:: mdma.dynamo.xmlsnapshot
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: mdma.dynamo
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

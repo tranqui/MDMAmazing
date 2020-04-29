@@ -5,10 +5,11 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
-    mdma.dynamo
-    mdma.lammps
-    mdma.spatial
+   mdma.dynamo
+   mdma.lammps
+   mdma.spatial
 
 Submodules
 ----------
@@ -17,47 +18,47 @@ mdma.atom module
 ----------------
 
 .. automodule:: mdma.atom
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mdma.mpi module
 ---------------
 
 .. automodule:: mdma.mpi
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mdma.pdb module
 ---------------
 
 .. automodule:: mdma.pdb
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mdma.snapshot module
 --------------------
 
 .. automodule:: mdma.snapshot
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 mdma.xyz module
 ---------------
 
 .. automodule:: mdma.xyz
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: mdma
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

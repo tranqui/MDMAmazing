@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>mdma.dynamo package &#8212; MDMAmazing 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mdma.lammps package" href="mdma.lammps.html" />
@@ -34,7 +33,7 @@
         </p>
 
       </div>
-      <div class="content">
+      <div class="content" role="main">
         
         
   <div class="section" id="mdma-dynamo-package">
@@ -44,18 +43,18 @@
 </div>
 <div class="section" id="module-mdma.dynamo.iniparser">
 <span id="mdma-dynamo-iniparser-module"></span><h2>mdma.dynamo.iniparser module<a class="headerlink" href="#module-mdma.dynamo.iniparser" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="mdma.dynamo.iniparser.ConfigFile">
-<em class="property">class </em><code class="descclassname">mdma.dynamo.iniparser.</code><code class="descname">ConfigFile</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.iniparser.ConfigFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.dynamo.iniparser.</code><code class="sig-name descname">ConfigFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/iniparser.html#ConfigFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.iniparser.ConfigFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.iniparser.ConfigFile.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.iniparser.ConfigFile.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/iniparser.html#ConfigFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.iniparser.ConfigFile.read" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.iniparser.ConfigFile.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.iniparser.ConfigFile.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/iniparser.html#ConfigFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.iniparser.ConfigFile.write" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -64,330 +63,336 @@
 <div class="section" id="module-mdma.dynamo.wrapper">
 <span id="mdma-dynamo-wrapper-module"></span><h2>mdma.dynamo.wrapper module<a class="headerlink" href="#module-mdma.dynamo.wrapper" title="Permalink to this headline">¶</a></h2>
 <p>Note: This is some old code I hacked together a long time, and it needs to be updated heavily. It should be made to use the newer modules (like the new XmlSnapshot) and documented thoroughly.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory">
-<em class="property">class </em><code class="descclassname">mdma.dynamo.wrapper.</code><code class="descname">DynamoTrajectory</code><span class="sig-paren">(</span><em>path</em>, <em>d=3</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.dynamo.wrapper.</code><code class="sig-name descname">DynamoTrajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">d</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.apply_uniform_dispersity">
-<code class="descname">apply_uniform_dispersity</code><span class="sig-paren">(</span><em>phi</em>, <em>size_ratios</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.apply_uniform_dispersity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply_uniform_dispersity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phi</span></em>, <em class="sig-param"><span class="n">size_ratios</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.apply_uniform_dispersity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.apply_uniform_dispersity" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.clear_snapshots">
-<code class="descname">clear_snapshots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.clear_snapshots" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clear_snapshots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.clear_snapshots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.clear_snapshots" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.coords">
-<code class="descname">coords</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.coords" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">coords</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.coords" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.coords_trajectory">
-<code class="descname">coords_trajectory</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.coords_trajectory" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">coords_trajectory</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.coords_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.create">
-<code class="descname">create</code><span class="sig-paren">(</span><em>ncells</em>, <em>phi</em>, <em>system=&lt;class 'mdma.dynamo.wrapper.MonodisperseHardSpheres'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.create" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param">ncells</em>, <em class="sig-param">phi</em>, <em class="sig-param">system=&lt;class 'mdma.dynamo.wrapper.MonodisperseHardSpheres'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.create" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.determine_relaxation_time">
-<code class="descname">determine_relaxation_time</code><span class="sig-paren">(</span><em>collisions_per_frame=500</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.determine_relaxation_time" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">determine_relaxation_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collisions_per_frame</span><span class="o">=</span><span class="default_value">500</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.determine_relaxation_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.determine_relaxation_time" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.effective_diameter">
-<code class="descname">effective_diameter</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.effective_diameter" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">effective_diameter</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.effective_diameter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.equilibrate">
-<code class="descname">equilibrate</code><span class="sig-paren">(</span><em>num_relaxations=100</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.equilibrate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">equilibrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_relaxations</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.equilibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.equilibrate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.equilibrated">
-<code class="descname">equilibrated</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.equilibrated" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">equilibrated</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.equilibrated" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.growth_create">
-<code class="descname">growth_create</code><span class="sig-paren">(</span><em>new_path</em>, <em>target_phi</em>, <em>num_relaxations=1</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.growth_create" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">growth_create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_path</span></em>, <em class="sig-param"><span class="n">target_phi</span></em>, <em class="sig-param"><span class="n">num_relaxations</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.growth_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.growth_create" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.latest_snapshot">
-<code class="descname">latest_snapshot</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.latest_snapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">latest_snapshot</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.latest_snapshot" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.n">
-<code class="descname">n</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.n" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">n</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.n" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.new_snapshot">
-<code class="descname">new_snapshot</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.new_snapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">new_snapshot</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.new_snapshot" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.parse_config">
-<code class="descname">parse_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.parse_config" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parse_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.parse_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.parse_config" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.parse_xml">
-<code class="descname">parse_xml</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.parse_xml" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parse_xml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.parse_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.parse_xml" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.relaxation_collisions">
-<code class="descname">relaxation_collisions</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.relaxation_collisions" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">relaxation_collisions</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.relaxation_collisions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>collisions</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collisions</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.run_trajectory">
-<code class="descname">run_trajectory</code><span class="sig-paren">(</span><em>nframes</em>, <em>dump_time</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.run_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nframes</span></em>, <em class="sig-param"><span class="n">dump_time</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.run_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.run_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.save" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.save_settings">
-<code class="descname">save_settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.save_settings" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#DynamoTrajectory.save_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.save_settings" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.snapshots">
-<code class="descname">snapshots</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.snapshots" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">snapshots</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.snapshots" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.velocities">
-<code class="descname">velocities</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.velocities" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">velocities</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.velocities" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.xyzr">
-<code class="descname">xyzr</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.xyzr" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">xyzr</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.xyzr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.DynamoTrajectory.xyzr_trajectory">
-<code class="descname">xyzr_trajectory</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.xyzr_trajectory" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">xyzr_trajectory</code><a class="headerlink" href="#mdma.dynamo.wrapper.DynamoTrajectory.xyzr_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
+<dt id="mdma.dynamo.wrapper.JoshPolydisperseHardSpheres">
+<em class="property">class </em><code class="sig-prename descclassname">mdma.dynamo.wrapper.</code><code class="sig-name descname">JoshPolydisperseHardSpheres</code><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#JoshPolydisperseHardSpheres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.JoshPolydisperseHardSpheres" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="mdma.dynamo.wrapper.JoshPolydisperseHardSpheres.density">
+<code class="sig-name descname">density</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#JoshPolydisperseHardSpheres.density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.JoshPolydisperseHardSpheres.density" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="mdma.dynamo.wrapper.JoshPolydisperseHardSpheres.size_ratios">
+<code class="sig-name descname">size_ratios</code><em class="property"> = array([0.52, 0.6 , 0.68, 0.76, 0.84, 0.92, 1.  ])</em><a class="headerlink" href="#mdma.dynamo.wrapper.JoshPolydisperseHardSpheres.size_ratios" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="mdma.dynamo.wrapper.JoshPolydisperseHardSpheres.volume_fraction">
+<code class="sig-name descname">volume_fraction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#JoshPolydisperseHardSpheres.volume_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.JoshPolydisperseHardSpheres.volume_fraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="mdma.dynamo.wrapper.MonodisperseHardSpheres">
-<em class="property">class </em><code class="descclassname">mdma.dynamo.wrapper.</code><code class="descname">MonodisperseHardSpheres</code><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.dynamo.wrapper.</code><code class="sig-name descname">MonodisperseHardSpheres</code><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#MonodisperseHardSpheres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.MonodisperseHardSpheres.density">
-<code class="descname">density</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres.density" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">density</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#MonodisperseHardSpheres.density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres.density" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="mdma.dynamo.wrapper.MonodisperseHardSpheres.size_ratios">
-<code class="descname">size_ratios</code><em class="property"> = array([1.])</em><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres.size_ratios" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">size_ratios</code><em class="property"> = array([1.])</em><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres.size_ratios" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.MonodisperseHardSpheres.volume_fraction">
-<code class="descname">volume_fraction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres.volume_fraction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume_fraction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#MonodisperseHardSpheres.volume_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.MonodisperseHardSpheres.volume_fraction" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres">
-<em class="property">class </em><code class="descclassname">mdma.dynamo.wrapper.</code><code class="descname">PaddyPolydisperseHardSpheres</code><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.dynamo.wrapper.</code><code class="sig-name descname">PaddyPolydisperseHardSpheres</code><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#PaddyPolydisperseHardSpheres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.density">
-<code class="descname">density</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.density" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">density</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#PaddyPolydisperseHardSpheres.density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.density" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.size_ratios">
-<code class="descname">size_ratios</code><em class="property"> = array([0.7986, 0.8609, 0.8993, 0.9376, 1.    ])</em><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.size_ratios" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">size_ratios</code><em class="property"> = array([0.7986, 0.8609, 0.8993, 0.9376, 1.    ])</em><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.size_ratios" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.volume_fraction">
-<code class="descname">volume_fraction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.volume_fraction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">volume_fraction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#PaddyPolydisperseHardSpheres.volume_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.PaddyPolydisperseHardSpheres.volume_fraction" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="mdma.dynamo.wrapper.box_size">
-<code class="descclassname">mdma.dynamo.wrapper.</code><code class="descname">box_size</code><span class="sig-paren">(</span><em>phi</em>, <em>n</em>, <em>system=&lt;class 'mdma.dynamo.wrapper.MonodisperseHardSpheres'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.wrapper.box_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.dynamo.wrapper.</code><code class="sig-name descname">box_size</code><span class="sig-paren">(</span><em class="sig-param">phi</em>, <em class="sig-param">n</em>, <em class="sig-param">system=&lt;class 'mdma.dynamo.wrapper.MonodisperseHardSpheres'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/wrapper.html#box_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.wrapper.box_size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="module-mdma.dynamo.xmlsnapshot">
 <span id="mdma-dynamo-xmlsnapshot-module"></span><h2>mdma.dynamo.xmlsnapshot module<a class="headerlink" href="#module-mdma.dynamo.xmlsnapshot" title="Permalink to this headline">¶</a></h2>
 <p>Module for reading and writing snapshots from and to DynamO (.xml) file formats. The main class is DynamoSnapshot, but some additional functions are defined to provide a simplified interface to this class.</p>
-<dl class="docutils">
-<dt>The module defines:</dt>
-<dd><ul class="first last simple">
-<li>DynamoSnapshot: the class the defining the file interface to this file format</li>
-<li>read: shorthand for DynamoSnapshot.read_single</li>
-<li>read_trajectory: shorthand for DynamoSnapshot.read_trajectory</li>
-<li>write: create a snapshot from coordinates to write to disk</li>
-<li>write_trajectory: shorthand to write a series of coordinates to disk</li>
+<dl class="simple">
+<dt>The module defines:</dt><dd><ul class="simple">
+<li><p>DynamoSnapshot: the class the defining the file interface to this file format</p></li>
+<li><p>read: shorthand for DynamoSnapshot.read_single</p></li>
+<li><p>read_trajectory: shorthand for DynamoSnapshot.read_trajectory</p></li>
+<li><p>write: create a snapshot from coordinates to write to disk</p></li>
+<li><p>write_trajectory: shorthand to write a series of coordinates to disk</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="class">
+<dl class="py class">
 <dt id="mdma.dynamo.xmlsnapshot.DynamoSnapshot">
-<em class="property">class </em><code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">DynamoSnapshot</code><span class="sig-paren">(</span><em>x=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>box=None</em>, <em>species=None</em>, <em>time=0</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.dynamo.xmlsnapshot.</code><code class="sig-name descname">DynamoSnapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">array([], shape=0, 0, dtype=float64)</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#DynamoSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="mdma.html#mdma.snapshot.Snapshot" title="mdma.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in DynamO (.xml) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.xmlsnapshot.DynamoSnapshot.assign_diameters">
-<code class="descname">assign_diameters</code><span class="sig-paren">(</span><em>uij_range</em>, <em>diameter</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.assign_diameters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">assign_diameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uij_range</span></em>, <em class="sig-param"><span class="n">diameter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#DynamoSnapshot.assign_diameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.assign_diameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign diameters to the particles across the given ID range.</p>
 <p>Diameters will only be assigned if the range describes a single-species interaction.
 Any other range is potentially a nonadditive interaction so an exception is raised as
 a warning.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>uij_range</strong> – xml entry describing the range of the interaction</li>
-<li><strong>diameter</strong> – length scale of these hard spheres</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uij_range</strong> – xml entry describing the range of the interaction</p></li>
+<li><p><strong>diameter</strong> – length scale of these hard spheres</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="mdma.dynamo.xmlsnapshot.NonadditiveError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NonadditiveError</span></code></a> – if the given range is a cross-species interaction, so potentially
-the dynamo file describes a nonadditive potential.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="mdma.dynamo.xmlsnapshot.NonadditiveError"><strong>NonadditiveError</strong></a> – if the given range is a cross-species interaction, so potentially
+    the dynamo file describes a nonadditive potential.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.xmlsnapshot.DynamoSnapshot.is_hard_sphere">
-<code class="descname">is_hard_sphere</code><span class="sig-paren">(</span><em>interaction</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.is_hard_sphere" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_hard_sphere</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interaction</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#DynamoSnapshot.is_hard_sphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.is_hard_sphere" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether an interaction encoded in the dynamo XML tree is a hard sphere
 interaction or not.</p>
 <p>There are two ways to encode hard spheres: either explicitly as a hard sphere, or as
 a square well with zero well depth (although the latter should be avoided as it results
 in a less efficient simulation). This helper function tests for both eventualities.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interaction</strong> – xml entry for the interaction</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">boolean stating whether the interaction is a hard sphere</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>interaction</strong> – xml entry for the interaction</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>boolean stating whether the interaction is a hard sphere</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.xmlsnapshot.DynamoSnapshot.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#DynamoSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a snapshot from a file, overwriting any existing data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_or_file</strong> – file stream or path to read snapshot from</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code> – if could not read from file</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – if did not recognise file format or the data does not describe an
-additive hard sphere system</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path_or_file</strong> – file stream or path to read snapshot from</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="mdma.html#mdma.snapshot.NoSnapshotError" title="mdma.snapshot.NoSnapshotError"><strong>NoSnapshotError</strong></a> – if could not read from file</p></li>
+<li><p><strong>RuntimeException</strong> – if did not recognise file format or the data does not describe an
+    additive hard sphere system</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.xmlsnapshot.DynamoSnapshot.read_trajectory">
-<code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#DynamoSnapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standard interface for reading trajectories should throw error because dynamo trajectories are not stored in the usual simple format.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="mdma.dynamo.xmlsnapshot.DynamoSnapshot.verify_cross_species_interactions">
-<code class="descname">verify_cross_species_interactions</code><span class="sig-paren">(</span><em>uij_range</em>, <em>diameter</em>, <em>eps=1e-12</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.verify_cross_species_interactions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">verify_cross_species_interactions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uij_range</span></em>, <em class="sig-param"><span class="n">diameter</span></em>, <em class="sig-param"><span class="n">eps</span><span class="o">=</span><span class="default_value">1e-10</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#DynamoSnapshot.verify_cross_species_interactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.DynamoSnapshot.verify_cross_species_interactions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check whether a cross-species hard sphere interaction is consistent with the known
 diameters of each species, assuming additive interactions.</p>
 <p>Additive cross-species interactions have size sigma = 0.5*(sigma_i + sigma_j) where
 sigma_{i,j} are the diameters of the individual species. If the diameter does not
 match this expectation then the interaction is not additive.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>uij_range</strong> – xml entry describing the range of the interaction</li>
-<li><strong>diameter</strong> – length scale of this cross-species hard sphere interaction</li>
-<li><strong>eps</strong> – machine tolerance for the test of additivity</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uij_range</strong> – xml entry describing the range of the interaction</p></li>
+<li><p><strong>diameter</strong> – length scale of this cross-species hard sphere interaction</p></li>
+<li><p><strong>eps</strong> – machine tolerance for the test of additivity</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="mdma.dynamo.xmlsnapshot.NonadditiveError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NonadditiveError</span></code></a> – if the interaction is not additive</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="mdma.dynamo.xmlsnapshot.NonadditiveError"><strong>NonadditiveError</strong></a> – if the interaction is not additive</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="exception">
+<dl class="py exception">
 <dt id="mdma.dynamo.xmlsnapshot.NonadditiveError">
-<em class="property">exception </em><code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">NonadditiveError</code><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">mdma.dynamo.xmlsnapshot.</code><code class="sig-name descname">NonadditiveError</code><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#NonadditiveError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.NonadditiveError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
 <p>Error thrown when a snapshot file features non-additive hard sphere
 diameters which are currently not handled.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="mdma.dynamo.xmlsnapshot.read">
-<code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">read</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.dynamo.xmlsnapshot.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a single snapshot from the disk.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="mdma.dynamo.xmlsnapshot.read_trajectory">
-<code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.dynamo.xmlsnapshot.</code><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a trajectory (i.e. multiple snapshots) from the disk.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="mdma.dynamo.xmlsnapshot.write">
-<code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">write</code><span class="sig-paren">(</span><em>x</em>, <em>box</em>, <em>out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.dynamo.xmlsnapshot.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a single configuration to the disk.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="mdma.dynamo.xmlsnapshot.write_trajectory">
-<code class="descclassname">mdma.dynamo.xmlsnapshot.</code><code class="descname">write_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.write_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.dynamo.xmlsnapshot.</code><code class="sig-name descname">write_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/dynamo/xmlsnapshot.html#write_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.dynamo.xmlsnapshot.write_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a configuration container to the disk.</p>
 </dd></dl>
 
@@ -413,7 +418,7 @@ diameters which are currently not handled.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Joshua Robinson.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>
