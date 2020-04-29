@@ -226,6 +226,76 @@ py::array_t<Scalar> periodic_pairwise_correlations(const Eigen::Ref<const CoordT
 }
 
 /**
+ *  Calculate the two body distribution function for points under periodic boundary conditions,
+ *  using cell lists to accelerate the calculation.
+ *
+ *  @param coords is an n by d matrix giving n points in a d-dimensional space.
+ *  @param box_dimensions is a d vector giving size of box in each dimensions for periodic wrapping.
+ *  @param min is the start point of the histogram bin range.
+ *  @param max is the final point of the histogram bin range.
+ *  @param nbins is the number of histogram bins in the range.
+ *
+ *  @return a numpy array giving the pdf for each bin.
+ **/
+template <typename CoordType, typename BoxType, typename Scalar>
+py::array_t<Scalar> periodic_pairwise_correlations_cell_lists(
+    const Eigen::Ref<const CoordType>& coords,
+    const Eigen::Ref<const BoxType>& box_dimensions,
+    Scalar min, Scalar max, size_t nbins)
+{
+    using Cells = spatial::CellLists<Scalar>;
+    Cells cells(max, box_dimensions, coords);
+
+    size_t n = cells.n();
+    Scalar bin_width = (max - min) / nbins;
+
+    Scalar edges[nbins+1];
+    Scalar left_edge = min;
+    for (size_t i = 0; i < nbins+1; ++i)
+    {
+        edges[i] = left_edge;
+        left_edge += bin_width;
+    }
+
+    Scalar volume = 1;
+    for (int c = 0; c < box_dimensions.cols(); ++c)
+        volume *= box_dimensions(c);
+    Scalar density = n / volume;
+
+    Scalar min_squ = min*min;
+    Scalar max_squ = max*max;
+
+    py::array_t<Scalar> g(nbins);
+    auto data = static_cast<Scalar*>(g.request().ptr);
+    for (size_t i = 0; i < nbins; ++i) data[i] = 0;
+
+    auto function = [&](auto delta)
+                    {
+                        Scalar dr_squ = delta.squaredNorm();
+                        if (dr_squ < min_squ or dr_squ > max_squ) return;
+
+                        Scalar dr = std::sqrt(dr_squ);
+                        int bin = (dr - min)/bin_width;
+                        data[bin] += 2;
+                    };
+    cells.neighbours().for_each(function);
+
+    // auto histogram = periodic_pdist_histogram(coords, box_dimensions, min, max, nbins);
+    // auto histogram_data = static_cast<int*>(histogram.request().ptr);
+    // py::array_t<Scalar> g(histogram.size());
+    // auto data = static_cast<Scalar*>(g.request().ptr);
+
+    auto cube = [](Scalar x) { return x*x*x; };
+    for (size_t i = 0; i < nbins; ++i)
+    {
+        long double dV = 4*pi/3*(cube(edges[i+1])-cube(edges[i]));
+        data[i] /= n*density*dV;
+    }
+
+    return g;
+}
+
+/**
  *  Calculate the histogram of triplets of mutual pairwise distances between points under
  *  periodic boundary conditions.
  *
@@ -369,6 +439,44 @@ py::array_t<Scalar> periodic_triplet_correlations(const Eigen::Ref<const CoordTy
 }
 
 /**
+ *  Calculate the overlap between two sets of points under periodic boundary conditions.
+ *
+ *  @param coords is an n by d matrix giving n points in a d-dimensional space.
+ *  @param box_dimensions is a d vector giving size of box in each dimensions for periodic wrapping.
+ *  @param threshold is the distance below which poitns are considered to overlap
+ *
+ *  @return a scalar in the range [0, 1] indicating the overlap
+ **/
+template <typename CoordType, typename BoxType, typename Scalar>
+Scalar periodic_overlap(const Eigen::Ref<const CoordType>& r0,
+               const Eigen::Ref<const CoordType>& r1,
+               const Eigen::Ref<const BoxType>& box_dimensions,
+               Scalar threshold)
+{
+    using Cells = spatial::CellLists<Scalar>;
+    Cells cells(threshold, box_dimensions, r1);
+
+    size_t n = cells.n();
+
+    Scalar overlap = 0;
+    Scalar threshold_squ = threshold*threshold;
+
+    auto function = [&](auto delta)
+                    {
+                        Scalar dr_squ = delta.squaredNorm();
+                        if (dr_squ < threshold_squ) overlap += 1;
+                    };
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        cells.neighbourhood(r0.row(i)).for_each(function);
+    }
+    overlap /= n;
+
+    return overlap;
+}
+
+/**
  *  Define distance functions in the module for a Scalar type specified
  *    by the Scalar template parameter.
  *
@@ -413,6 +521,13 @@ void define_functions(Module m)
               py::arg("min"), py::arg("max"), py::arg("nbins"),
               py::return_value_policy::move,
               "Two body distribution function for points under periodic boundary conditions.");
+        m.def("periodic_pairwise_correlations_cell_lists",
+              &periodic_pairwise_correlations_cell_lists<CoordType,BoxType,Scalar>,
+              py::arg("X").noconvert(),
+              py::arg("box_dimensions").noconvert(),
+              py::arg("min"), py::arg("max"), py::arg("nbins"),
+              py::return_value_policy::move,
+              "Two body distribution function for points under periodic boundary conditions.");
 
         m.def("periodic_triplet_dist_histogram",
               &periodic_triplet_dist_histogram<CoordType,BoxType,Scalar>,
@@ -428,6 +543,14 @@ void define_functions(Module m)
               py::arg("min"), py::arg("max"), py::arg("nbins"),
               py::return_value_policy::move,
               "Three body distribution function for points under periodic boundary conditions.");
+
+        m.def("periodic_overlap",
+              &periodic_overlap<CoordType,BoxType,Scalar>,
+              py::arg("X0").noconvert(),
+              py::arg("X1").noconvert(),
+              py::arg("box_dimensions").noconvert(),
+              py::arg("threshold"),
+              "Overlap between two sets of points under periodic boundary conditions.");
     }
 }
 

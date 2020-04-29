@@ -48,6 +48,30 @@ namespace mdma
                 const Coordinate& position;
             };
 
+            template <typename Coord>
+            EigenIndex index_from_coordinate(Coord&& coord) const
+            {
+                Coordinate coordinate(coord);
+
+                EigenIndex index;
+                for (size_t c = 0; c < d; ++c)
+                {
+                    while (coordinate[c] >= this->box_dimensions[c])
+                        coordinate[c] -= this->box_dimensions[c];
+                    while (coordinate[c] < 0)
+                        coordinate[c] += this->box_dimensions[c];
+                    index[c] = std::floor(coordinate[c] / this->cell_widths[c]);
+                }
+
+                return index;
+            }
+
+            template <typename Coord>
+            int offset_from_coordinate(Coord&& coord) const
+            {
+                return this->grid.offset(this->index_from_coordinate(coord));
+            }
+
             CellLists(Scalar neighbour_cutoff,
                       const Eigen::Ref<const Coordinate>& box_dimensions,
                       const Eigen::Ref<const Domain>& coordinates)
@@ -64,20 +88,9 @@ namespace mdma
                 for (size_t atom = 0; atom < this->n(); ++atom)
                 {
                     auto&& coordinate = this->coordinates.row(atom);
-
-                    EigenIndex index;
-                    for (size_t c = 0; c < d; ++c)
-                    {
-                        while (coordinate[c] > this->box_dimensions[c])
-                            coordinate[c] -= box_dimensions[c];
-                        while (coordinate[c] < 0)
-                            coordinate[c] += box_dimensions[c];
-                        index[c] = std::floor(coordinate[c] / this->cell_widths[c]);
-                    }
-
-                    auto offset = this->grid.offset(index);
-                    this->grid[offset].children.push_back(atom);
-                    this->particles.emplace_back(offset, coordinate);
+                    int cell = this->offset_from_coordinate(coordinate);
+                    this->grid[cell].children.push_back(atom);
+                    this->particles.emplace_back(cell, coordinate);
                 }
             }
 
@@ -129,9 +142,11 @@ namespace mdma
             }
 
             class Neighbours;
-            friend class Neighbours;
             class Neighbourhood;
+            class TrialNeighbourhood;
+            friend class Neighbours;
             friend class Neighbourhood;
+            friend class TrialNeighbourhood;
 
             inline Neighbours neighbours() const
             {
@@ -140,6 +155,10 @@ namespace mdma
             inline Neighbourhood neighbourhood(int atom) const
             {
                 return Neighbourhood(*this, atom);
+            }
+            inline TrialNeighbourhood neighbourhood(Coordinate&& coordinate) const
+            {
+                return TrialNeighbourhood(*this, std::forward<Coordinate>(coordinate));
             }
 
             Domain find_displacements() const
@@ -246,24 +265,24 @@ namespace mdma
         class CellLists<Scalar, GridType>::Neighbourhood
         {
         public:
-            Neighbourhood(const CellLists<Scalar, GridType>& cell_lists, size_t particle)
-                : cell_lists(cell_lists), particle(particle)
+            Neighbourhood(const CellLists<Scalar, GridType>& cell_lists, int particle)
+                : cell_lists(cell_lists), particle(particle),
+                  cell(cell_lists.grid[cell_lists.particles[particle].cell])
             { }
 
             inline void for_each(std::function<void (Coordinate&&)> function) const
             {
                 auto &cells = this->cell_lists;
-                auto& cell = cells.grid[cells.particles[particle].cell];
                 auto&& x = cells.coordinates.row(this->particle);
 
-                for (auto neighbour : cell)
+                for (auto neighbour : this->cell)
                 {
                     if (neighbour == particle) continue;
                     function(x - cells.coordinates.row(neighbour));
                 }
 
                 Coordinate offset;
-                for (auto& adjacent_cell : cell.neighbours)
+                for (auto& adjacent_cell : this->cell.neighbours)
                 {
                     for (size_t c = 0; c < d; ++c)
                         offset(c) = adjacent_cell.image_offset(c) *
@@ -277,11 +296,10 @@ namespace mdma
             inline bool for_each_terminating(std::function<bool (Coordinate&&)> function) const
             {
                 auto& cells = this->cell_lists;
-                auto& cell = cells.grid[cells.particles[particle].cell];
                 auto&& x = cells.coordinates.row(this->particle);
                 bool abort;
 
-                for (auto neighbour : cell)
+                for (auto neighbour : this->cell)
                 {
                     if (neighbour == this->particle) continue;
                     abort = function(x - cells.coordinates.row(neighbour));
@@ -289,7 +307,7 @@ namespace mdma
                 }
 
                 Coordinate offset;
-                for (auto& adjacent_cell : cell.neighbours)
+                for (auto& adjacent_cell : this->cell.neighbours)
                 {
                     for (size_t c = 0; c < d; ++c)
                         offset(c) = adjacent_cell.image_offset(c) *
@@ -308,6 +326,73 @@ namespace mdma
         private:
             const CellLists<Scalar, GridType>& cell_lists;
             const size_t particle;
+            const Cell<size_t, d>& cell;
+        };
+
+        template <typename Scalar, template<typename,size_t> typename GridType>
+        class CellLists<Scalar, GridType>::TrialNeighbourhood
+        {
+        public:
+            TrialNeighbourhood(const CellLists<Scalar, GridType>& cell_lists,
+                               Coordinate&& trial_position)
+                : cell_lists(cell_lists),
+                  x(std::forward<Coordinate>(trial_position)),
+                  cell(cell_lists.grid[cell_lists.offset_from_coordinate(std::forward<Coordinate>(trial_position))])
+            {}
+
+            inline void for_each(std::function<void (Coordinate&&)> function) const
+            {
+                auto& cells = this->cell_lists;
+
+                for (auto neighbour : this->cell)
+                {
+                    function(x - cells.coordinates.row(neighbour));
+                }
+
+                Coordinate offset;
+                for (auto& adjacent_cell : this->cell.neighbours)
+                {
+                    for (size_t c = 0; c < d; ++c)
+                        offset(c) = adjacent_cell.image_offset(c) *
+                            cells.cell_widths(c);
+
+                    for (auto neighbour : adjacent_cell.cell->children)
+                        function(x - cells.coordinates.row(neighbour) - offset);
+                }
+            }
+
+            inline bool for_each_terminating(std::function<bool (Coordinate&&)> function) const
+            {
+                auto& cells = this->cell_lists;
+                bool abort;
+
+                for (auto neighbour : this->cell)
+                {
+                    abort = function(x - cells.coordinates.row(neighbour));
+                    if (abort) return true;
+                }
+
+                Coordinate offset;
+                for (auto& adjacent_cell : this->cell.neighbours)
+                {
+                    for (size_t c = 0; c < d; ++c)
+                        offset(c) = adjacent_cell.image_offset(c) *
+                            cells.cell_widths(c);
+
+                    for (auto neighbour : adjacent_cell.cell->children)
+                    {
+                        abort = function(x - cells.coordinates.row(neighbour) - offset);
+                        if (abort) return true;
+                    }
+                }
+
+                return false;
+            }
+
+        private:
+            const CellLists<Scalar, GridType>& cell_lists;
+            Coordinate&& x;
+            const Cell<size_t, d>& cell;
         };
     }
 }

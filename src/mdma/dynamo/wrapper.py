@@ -31,6 +31,16 @@ class PaddyPolydisperseHardSpheres:
     def density(phi): return 6 * phi / np.pi
     def volume_fraction(density): return density / (6 * np.pi)
 
+class JoshPolydisperseHardSpheres:
+    # 7-component system with 16% polydispersity has these diameters
+    #size_ratios = np.array([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. ]) # old: 20 % polydispersity
+    size_ratios = np.array([0.52, 0.6 , 0.68, 0.76, 0.84, 0.92, 1.  ])
+    # Effective volume of a single particle (mean of the sizes, as system is equimolar)
+    #effective_volume = np.pi*np.sum(size_ratios**3)/(6*len(size_ratios))
+
+    def density(phi): return 6 * phi / np.pi
+    def volume_fraction(density): return density / (6 * np.pi)
+
 # Box size for a system with the above parameters.
 def box_size(phi, n, system=MonodisperseHardSpheres):
     volume = n / system.density(phi)

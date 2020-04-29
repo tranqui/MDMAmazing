@@ -91,7 +91,7 @@ class DynamoSnapshot(Snapshot):
         else:
             raise RuntimeError('unknown range type encounted: %s' % range_type)
 
-    def verify_cross_species_interactions(self, uij_range, diameter, eps=1e-12):
+    def verify_cross_species_interactions(self, uij_range, diameter, eps=1e-10):
         """Check whether a cross-species hard sphere interaction is consistent with the known
         diameters of each species, assuming additive interactions.
 
