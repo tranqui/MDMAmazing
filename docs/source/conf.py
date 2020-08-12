@@ -65,7 +65,7 @@ author = 'Joshua F. Robinson'
 # The full version, including alpha/beta/rc tags.
 import subprocess
 release = subprocess.check_output(["git", "describe", "--tags"]).decode('ascii').strip()
-release = '-'.join(release.split('-')[:-1])
+release = '-'.join(release.split('-')[:2])
 # The short X.Y version.
 version = '.'.join(release.split('-')[0].split('.')[:-1])
 
