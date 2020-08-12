@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>Getting started &#8212; MDMAmazing 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples.html" />
@@ -54,6 +54,10 @@
 </ul>
 </div></blockquote>
 </div>
+<div class="section" id="parallelisation-with-mpi">
+<h3>Parallelisation with MPI<a class="headerlink" href="#parallelisation-with-mpi" title="Permalink to this headline">¶</a></h3>
+<p>Parallelisation is possible using Message Passing Interface (MPI). If you wish to use these features you will need a working MPI installation (e.g. <a class="reference external" href="https://www.open-mpi.org/">Open MPI</a>) on your system, and you will need the <a class="reference external" href="https://mpi4py.readthedocs.io/en/stable/">mpi4py</a> module for python bindings.</p>
+</div>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
@@ -71,6 +75,10 @@
 </div>
 <p>NB: if you are reinstalling the same version of MDMAmazing (with e.g. pybind11 enabled) the install step may ignore this command. To force the install you must then add the <code class="docutils literal notranslate"><span class="pre">--force</span></code> flag i.e.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="n">force</span>
+</pre></div>
+</div>
+<p>If you wish to use parallelisation and do not have the <a class="reference external" href="https://mpi4py.readthedocs.io/en/stable/">mpi4py</a> module already installed, pass the flag <code class="docutils literal notranslate"><span class="pre">--with-mpi</span></code> during installation i.e.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">mpi</span>
 </pre></div>
 </div>
 </div>
@@ -101,7 +109,7 @@ Follow the instructions  <a class="reference external" href="https://lammps.sand
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Joshua Robinson.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>
 </html>

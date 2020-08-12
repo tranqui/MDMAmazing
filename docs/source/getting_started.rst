@@ -14,6 +14,11 @@ MDMAmazing is written exclusively in Python 3. As such Python 3 must be installe
   * The official source: `<https://www.python.org/downloads/>`_
   * Through `anaconda <https://www.anaconda.com/download>`_ which offers a version of Python prebuilt with libraries for scientific computing.
 
+Parallelisation with MPI
+------------------------
+
+Parallelisation is possible using Message Passing Interface (MPI). If you wish to use these features you will need a working MPI installation (e.g. `Open MPI <https://www.open-mpi.org/>`_) on your system, and you will need the `mpi4py <https://mpi4py.readthedocs.io/en/stable/>`_ module for python bindings.
+
 Installation
 ============
 
@@ -33,6 +38,10 @@ If you wish to make use of python bindings to C++ optimised routines you must in
 NB: if you are reinstalling the same version of MDMAmazing (with e.g. pybind11 enabled) the install step may ignore this command. To force the install you must then add the ``--force`` flag i.e.::
 
   python3 setup.py install --user --force
+
+If you wish to use parallelisation and do not have the `mpi4py <https://mpi4py.readthedocs.io/en/stable/>`_ module already installed, pass the flag ``--with-mpi`` during installation i.e.::
+
+  python3 setup.py install --user --with-mpi
 
 Optional: Installing LAMMPS
 ===========================

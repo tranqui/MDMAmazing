@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>mdma package &#8212; MDMAmazing 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="mdma.dynamo package" href="mdma.dynamo.html" />
@@ -53,7 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="mdma.lammps.html">mdma.lammps package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="mdma.lammps.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mdma.lammps.html#module-mdma.lammps.potentials">mdma.lammps.potentials module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.lammps.html#module-mdma.lammps.wrapper">mdma.lammps.wrapper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdma.lammps.html#mdma-lammps-wrapper-module">mdma.lammps.wrapper module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mdma.lammps.html#module-mdma.lammps">Module contents</a></li>
 </ul>
 </li>
@@ -84,15 +84,15 @@ a simplified interface to this class.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py class">
+<dl class="class">
 <dt id="mdma.atom.AtomSnapshot">
-<em class="property">class </em><code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">AtomSnapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">array([], shape=0, 0, dtype=float64)</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#AtomSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.AtomSnapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">AtomSnapshot</code><span class="sig-paren">(</span><em class="sig-param">x=array([]</em>, <em class="sig-param">shape=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">dtype=float64)</em>, <em class="sig-param">box=None</em>, <em class="sig-param">species=None</em>, <em class="sig-param">time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#AtomSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.AtomSnapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mdma.snapshot.Snapshot" title="mdma.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in LAMMPS (.atom) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.atom.AtomSnapshot.read">
-<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#AtomSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.AtomSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#AtomSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.AtomSnapshot.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a snapshot from a file, overwriting any existing data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -107,34 +107,34 @@ a simplified interface to this class.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.atom.AtomSnapshot.triclinic">
 <em class="property">property </em><code class="sig-name descname">triclinic</code><a class="headerlink" href="#mdma.atom.AtomSnapshot.triclinic" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.atom.read">
-<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a single snapshot from the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.atom.read_trajectory">
-<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.read_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a trajectory (i.e. multiple snapshots) from the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.atom.write">
-<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">species=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em>, <em class="sig-param">species=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a single configuration to the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.atom.write_trajectory">
-<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">write_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#write_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.write_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">write_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#write_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.write_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a configuration container to the disk.</p>
 </dd></dl>
 
@@ -155,27 +155,27 @@ defined to provide a simplified interface to this class.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py class">
+<dl class="class">
 <dt id="mdma.pdb.PDBSnapshot">
-<em class="property">class </em><code class="sig-prename descclassname">mdma.pdb.</code><code class="sig-name descname">PDBSnapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">array([], shape=0, 0, dtype=float64)</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#PDBSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.PDBSnapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.pdb.</code><code class="sig-name descname">PDBSnapshot</code><span class="sig-paren">(</span><em class="sig-param">x=array([]</em>, <em class="sig-param">shape=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">dtype=float64)</em>, <em class="sig-param">box=None</em>, <em class="sig-param">species=None</em>, <em class="sig-param">time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#PDBSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.PDBSnapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mdma.snapshot.Snapshot" title="mdma.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in Protein Data Bank (.pdb) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.pdb.PDBSnapshot.molecule">
-<code class="sig-name descname">molecule</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">molecule_number</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#PDBSnapshot.molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.PDBSnapshot.molecule" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">molecule</code><span class="sig-paren">(</span><em class="sig-param">molecule_number</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#PDBSnapshot.molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.PDBSnapshot.molecule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Summarise all atoms within a molecule.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.pdb.PDBSnapshot.molecule_sizes">
 <em class="property">property </em><code class="sig-name descname">molecule_sizes</code><a class="headerlink" href="#mdma.pdb.PDBSnapshot.molecule_sizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sizes of each molecule in the snapshot.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.pdb.PDBSnapshot.read">
-<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#PDBSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.PDBSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#PDBSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.PDBSnapshot.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a snapshot from a file, overwriting any existing data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -192,15 +192,15 @@ defined to provide a simplified interface to this class.</p>
 
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.pdb.read">
-<code class="sig-prename descclassname">mdma.pdb.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.pdb.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a single snapshot from the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.pdb.write">
-<code class="sig-prename descclassname">mdma.pdb.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">species=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.pdb.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em>, <em class="sig-param">species=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/pdb.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.pdb.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a single configuration to the disk.</p>
 </dd></dl>
 
@@ -216,16 +216,16 @@ defined to provide a simplified interface to this class.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py exception">
+<dl class="exception">
 <dt id="mdma.snapshot.NoSnapshotError">
 <em class="property">exception </em><code class="sig-prename descclassname">mdma.snapshot.</code><code class="sig-name descname">NoSnapshotError</code><a class="reference internal" href="_modules/mdma/snapshot.html#NoSnapshotError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.NoSnapshotError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
 <p>Exception raised when not able to read a snapshot from a file.</p>
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="mdma.snapshot.Snapshot">
-<em class="property">class </em><code class="sig-prename descclassname">mdma.snapshot.</code><code class="sig-name descname">Snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">array([], shape=0, 0, dtype=float64)</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.snapshot.</code><code class="sig-name descname">Snapshot</code><span class="sig-paren">(</span><em class="sig-param">x=array([]</em>, <em class="sig-param">shape=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">dtype=float64)</em>, <em class="sig-param">box=None</em>, <em class="sig-param">species=None</em>, <em class="sig-param">time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Snapshot of a system of particles.</p>
 <dl class="simple">
@@ -237,63 +237,63 @@ species: labels of the particle species (string or container of strings)
 time: time or frame of the snapshot within a trajectory</p>
 </dd>
 </dl>
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.box_dimensions">
 <em class="property">property </em><code class="sig-name descname">box_dimensions</code><a class="headerlink" href="#mdma.snapshot.Snapshot.box_dimensions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dimensions of box.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.composition">
 <em class="property">property </em><code class="sig-name descname">composition</code><a class="headerlink" href="#mdma.snapshot.Snapshot.composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compositional make up of each species.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.concentration">
 <em class="property">property </em><code class="sig-name descname">concentration</code><a class="headerlink" href="#mdma.snapshot.Snapshot.concentration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concentrations of each species.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.coordinates">
 <em class="property">property </em><code class="sig-name descname">coordinates</code><a class="headerlink" href="#mdma.snapshot.Snapshot.coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for snapshot coordinates.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.copy">
 <code class="sig-name descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the snapshot.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.d">
 <em class="property">property </em><code class="sig-name descname">d</code><a class="headerlink" href="#mdma.snapshot.Snapshot.d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dimensionality of configuration space.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.density">
 <em class="property">property </em><code class="sig-name descname">density</code><a class="headerlink" href="#mdma.snapshot.Snapshot.density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Density of configuration from box dimensions.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.n">
 <em class="property">property </em><code class="sig-name descname">n</code><a class="headerlink" href="#mdma.snapshot.Snapshot.n" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of particles in snapshot.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.natoms">
 <em class="property">property </em><code class="sig-name descname">natoms</code><a class="headerlink" href="#mdma.snapshot.Snapshot.natoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of particles in snapshot.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.read_single">
-<em class="property">classmethod </em><code class="sig-name descname">read_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.read_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.read_single" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">read_single</code><span class="sig-paren">(</span><em class="sig-param">path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.read_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.read_single" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a single snapshot from the disk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -316,15 +316,15 @@ time: time or frame of the snapshot within a trajectory</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">snapshot</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;snapshot.atom&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">snapshot</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;snapshot.atom&#39;</span><span class="p">)</span>
 <span class="go">&lt;snapshot n=10976 t=0&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.read_trajectory">
-<em class="property">classmethod </em><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em>, <em class="sig-param"><span class="n">max_frames</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param">path_or_file</em>, <em class="sig-param">max_frames=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a trajectory (i.e. multiple snapshots) from the disk.</p>
 <p>Example where trajectory.atom is an atom file containing two snapshots:
 &gt;&gt;&gt; list(read(‘trajectory.atom’, 2))
@@ -351,21 +351,21 @@ time: time or frame of the snapshot within a trajectory</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.shape">
 <em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#mdma.snapshot.Snapshot.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shape of particle coordinates, i.e. [n, d].</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.volume">
 <em class="property">property </em><code class="sig-name descname">volume</code><a class="headerlink" href="#mdma.snapshot.Snapshot.volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Volume of system box.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.snapshot.Snapshot.write">
-<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#Snapshot.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.Snapshot.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dump the snapshot to a file in LAMMPS (.atom) format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -376,9 +376,9 @@ time: time or frame of the snapshot within a trajectory</p>
 
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.snapshot.stream_safe_open">
-<code class="sig-prename descclassname">mdma.snapshot.</code><code class="sig-name descname">stream_safe_open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'r'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#stream_safe_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.stream_safe_open" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.snapshot.</code><code class="sig-name descname">stream_safe_open</code><span class="sig-paren">(</span><em class="sig-param">path_or_file</em>, <em class="sig-param">mode='r'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/snapshot.html#stream_safe_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.snapshot.stream_safe_open" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager for parsers which accept an open file stream or a file path to open.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -405,15 +405,15 @@ simplified interface to this class.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py class">
+<dl class="class">
 <dt id="mdma.xyz.XYZSnapshot">
-<em class="property">class </em><code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">XYZSnapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">array([], shape=0, 0, dtype=float64)</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#XYZSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.XYZSnapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">XYZSnapshot</code><span class="sig-paren">(</span><em class="sig-param">x=array([]</em>, <em class="sig-param">shape=(0</em>, <em class="sig-param">0)</em>, <em class="sig-param">dtype=float64)</em>, <em class="sig-param">box=None</em>, <em class="sig-param">species=None</em>, <em class="sig-param">time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#XYZSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.XYZSnapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mdma.snapshot.Snapshot" title="mdma.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in XYZ (.xyz) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="py method">
+<dl class="method">
 <dt id="mdma.xyz.XYZSnapshot.read">
-<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_or_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#XYZSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.XYZSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#XYZSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.XYZSnapshot.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a snapshot from a file, overwriting any existing data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -427,27 +427,27 @@ simplified interface to this class.</p>
 
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.xyz.read">
-<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a single snapshot from the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.xyz.read_trajectory">
-<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">read_trajectory</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.read_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a trajectory (i.e. multiple snapshots) from the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.xyz.write">
-<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">species=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em>, <em class="sig-param">species=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrtie a single configuration to the disk.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.xyz.write_trajectory">
-<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">write_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#write_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.write_trajectory" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.xyz.</code><code class="sig-name descname">write_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/xyz.html#write_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.xyz.write_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a configuration container to the disk.</p>
 </dd></dl>
 
@@ -473,7 +473,7 @@ simplified interface to this class.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Joshua Robinson.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>
 </html>

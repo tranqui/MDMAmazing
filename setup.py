@@ -2,14 +2,22 @@
 
 from setuptools import setup, Extension, find_packages
 from glob import glob
-import pybind11, sys, os
+import sys, os
+
+required_modules = ['numpy', 'scipy', 'pandas', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
+if '--with-mpi' in sys.argv:
+    required_modules += ['mpi4py']
+
+requirements = []
+for module in required_modules:
+    try: exec("import %s" % module)
+    except: requirements += [module]
 
 ext_modules = []
-install_requires=['numpy', 'scipy', 'pandas', 'mpi4py', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
-
 if '--with-pybind11' in sys.argv:
+    import pybind11
     sys.argv.remove('--with-pybind11')
-    install_requires += ['pybind11']
+    requirements += ['pybind11']
 
     cpp_args = ['-std=c++14', '-mtune=native', '-march=native', '-Ofast', '-Wall', '-Wextra']
     link_args =  []
@@ -36,9 +44,9 @@ setup(
     author_email='joshua.robinson@bristol.ac.uk',
     url='https://github.com/tranqui/MDMAmazing.git',
     license='GNU General Public License v3.0',
-    version='1.0',
+    version='1.0.1a',
     package_dir={'': 'src'},
     packages=find_packages('src'),
     ext_modules=ext_modules,
-    install_requires=['pybind11']
+    install_requires=requirements
  )

@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>mdma.spatial package &#8212; MDMAmazing 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="mdma.lammps package" href="mdma.lammps.html" /> 
@@ -42,9 +42,9 @@
 <span id="mdma-spatial-periodic-module"></span><h2>mdma.spatial.periodic module<a class="headerlink" href="#module-mdma.spatial.periodic" title="Permalink to this headline">¶</a></h2>
 <p>Module defining helper functions for distance calculations in periodic boundary
 conditions.</p>
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.spatial.periodic.delta">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x1</span></em>, <em class="sig-param"><span class="n">x2</span></em>, <em class="sig-param"><span class="n">box</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displacement between two sets of points in a d-dimensional periodic space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -64,9 +64,9 @@ conditions.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.spatial.periodic.distance">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x1</span></em>, <em class="sig-param"><span class="n">x2</span></em>, <em class="sig-param"><span class="n">box</span></em>, <em class="sig-param"><span class="n">correct_drift</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.distance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">distance</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em>, <em class="sig-param">correct_drift=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Distance between two sets of points in a d-dimensional periodic space.</p>
 <p>This functions analagously to numpy.spatial.cdist.</p>
 <dl class="field-list simple">
@@ -90,9 +90,9 @@ where displacements are wrapped inside the box boundaries
 </dl>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.spatial.periodic.pdist">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">pdist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">box</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#pdist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.pdist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">pdist</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#pdist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.pdist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pairwise distances between points in a d-dimensional periodic space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -110,9 +110,9 @@ where displacements are wrapped inside the box boundaries
 </dl>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.spatial.periodic.self_intermediate_scattering_function">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_intermediate_scattering_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x1</span></em>, <em class="sig-param"><span class="n">x2</span></em>, <em class="sig-param"><span class="n">box</span></em>, <em class="sig-param"><span class="n">q</span><span class="o">=</span><span class="default_value">6.283185307179586</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_intermediate_scattering_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_intermediate_scattering_function" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_intermediate_scattering_function</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em>, <em class="sig-param">q=6.283185307179586</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_intermediate_scattering_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_intermediate_scattering_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Self intermediate scattering function between two configurations of points.</p>
 <p>The correlation function is defined as the Fourier transform of the
 self part of the
@@ -145,9 +145,9 @@ where <span class="math notranslate nohighlight">\(\sigma\)</span> is the typica
 </dl>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="mdma.spatial.periodic.self_overlap">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x1</span></em>, <em class="sig-param"><span class="n">x2</span></em>, <em class="sig-param"><span class="n">box</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_overlap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_overlap</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em>, <em class="sig-param">tol=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Self overlap between two configurations of points.</p>
 <p>Overlap is defined as:</p>
 <blockquote>
@@ -194,7 +194,7 @@ and <span class="math notranslate nohighlight">\(a\)</span> is the tolerance to 
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Joshua Robinson.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>
 </html>
