@@ -3,6 +3,12 @@
 from setuptools import setup, Extension, find_packages
 from glob import glob
 import sys, os
+import subprocess
+
+version = subprocess.check_output(["git", "describe", "--tags"]).decode('ascii').strip()
+
+with open("README.md", "r") as f:
+    long_description = f.read()
 
 required_modules = ['numpy', 'scipy', 'pandas', 'natsort', 'progressbar', 'lxml', 'beautifulsoup4']
 if '--with-mpi' in sys.argv:
@@ -38,15 +44,24 @@ if '--with-pybind11' in sys.argv:
 
 setup(
     name='MDMAmazing',
-    description='Molecular Dynamics Management and Analysis',
-    long_description=open('README.md').read(),
-    author='Joshua Robinson',
-    author_email='joshua.robinson@bristol.ac.uk',
-    url='https://github.com/tranqui/MDMAmazing.git',
+    version=version,
     license='GNU General Public License v3.0',
-    version='1.0.1a',
+
+    author='Joshua F. Robinson',
+    author_email='joshua.robinson@bristol.ac.uk',
+
+    url='https://github.com/tranqui/MDMAmazing.git',
+    description='Molecular Dynamics Management and Analysis',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+
+    python_requires='>=3',
+    ext_modules=ext_modules,
+    install_requires=requirements,
     package_dir={'': 'src'},
     packages=find_packages('src'),
-    ext_modules=ext_modules,
-    install_requires=requirements
+
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ],
  )
