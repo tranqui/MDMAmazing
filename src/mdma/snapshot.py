@@ -95,6 +95,11 @@ class Snapshot:
         return self.x.shape
 
     @property
+    def t(self):
+        """Time within a trajectory where the snapshot occurs (normally in simulation time units)."""
+        return self.time
+
+    @property
     def box_dimensions(self):
         """Dimensions of box."""
         try: return self.box[:,1] - self.box[:,0]
