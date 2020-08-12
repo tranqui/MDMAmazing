@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Examples &#8212; MDMAmazing 0.1.dev0 documentation</title>
+    <title>Examples &#8212; MDMAmazing v1.0.0-8 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -12,13 +12,14 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="mdma package" href="mdma.html" />
+    <link rel="next" title="mdma" href="modules.html" />
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.0-8 documentation</span></a></h1>
         <h2 class="heading"><span>Examples</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -28,7 +29,7 @@
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
         &#160;&#160;::&#160;&#160;
-        <a href="mdma.html">mdma package</a>&#160;&#160;»
+        <a href="modules.html">mdma</a>&#160;&#160;»
         </p>
 
       </div>
@@ -37,6 +38,119 @@
         
   <div class="section" id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reading-and-writing-snapshots">
+<h2>Reading and writing snapshots<a class="headerlink" href="#reading-and-writing-snapshots" title="Permalink to this headline">¶</a></h2>
+<p>Snapshots are the fundamental units in <a class="reference internal" href="mdma.html#module-mdma" title="mdma"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma</span></code></a> for analysis of molecular dynamics simulations.
+We provides a number of snapshot classes corresponding to different common file formats used by various molecular dynamics software.
+The main modules for this are:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="mdma.html#module-mdma.xyz" title="mdma.xyz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.xyz</span></code></a> provides <a class="reference internal" href="mdma.html#mdma.xyz.XYZSnapshot" title="mdma.xyz.XYZSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.xyz.XYZSnapshot</span></code></a> for reading XYZ format (.xyz extension)</p></li>
+<li><p><a class="reference internal" href="mdma.html#module-mdma.atom" title="mdma.atom"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.atom</span></code></a> provides <a class="reference internal" href="mdma.html#mdma.atom.AtomSnapshot" title="mdma.atom.AtomSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.atom.AtomSnapshot</span></code></a> for reading LAMMPS dump files (.atom extension)</p></li>
+<li><p><a class="reference internal" href="mdma.html#module-mdma.pdb" title="mdma.pdb"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.pdb</span></code></a> provides <a class="reference internal" href="mdma.html#mdma.pdb.PDBSnapshot" title="mdma.pdb.PDBSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.pdb.PDBSnapshot</span></code></a> for reading Protein Database format (.pdb extension)</p></li>
+<li><p><a class="reference internal" href="mdma.dynamo.html#module-mdma.dynamo" title="mdma.dynamo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.dynamo</span></code></a> provides <a class="reference internal" href="mdma.dynamo.html#mdma.dynamo.xmlsnapshot.DynamoSnapshot" title="mdma.dynamo.xmlsnapshot.DynamoSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.dynamo.xmlsnapshot.DynamoSnapshot</span></code></a> for reading DynamO format (.xml extension)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If your desired file format is not in the above list, then you can create a new class by deriving from <a class="reference internal" href="mdma.html#mdma.snapshot.Snapshot" title="mdma.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot</span></code></a> following the templates above.
+If you are unsure how to do this, then feel free to submit a request that support for your file format be added to the <a class="reference external" href="https://github.com/tranqui/MDMAmazing/issues">GitHub issue tracker</a> or contact the <a class="reference external" href="index.html#author">author</a> directly with your request.</p>
+</div>
+<p>Each of the classes contain different information depending on the file format.
+Each of the above modules provides a <code class="code docutils literal notranslate"><span class="pre">read</span></code> function to read a single snapshot from a file (or an open filestream).</p>
+<p>To read a single snapshot from the LAMMPS file <cite>my_snapshot.atom</cite> we run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span>
+<span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;my_snapshot.atom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Equivalently we could pass an open filestream as in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_snapshot.atom&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+   <span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Whichever method used, the above examples will load the data into the variable <code class="code docutils literal notranslate"><span class="pre">snap</span></code> which can then be used. For example, we can obtain the number of particles, the time (in simulation time units) and the particle coordinates via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">natoms</span>
+<span class="go">10976</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">time</span>
+<span class="go">1234</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">coordinates</span>
+<span class="go">array([[52.631  , 54.3353 , 56.8596 ],</span>
+<span class="go">       [ 6.94414, 54.7188 , 50.713  ],</span>
+<span class="go">       [48.832  ,  1.72831,  2.68473],</span>
+<span class="go">       ...,</span>
+<span class="go">       [14.4879 , 44.3192 , 56.926  ],</span>
+<span class="go">       [21.4345 , 44.3192 , 31.5277 ],</span>
+<span class="go">       [10.4642 , 20.0305 , 31.3072 ]], dtype=float128)</span>
+</pre></div>
+</div>
+<p>Or we can use the following equivalent short-hand names for these variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">n</span>
+<span class="go">10976</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">t</span>
+<span class="go">1234</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">x</span>
+<span class="go">array([[52.631  , 54.3353 , 56.8596 ],</span>
+<span class="go">       [ 6.94414, 54.7188 , 50.713  ],</span>
+<span class="go">       [48.832  ,  1.72831,  2.68473],</span>
+<span class="go">       ...,</span>
+<span class="go">       [14.4879 , 44.3192 , 56.926  ],</span>
+<span class="go">       [21.4345 , 44.3192 , 31.5277 ],</span>
+<span class="go">       [10.4642 , 20.0305 , 31.3072 ]], dtype=float128)</span>
+</pre></div>
+</div>
+<p>The simulation box and its length in each dimension can be obtained via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">box</span>
+<span class="go">array([[ 0.    , 58.2363],</span>
+<span class="go">       [ 0.    , 58.2363],</span>
+<span class="go">       [ 0.    , 58.2363]], dtype=float128)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">box_dimensions</span>
+<span class="go">array([58.2363, 58.2363, 58.2363], dtype=float128)</span>
+</pre></div>
+</div>
+<p>Each row of the member variable <code class="code docutils literal notranslate"><span class="pre">snap.box</span></code> describes the left and right positions of a rectangular box in that dimension. Each entry of <code class="code docutils literal notranslate"><span class="pre">snap.box_dimensions</span></code> gives the length (right - left). This convention is used throughout the <a class="reference internal" href="mdma.html#module-mdma" title="mdma"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma</span></code></a> package.</p>
+<p>The chemical species are obtained with the <code class="code docutils literal notranslate"><span class="pre">snap.species</span></code> member variable, i.e.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">snap</span><span class="o">.</span><span class="n">species</span>
+<span class="go">array([2, 1, 1, ..., 1, 2, 1])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Which member variables are contained in the snapshot object will depend on the file format.
+Consult the documentation for the specific module to learn what data is contained in the particular snapshot.</p>
+<p>For example, the XYZ format does not state the simulation time so this will be absent from an <a class="reference internal" href="mdma.html#mdma.xyz.XYZSnapshot" title="mdma.xyz.XYZSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.xyz.XYZSnapshot</span></code></a> object, and may produce an error if you try to access it. The XYZ file format also does not define a box, so it will try to approximate a box from the coordinates which can lead to errors in the analysis. In general, it is better to use other file formats that contain more simulation information.</p>
+</div>
+<p>If you know the file contains many snapshots (e.g. in a trajectory), then you have to open it as a filestream so that the file will not be closed upon reading each snapshot. To read in 10 snapshots from a file try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_trajectory.atom&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="c1"># your code processing the snapshot goes here</span>
+</pre></div>
+</div>
+<p>This example hard-codes the number of snapshots to read. If you do not know the number in advance, we provide a convenience function <cite>read_trajectory</cite> for each file type which returns a generator that can be looped over until the end of the file. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="s1">&#39;my_trajectory.atom&#39;</span><span class="p">):</span>
+    <span class="c1"># your code processing the snapshot goes here</span>
+</pre></div>
+</div>
+<p>The previous two examples are convenient for processing large trajectories because only a single snapshot is loaded into memory at one time. Sometimes it is necessary to load the entire trajectory into memory, which can be done as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trajectory</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="s1">&#39;my_trajectory.atom&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="p">:</span>
+    <span class="c1"># your code processing the snapshot goes here</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful when reading an entire trajectory into memory, as this can easily consume a large portion of available resources for large systems and/or long trajectories.</p>
+</div>
+<p>For other fileformats replace <code class="code docutils literal notranslate"><span class="pre">atom</span></code> in the above examples with any of the other modules listed at the start of this section. For example, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">xyz</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="s1">&#39;my_trajectory.xyz&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>to read in a trajectory in XYZ format.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Show how to write files in each format.</p>
+</div>
+</div>
 <div class="section" id="creating-and-running-a-lammps-simulation">
 <h2>Creating and running a LAMMPS simulation<a class="headerlink" href="#creating-and-running-a-lammps-simulation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="initialising-and-running-the-simulations">
@@ -60,22 +174,19 @@
 </div>
 <div class="section" id="processing-the-results">
 <h3>Processing the results<a class="headerlink" href="#processing-the-results" title="Permalink to this headline">¶</a></h3>
-<p>To write a snapshot to a file we can use the atom module:</p>
+<p>To write a snapshot to a file we can use the native LAMMPS dump files:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This will create a file in the current directory named <cite>dump.atom</cite> storing the snapshot in LAMMPS’
-atom format.</p>
-<p>Sometimes it is desirable to save the coordinates in rescaled
-coordinates which are bounded between 0 and 1, in which case we can do:</p>
+<p>This will create a file in the current directory named <cite>dump.atom</cite> storing the snapshot in LAMMPS’ atom format.</p>
+<p>Sometimes it is desirable to save the coordinates in rescaled coordinates which are bounded between 0 and 1, in which case we can do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atom_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="s1">&#39;zs&#39;</span><span class="p">]</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">write_dump</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">atom_columns</span><span class="p">,</span> <span class="s1">&#39;modify&#39;</span><span class="p">,</span> <span class="s1">&#39;pbc&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Alternatively, we can use the atom module to write the coordinates. This has the advantage of
-being more transparent and flexible due to being written in python, at the cost of slower
-performance:</p>
+<p>Alternatively, we can use the <a class="reference internal" href="mdma.html#module-mdma.atom" title="mdma.atom"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.atom</span></code></a> module to write the coordinates (see also <a class="reference external" href="#reading-and-writing-snapshots">above</a> for more comprehensive overview of reading/writing snapshots).
+This has the advantage of being more transparent and flexible due to being written in python, at the cost of slower performance:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">atom</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sim</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">box</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">sim</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
@@ -98,13 +209,14 @@ To read a snapshot previously stored as an atom file we can do:</p>
 </div>
 <div class="section" id="creating-and-running-a-dynamo-simulation">
 <h2>Creating and running a DynamO simulation<a class="headerlink" href="#creating-and-running-a-dynamo-simulation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>Initialising and running the simulations<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Initialising and running the simulations<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>Coming soon.</p>
 </div>
-<div class="section" id="id2">
-<h3>Processing the results<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<p>Suppose we have simulated a hard sphere system and produced a configuration file <cite>config.end.xml</cite> in the current directory. To read this file and convert it into the more flexible LAMMPS format we can try:</p>
+<div class="section" id="id3">
+<h3>Processing the results<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Suppose we have simulated a hard sphere system and produced a configuration file <cite>config.end.xml</cite> in the current directory.
+To read this file and convert it into the more flexible LAMMPS format we can try:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">dynamo</span><span class="p">,</span> <span class="n">atom</span>
 <span class="n">snap</span> <span class="o">=</span> <span class="n">dynamo</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;config.end.xml&#39;</span><span class="p">)</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;dump.atom&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -114,9 +226,132 @@ To read a snapshot previously stored as an atom file we can do:</p>
 <p>The file <cite>dump.atom</cite> will be created, ready for analysis or visualisation (with e.g. <a class="reference external" href="https://ovito.org/">ovito</a>).</p>
 </div>
 </div>
-<div class="section" id="computing-intermediate-scattering-functions">
-<h2>Computing intermediate scattering functions<a class="headerlink" href="#computing-intermediate-scattering-functions" title="Permalink to this headline">¶</a></h2>
-<p>Coming soon.</p>
+<div class="section" id="common-two-point-correlation-functions">
+<h2>Common two-point correlation functions<a class="headerlink" href="#common-two-point-correlation-functions" title="Permalink to this headline">¶</a></h2>
+<p>We are going to explore how to obtain some two-point functions commonly used to analyse molecular dynamics simulations, of the general form</p>
+<div class="math notranslate nohighlight">
+\[F = F(\vec{x}_1, \vec{x}_2)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\vec{x}_{\{1,2\}}\)</span> are two sets of coordinates that could correspond to two different systems, or the same system at two different times.
+We require that the number of particles <span class="math notranslate nohighlight">\(N\)</span> (and dimensions) are the same for both systems.
+We will run through examples of how to calculate some common correlation functions, then we will show how to average these correlation functions over a trajectory to obtain correlation functions for two-points in time.</p>
+<p>Spatial correlation functions are defined within the submodule <a class="reference internal" href="mdma.spatial.html#module-mdma.spatial" title="mdma.spatial"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.spatial</span></code></a>.
+Currently only simulations in periodic boxes are supported, so the only module there is <a class="reference internal" href="mdma.spatial.html#module-mdma.spatial.periodic" title="mdma.spatial.periodic"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.spatial.periodic</span></code></a>.
+In all of the examples in subsequent sections this is assumed to have been imported via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma.spatial</span> <span class="kn">import</span> <span class="n">periodic</span>
+</pre></div>
+</div>
+<p>We assume that two snapshots are loaded called <code class="code docutils literal notranslate"><span class="pre">snap1</span></code> and <code class="code docutils literal notranslate"><span class="pre">snap2</span></code>, that correspond to the two systems above.
+See the <a class="reference external" href="#reading-and-writing-snapshots">first section</a> for examples showing how to read snapshots.</p>
+<div class="section" id="displacements">
+<h3>Displacements<a class="headerlink" href="#displacements" title="Permalink to this headline">¶</a></h3>
+<p>One of the simplest quantities for spatial correlations is the displacement between two sets of coordinates, which is crucial for calculating other more interesting quantities.
+In the absence of periodic boundary conditions, displacements are extremely simple, i.e. we take the difference:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dx</span> <span class="o">=</span> <span class="n">snap1</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+</div>
+<p>However, with periodic boundary conditions we have to take into account the wrapping at the boundaries.
+To this we provide the following functions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.delta" title="mdma.spatial.periodic.delta"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.delta()</span></code></a>: calculates the displacement between particles with the same indices in the two systems</p></li>
+<li><p><a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.distance" title="mdma.spatial.periodic.distance"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.distance()</span></code></a>: calculates the <span class="math notranslate nohighlight">\(N\)</span> distances between particles with the same indices in the two systems</p></li>
+<li><p><a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.pdist" title="mdma.spatial.periodic.pdist"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.pdist()</span></code></a>: calculates all <span class="math notranslate nohighlight">\(N(N-1)/2\)</span> distances between all particles within a <em>single</em> system. This is the periodic equivalent to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html">scipy.spatial.distance.pdist</a>.</p></li>
+</ul>
+<p>The equivalent of the above example for periodic systems would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dx</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We assume the box dimensions are the same in both systems. We also make this assumption in all subsequent examples.
+If the box size differs then then the correlation functions will produce erroneous results.</p>
+</div>
+</div>
+<div class="section" id="self-overlap">
+<h3>Self-overlap<a class="headerlink" href="#self-overlap" title="Permalink to this headline">¶</a></h3>
+<p>The self-overlap is defined as</p>
+<div class="math notranslate nohighlight">
+\[Q(\vec{x}_1, \vec{x}_2; \delta) = \frac{1}{N} \sum_{k=1}^N \Theta\left( \left| \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right| - \delta \right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Theta(\cdots)\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Heaviside_step_function">Heaviside step function</a>, <span class="math notranslate nohighlight">\(\vec{x}_{\{1,2\}}^{(k)}\)</span> indicates the kth particle position in the each system and <span class="math notranslate nohighlight">\(\delta\)</span> is a small parameter that determines whether particles are sufficiently close to be considered to overlap.
+<span class="math notranslate nohighlight">\(\delta\)</span> is typically taken to be <span class="math notranslate nohighlight">\(0.3\sigma\)</span> where <span class="math notranslate nohighlight">\(\sigma\)</span> is the (effective) particle diameter.</p>
+<p>To compute this quantity we provide <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a>, which can be used via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_overlap</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Refer to the documentation of <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a> for descriptions of the arguments.</p>
+<div class="admonition-todo admonition" id="id5">
+<p class="admonition-title">Todo</p>
+<p>Show how to calculate the overlap between two clusters (not periodic), which requires finding the optimal alignment.</p>
+</div>
+</div>
+<div class="section" id="intermediate-scattering-function">
+<h3>Intermediate scattering function<a class="headerlink" href="#intermediate-scattering-function" title="Permalink to this headline">¶</a></h3>
+<p>The self intermediate scattering function (ISF) is defined as the Fourier transform of the self part of the <a class="reference external" href="https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function">van Hove function</a>:</p>
+<div class="math notranslate nohighlight">
+\[F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \left\langle \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)} \right\rangle\]</div>
+<p><span class="math notranslate nohighlight">\(|\vec{q}|\)</span> is typically taken to be <span class="math notranslate nohighlight">\(2\pi / \sigma\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We assume isotropy and <span class="math notranslate nohighlight">\(d=3\)</span> so <span class="math notranslate nohighlight">\(\vec{q} \to |\vec{q}|\)</span>, and the exponential reduces to a <a class="reference external" href="https://en.wikipedia.org/wiki/Sinc_function">sinc</a> function.</p>
+</div>
+<div class="admonition-todo admonition" id="id6">
+<p class="admonition-title">Todo</p>
+<p>Replace sinc implementation with a spherical Bessel function for arbitrary <span class="math notranslate nohighlight">\(d\)</span>.</p>
+</div>
+<p>To compute this quantity we provide <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_intermediate_scattering_function" title="mdma.spatial.periodic.self_intermediate_scattering_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_intermediate_scattering_function()</span></code></a>, which can be used via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The above example will give erroneous results in general, because the self-ISF function takes a fourth argument <span class="math notranslate nohighlight">\(|\vec{q}|\)</span> which we have ignored.
+By default this function sets <span class="math notranslate nohighlight">\(|\vec{q}| = 2\pi\)</span> if this is not specified, which implicitly assumes the effective diameter <span class="math notranslate nohighlight">\(\sigma = 1\)</span>.
+In general you must pass the wavenumber explicitly to get reasonable results.
+Refer to the documentation <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_intermediate_scattering_function" title="mdma.spatial.periodic.self_intermediate_scattering_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_intermediate_scattering_function()</span></code></a> for descriptions of the additional arguments.</p>
+</div>
+</div>
+<div class="section" id="averaging-temporal-correlation-functions-over-trajectories">
+<h3>Averaging temporal correlation functions over trajectories<a class="headerlink" href="#averaging-temporal-correlation-functions-over-trajectories" title="Permalink to this headline">¶</a></h3>
+<p>A common operation is to take some two-point correlation function, and find its average value in equilibrium (i.e. assuming time-translation invariance) e.g.</p>
+<div class="math notranslate nohighlight">
+\[\langle A(t) A(t') \rangle \to \langle A(t) A(t + \delta t) \rangle\]</div>
+<p>for some observable <span class="math notranslate nohighlight">\(A(t)\)</span>.
+Evaluating this quantity over a trajectory strictly requires averaging over all the pairs of snapshots in the trajectory, although in practice a subset usually suffices.</p>
+<p>Assuming we have loaded a trajectory into the variable <code class="code docutils literal notranslate"><span class="pre">trajectory</span></code> (see the <a class="reference external" href="#reading-and-writing-snapshots">Reading and writing snapshots</a> for examples showing how to do this).
+We can obtain a quick estimate of what the correlation function looks like by only comparing with the first snapshot, i.e.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
+<span class="n">snap1</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)):</span>
+    <span class="n">snap2</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span>
+    <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, we have assumed that the box dimensions and number of particles are constant throughout the trajectory.
+Plotting the variable <span class="math notranslate nohighlight">\(F\)</span> at this point can give a rough idea of how it is varying.</p>
+<p>The above example will typically feature a lot of noise because each value of <span class="math notranslate nohighlight">\(\delta t\)</span> only contains a single sample.
+In general, it is much better to perform the average via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
+<span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dt</span>
+        <span class="n">snap1</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">snap2</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+    <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span>
+</pre></div>
+</div>
+<p>This code snippet evaluates all <span class="math notranslate nohighlight">\(m(m-1)/2\)</span> pairs of snapshots, where <span class="math notranslate nohighlight">\(m\)</span> is the number of snapshots, and can be quite slow.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Replace <code class="code docutils literal notranslate"><span class="pre">self_intermediate_scattering_function</span></code> with the correlation function of your choice in the examples above.</p>
+</div>
+<div class="admonition-todo admonition" id="id8">
+<p class="admonition-title">Todo</p>
+<p>Vectorise the above and create a canonical implementation that we can use instead of having to do the looping manually.</p>
+</div>
+</div>
 </div>
 <div class="section" id="parallel-analysis-with-mpi">
 <h2>Parallel analysis with MPI<a class="headerlink" href="#parallel-analysis-with-mpi" title="Permalink to this headline">¶</a></h2>
@@ -146,7 +381,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 </pre></div>
 </div>
 <p>Then, running the program above with 3 cores produces the following output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="n">python3</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mpirun</span> <span class="o">-</span><span class="n">n</span> <span class="mi">3</span> <span class="n">python</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
 <span class="go">0 [&#39;6.txt&#39;, &#39;1.txt&#39;, &#39;8.txt&#39;]</span>
 <span class="go">1 [&#39;3.txt&#39;, &#39;4.txt&#39;, &#39;7.txt&#39;]</span>
 <span class="go">2 [&#39;5.txt&#39;, &#39;2.txt&#39;]</span>
@@ -164,7 +399,7 @@ To read a snapshot previously stored as an atom file we can do:</p>
 </pre></div>
 </div>
 <p>Note that running the program without the <code class="code docutils literal notranslate"><span class="pre">mpirun</span></code> command will use normal serial analysis:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python3</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="n">example</span><span class="o">.</span><span class="n">py</span>
 <span class="go">0 [&#39;1.txt&#39;, &#39;2.txt&#39;, &#39;3.txt&#39;, &#39;4.txt&#39;, &#39;5.txt&#39;, &#39;6.txt&#39;, &#39;7.txt&#39;, &#39;8.txt&#39;]</span>
 <span class="go">0 file 1.txt contains: 1</span>
 <span class="go">0 file 2.txt contains: 2</span>
@@ -189,13 +424,13 @@ To read a snapshot previously stored as an atom file we can do:</p>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
         &#160;&#160;::&#160;&#160;
-        <a href="mdma.html">mdma package</a>&#160;&#160;»
+        <a href="modules.html">mdma</a>&#160;&#160;»
         </p>
 
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Joshua Robinson.
+        &#169; Copyright 2018, Joshua F. Robinson.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>

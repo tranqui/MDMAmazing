@@ -1,10 +1,13 @@
 Getting started
 ###############
 
-.. warning:: I have only tried installing this on my own (GNU/Linux) machine, so some of these steps may fail on other systems particularly on Windows or Mac OS X operating systems. If you encounter any problems or have any suggestions please contact the `author <index.html#author>`_.
+
+.. note:: I have only tried installing this on my own (GNU/Linux) machine, so some of these steps may fail on other systems particularly on Windows or Mac OS X operating systems. If you encounter any problems or have any suggestions please contact the `author <index.html#author>`_.
+
 
 Prerequisites
 =============
+
 
 Python 3
 --------
@@ -19,8 +22,10 @@ Parallelisation with MPI
 
 Parallelisation is possible using Message Passing Interface (MPI). If you wish to use these features you will need a working MPI installation (e.g. `Open MPI <https://www.open-mpi.org/>`_) on your system, and you will need the `mpi4py <https://mpi4py.readthedocs.io/en/stable/>`_ module for python bindings.
 
+
 Installation
 ============
+
 
 The repository is hosted at `<https://github.com/tranqui/MDMAmazing>`_.
 
@@ -43,13 +48,17 @@ If you wish to use parallelisation and do not have the `mpi4py <https://mpi4py.r
 
   python3 setup.py install --user --with-mpi
 
+
 Optional: Installing LAMMPS
 ===========================
+
 
 To use the wrapper for LAMMPS, it must be compiled as a shared library and PyLammps must be installed.
 Follow the instructions  `here <https://lammps.sandia.gov/doc/Howto_pylammps.html#system-wide-installation>`_ for details of this process.
 
+
 Optional: Installing DynamO
 ===========================
+
 
 Coming soon.

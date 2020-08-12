@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>mdma.spatial package &#8212; MDMAmazing 0.1.dev0 documentation</title>
+    <title>mdma.spatial package &#8212; MDMAmazing v1.0.0-8 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <link rel="prev" title="mdma.lammps package" href="mdma.lammps.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.0-8 documentation</span></a></h1>
         <h2 class="heading"><span>mdma.spatial package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -44,14 +44,14 @@
 conditions.</p>
 <dl class="function">
 <dt id="mdma.spatial.periodic.delta">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displacement between two sets of points in a d-dimensional periodic space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x1</strong> (<em>numpy.ndarray</em>) – An n by d array for first set of n points in a d-dimensional space.</p></li>
 <li><p><strong>x2</strong> (<em>numpy.ndarray</em>) – An n by d array for second set of n points in a d-dimensional space.</p></li>
-<li><p><strong>box</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
+<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -66,7 +66,7 @@ conditions.</p>
 
 <dl class="function">
 <dt id="mdma.spatial.periodic.distance">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">distance</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em>, <em class="sig-param">correct_drift=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.distance" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">distance</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions</em>, <em class="sig-param">correct_drift=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Distance between two sets of points in a d-dimensional periodic space.</p>
 <p>This functions analagously to numpy.spatial.cdist.</p>
 <dl class="field-list simple">
@@ -74,13 +74,13 @@ conditions.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x1</strong> (<em>numpy.ndarray</em>) – An n by d array for first set of n points in a d-dimensional space.</p></li>
 <li><p><strong>x2</strong> (<em>numpy.ndarray</em>) – An n by d array for second set of n points in a d-dimensional space.</p></li>
-<li><p><strong>box</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
+<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
 <li><p><strong>correct_drift</strong> (<em>bool</em>) – Whether to correct for drift in the centre of mass.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The n distances i.e.
-<span class="math notranslate nohighlight">\(\{|\mathbf{x}_2^{(i)} - \mathbf{x}_1^{(i)}|\}_{i=1}^n\)</span>,
+<span class="math notranslate nohighlight">\(\{|\vec{x}_2^{(k)} - \vec{x}_1^{(k)}|\}_{k=1}^n\)</span>,
 where displacements are wrapped inside the box boundaries
 (i.e. the nearest image convention).</p>
 </dd>
@@ -92,13 +92,13 @@ where displacements are wrapped inside the box boundaries
 
 <dl class="function">
 <dt id="mdma.spatial.periodic.pdist">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">pdist</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#pdist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.pdist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">pdist</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">box_dimensions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#pdist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.pdist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pairwise distances between points in a d-dimensional periodic space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>numpy.ndarray</em>) – An n by d array for the n points in a d-dimensional space.</p></li>
-<li><p><strong>box</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
+<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -112,19 +112,17 @@ where displacements are wrapped inside the box boundaries
 
 <dl class="function">
 <dt id="mdma.spatial.periodic.self_intermediate_scattering_function">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_intermediate_scattering_function</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em>, <em class="sig-param">q=6.283185307179586</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_intermediate_scattering_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_intermediate_scattering_function" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_intermediate_scattering_function</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions</em>, <em class="sig-param">q=6.283185307179586</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_intermediate_scattering_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_intermediate_scattering_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Self intermediate scattering function between two configurations of points.</p>
-<p>The correlation function is defined as the Fourier transform of the
-self part of the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function">van Hove function</a>
-(also known as the dynamic structure factor):</p>
-<blockquote>
-<div><p><span class="math notranslate nohighlight">\(F(t_1, t_2; \mathbf{q}) = \frac{1}{N} \Big\langle \sum_{i=1}^N \exp{(i \mathbf{q} \cdot (\mathbf{x}_i(t_1) - \mathbf{x}_i(t_2)))} \Big\rangle\)</span></p>
-</div></blockquote>
+<p>The correlation function is defined as the Fourier transform of the self part of the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function">van Hove function</a>:</p>
+<div class="math notranslate nohighlight">
+\[F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \left\langle \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)} \right\rangle\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> is the wave vector of the Fourier transform.
 This implementation assumes isotropy, so the exponential reduces to a
 <a class="reference external" href="https://en.wikipedia.org/wiki/Sinc_function">sinc</a> function
-and only the magnitude of the wavevector matters so <span class="math notranslate nohighlight">\(q\)</span> is a scalar.</p>
+and only the magnitude of the wavevector matters so <span class="math notranslate nohighlight">\(q\)</span> is a scalar.
+<span class="math notranslate nohighlight">\(|\vec{q}|\)</span> is typically taken to be <span class="math notranslate nohighlight">\(2\pi / \sigma\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -147,22 +145,26 @@ where <span class="math notranslate nohighlight">\(\sigma\)</span> is the typica
 
 <dl class="function">
 <dt id="mdma.spatial.periodic.self_overlap">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_overlap</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box</em>, <em class="sig-param">tol=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_overlap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_overlap</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions</em>, <em class="sig-param">tol=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Self overlap between two configurations of points.</p>
 <p>Overlap is defined as:</p>
 <blockquote>
-<div><p><span class="math notranslate nohighlight">\(Q(t_1, t_2) = \frac{1}{N} \sum_{i=1}^N \Theta\Big(|\mathbf{x}_i(t_1) - \mathbf{x}_i(t_2)| - a\Big)\)</span></p>
+<div><div class="math notranslate nohighlight">
+\[Q(\vec{x}_1, \vec{x}_2; \delta) = \frac{1}{N} \sum_{k=1}^N \Theta\left( \left| \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right| - \delta \right)\]</div>
 </div></blockquote>
-<p>where <span class="math notranslate nohighlight">\(\Theta(\cdots)\)</span> is the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Heaviside_step_function">Heaviside theta function</a>
-and <span class="math notranslate nohighlight">\(a\)</span> is the tolerance to count the pair as overlapping.</p>
+<p>where <span class="math notranslate nohighlight">\(\Theta(\cdots)\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Heaviside_step_function">Heaviside step function</a>,
+<span class="math notranslate nohighlight">\(\vec{x}_{\{1,2\}}^{(k)}\)</span> indicates the kth particle position in the each system
+and <span class="math notranslate nohighlight">\(\delta\)</span> is a small parameter that determines whether particles are sufficiently
+close to be considered to overlap.
+<span class="math notranslate nohighlight">\(\delta\)</span> is typically taken to be <span class="math notranslate nohighlight">\(0.3\sigma\)</span> where <span class="math notranslate nohighlight">\(\sigma\)</span> is
+the (effective) particle diameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x1</strong> (<em>numpy.ndarray</em>) – An n by d array for first set of n points in a d-dimensional space.</p></li>
 <li><p><strong>x2</strong> (<em>numpy.ndarray</em>) – An n by d array for second set of n points in a d-dimensional space.</p></li>
-<li><p><strong>box</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
-<li><p><strong>tol</strong> (<em>bool</em>) – Tolerance to count an overlap (<span class="math notranslate nohighlight">\(a\)</span> in the above equation).</p></li>
+<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
+<li><p><strong>tol</strong> (<em>bool</em>) – Tolerance to count an overlap (<span class="math notranslate nohighlight">\(\delta\)</span> in the above equation).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -193,7 +195,7 @@ and <span class="math notranslate nohighlight">\(a\)</span> is the tolerance to 
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Joshua Robinson.
+        &#169; Copyright 2018, Joshua F. Robinson.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>

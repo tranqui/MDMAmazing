@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>MDMAmazing: Molecular Dynamics Management and Analysis &#8212; MDMAmazing 0.1.dev0 documentation</title>
+    <title>MDMAmazing: Molecular Dynamics Management and Analysis &#8212; MDMAmazing v1.0.0-8 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <link rel="next" title="Overview" href="overview.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="#">
-          <span>MDMAmazing 0.1.dev0 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.0-8 documentation</span></a></h1>
         <h2 class="heading"><span>MDMAmazing: Molecular Dynamics Management and Analysis</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -49,28 +49,50 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#python-3">Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started.html#parallelisation-with-mpi">Parallelisation with MPI</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#optional-installing-lammps">Optional: Installing LAMMPS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#optional-installing-dynamo">Optional: Installing DynamO</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#creating-and-running-a-lammps-simulation">Creating and running a LAMMPS simulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#creating-and-running-a-dynamo-simulation">Creating and running a DynamO simulation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#computing-intermediate-scattering-functions">Computing intermediate scattering functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#reading-and-writing-snapshots">Reading and writing snapshots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#creating-and-running-a-lammps-simulation">Creating and running a LAMMPS simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#initialising-and-running-the-simulations">Initialising and running the simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#processing-the-results">Processing the results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#creating-and-running-a-dynamo-simulation">Creating and running a DynamO simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#id2">Initialising and running the simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#id3">Processing the results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#common-two-point-correlation-functions">Common two-point correlation functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#displacements">Displacements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#self-overlap">Self-overlap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#intermediate-scattering-function">Intermediate scattering function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#averaging-temporal-correlation-functions-over-trajectories">Averaging temporal correlation functions over trajectories</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#parallel-analysis-with-mpi">Parallel analysis with MPI</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="mdma.html">mdma package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#subpackages">Subpackages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#module-mdma.atom">mdma.atom module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#mdma-mpi-module">mdma.mpi module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#module-mdma.pdb">mdma.pdb module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#module-mdma.snapshot">mdma.snapshot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#module-mdma.xyz">mdma.xyz module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mdma.html#module-mdma">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">mdma</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mdma.html">mdma package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#module-mdma.atom">mdma.atom module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#mdma-mpi-module">mdma.mpi module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#module-mdma.pdb">mdma.pdb module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#module-mdma.snapshot">mdma.snapshot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#module-mdma.xyz">mdma.xyz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdma.html#module-mdma">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -78,7 +100,7 @@
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p>MDMAmazing is released under the <a class="reference external" href="https://github.com/tranqui/MDMAmazing/blob/master/LICENSE">GPLv3</a> license.</p>
+<p>MDMAmazing is released under the <a class="reference external" href="https://github.com/tranqui/MDMAmazing/blob/master/LICENSE">GNU General Public License v3.0</a> license.</p>
 </div>
 <div class="section" id="author">
 <h2>Author<a class="headerlink" href="#author" title="Permalink to this headline">¶</a></h2>
@@ -122,7 +144,7 @@
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Joshua Robinson.
+        &#169; Copyright 2018, Joshua F. Robinson.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>
