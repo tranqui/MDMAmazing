@@ -396,6 +396,24 @@ You can still pass additional arguments to the correlation function by name, e.g
   from mdma import correlation
   F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25, q=2*np.pi/5)
 
+The following is a minimal working example that calculates and plots an ISF for a trajectory contained in the file `my_trajectory.atom` ::
+
+  import numpy as np
+  from mdma import atom, correlation
+  from mdma.spatial import periodic
+
+  trajectory = list(atom.read_trajectory('my_trajectory.atom'))
+  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25, q=2*np.pi)
+  dt = [snap.time for snap in trajectory]
+
+  import matplotlib.pyplot as plt
+  plt.semilogx(dt, F)
+  plt.xlabel('t')
+  plt.ylabel('F(t)')
+  plt.show()
+
+This assumes you have `matplotlib <https://matplotlib.org>`_ installed for plotting the function.
+
 .. note:: Replace :code:`self_intermediate_scattering_function` with the correlation function of your choice in the examples above.
 
 .. todo:: Vectorise the above and create a canonical implementation that we can use instead of having to do the looping manually.
