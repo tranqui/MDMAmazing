@@ -126,8 +126,8 @@ For other fileformats replace :code:`atom` in the above examples with any of the
 
 to read in a trajectory in XYZ format.
 
-Outputting snapshots to the console or writing them to files
-------------------------------------------------------------
+Printing snapshots to the console or writing them to the disk
+-------------------------------------------------------------
 
 To print the snapshot to the console in its native format we can use::
 
