@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Examples &#8212; MDMAmazing v1.0.1-3 documentation</title>
+    <title>Examples &#8212; MDMAmazing v1.0.1-4 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing v1.0.1-3 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.1-4 documentation</span></a></h1>
         <h2 class="heading"><span>Examples</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -277,7 +277,11 @@ In all of the examples in subsequent sections this is assumed to have been impor
 </pre></div>
 </div>
 <p>We assume that two snapshots are loaded called <code class="code docutils literal notranslate"><span class="pre">snap1</span></code> and <code class="code docutils literal notranslate"><span class="pre">snap2</span></code>, that correspond to the two systems above.
-See the <a class="reference external" href="#reading-and-writing-snapshots">first section</a> for examples showing how to read snapshots.</p>
+See <a class="reference external" href="#reading-and-writing-snapshots">Reading and writing snapshots</a> for examples showing how to read snapshots.</p>
+<div class="admonition-todo admonition" id="id5">
+<p class="admonition-title">Todo</p>
+<p>Generalise correlation functions for NPT simulations where the box size will fluctuate between two points in time.</p>
+</div>
 <div class="section" id="displacements">
 <h3>Displacements<a class="headerlink" href="#displacements" title="Permalink to this headline">¶</a></h3>
 <p>One of the simplest quantities for spatial correlations is the displacement between two sets of coordinates, which is crucial for calculating other more interesting quantities.
@@ -299,7 +303,7 @@ To this we provide the following functions:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We assume the box dimensions are the same in both systems. We also make this assumption in all subsequent examples.
-If the box size differs then then the correlation functions will produce erroneous results.</p>
+If the box size differs then the correlation functions will produce erroneous results.</p>
 </div>
 </div>
 <div class="section" id="self-overlap">
@@ -314,7 +318,7 @@ If the box size differs then then the correlation functions will produce erroneo
 </pre></div>
 </div>
 <p>Refer to the documentation of <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a> for descriptions of the arguments.</p>
-<div class="admonition-todo admonition" id="id4">
+<div class="admonition-todo admonition" id="id6">
 <p class="admonition-title">Todo</p>
 <p>Show how to calculate the overlap between two clusters (not periodic), which requires finding the optimal alignment.</p>
 </div>
@@ -323,13 +327,13 @@ If the box size differs then then the correlation functions will produce erroneo
 <h3>Intermediate scattering function<a class="headerlink" href="#intermediate-scattering-function" title="Permalink to this headline">¶</a></h3>
 <p>The self intermediate scattering function (ISF) is defined as the Fourier transform of the self part of the <a class="reference external" href="https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function">van Hove function</a>:</p>
 <div class="math notranslate nohighlight">
-\[F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \left\langle \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)} \right\rangle\]</div>
+\[F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)}\]</div>
 <p><span class="math notranslate nohighlight">\(|\vec{q}|\)</span> is typically taken to be <span class="math notranslate nohighlight">\(2\pi / \sigma\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We assume isotropy and <span class="math notranslate nohighlight">\(d=3\)</span> so <span class="math notranslate nohighlight">\(\vec{q} \to |\vec{q}|\)</span>, and the exponential reduces to a <a class="reference external" href="https://en.wikipedia.org/wiki/Sinc_function">sinc</a> function.</p>
 </div>
-<div class="admonition-todo admonition" id="id5">
+<div class="admonition-todo admonition" id="id7">
 <p class="admonition-title">Todo</p>
 <p>Replace sinc implementation with a spherical Bessel function for arbitrary <span class="math notranslate nohighlight">\(d\)</span>.</p>
 </div>
@@ -347,12 +351,17 @@ Refer to the documentation <a class="reference internal" href="mdma.spatial.html
 </div>
 <div class="section" id="averaging-temporal-correlation-functions-over-trajectories">
 <h3>Averaging temporal correlation functions over trajectories<a class="headerlink" href="#averaging-temporal-correlation-functions-over-trajectories" title="Permalink to this headline">¶</a></h3>
-<p>A common operation is to take some two-point correlation function, and find its average value in equilibrium (i.e. assuming time-translation invariance) e.g.</p>
+<p>A common operation is to take some two-point correlation function, and find its average value in equilibrium (where time-translation invariance is recovered) i.e.</p>
 <div class="math notranslate nohighlight">
-\[\langle A(t) A(t') \rangle \to \langle A(t) A(t + \delta t) \rangle\]</div>
-<p>for some observable <span class="math notranslate nohighlight">\(A(t)\)</span>.
-Evaluating this quantity over a trajectory strictly requires averaging over all the pairs of snapshots in the trajectory, although in practice a subset usually suffices.</p>
-<p>Assuming we have loaded a trajectory into the variable <code class="code docutils literal notranslate"><span class="pre">trajectory</span></code> (see the <a class="reference external" href="#reading-and-writing-snapshots">Reading and writing snapshots</a> for examples showing how to do this).
+\[\lim_{t \to \infty} \left \langle G(t, t') \rangle = \langle G(\delta t = t' - t) \right \rangle\]</div>
+<p>for some correlation function <span class="math notranslate nohighlight">\(G(t, t')\)</span> and where <span class="math notranslate nohighlight">\(\langle \cdots \rangle\)</span> indicates an ensemble average.
+The ensemble average equals the long-time average in equilibrium, so we can evaluate this for a long trajectory by sampling over all the pairs of snapshots in a trajectory (although in practice a subset usually suffices).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the literature on supercooled liquids a trajectory is conventionally taken to be <em>long-enough</em> for this procedure if it contains several decays of the time-correlation functions, e.g. if the ISF decays <span class="math notranslate nohighlight">\(\mathcal{O}(10)\)</span> times.
+In the latter example, by a “decay” we mean that the correlation function reaches <span class="math notranslate nohighlight">\(F(\delta t) \le 1/e\)</span> from an initial value of <span class="math notranslate nohighlight">\(F(\delta t = 0) = 1\)</span>, and the reference time is reset when this event occurs.</p>
+</div>
+<p>Assuming we have loaded a trajectory into the variable <code class="code docutils literal notranslate"><span class="pre">trajectory</span></code> (see <a class="reference external" href="#reading-and-writing-snapshots">Reading and writing snapshots</a> for examples showing how to do this).
 We can obtain a quick estimate of what the correlation function looks like by only comparing with the first snapshot, i.e.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
@@ -367,14 +376,14 @@ Plotting the variable <span class="math notranslate nohighlight">\(F\)</span> at
 <p>The above example will typically feature a lot of noise because each value of <span class="math notranslate nohighlight">\(\delta t\)</span> only contains a single sample.
 In general, it is much better to perform the average via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
 <span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)):</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span><span class="p">):</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dt</span>
         <span class="n">snap1</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">snap2</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-        <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+        <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">+=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
     <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span>
 </pre></div>
 </div>
@@ -383,7 +392,7 @@ In general, it is much better to perform the average via:</p>
 <p class="admonition-title">Note</p>
 <p>Replace <code class="code docutils literal notranslate"><span class="pre">self_intermediate_scattering_function</span></code> with the correlation function of your choice in the examples above.</p>
 </div>
-<div class="admonition-todo admonition" id="id7">
+<div class="admonition-todo admonition" id="id9">
 <p class="admonition-title">Todo</p>
 <p>Vectorise the above and create a canonical implementation that we can use instead of having to do the looping manually.</p>
 </div>

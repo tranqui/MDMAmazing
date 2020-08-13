@@ -253,7 +253,9 @@ In all of the examples in subsequent sections this is assumed to have been impor
   from mdma.spatial import periodic
 
 We assume that two snapshots are loaded called :code:`snap1` and :code:`snap2`, that correspond to the two systems above.
-See the `first section <#reading-and-writing-snapshots>`_ for examples showing how to read snapshots.
+See `Reading and writing snapshots <#reading-and-writing-snapshots>`_ for examples showing how to read snapshots.
+
+.. todo:: Generalise correlation functions for NPT simulations where the box size will fluctuate between two points in time.
 
 Displacements
 -------------
@@ -275,7 +277,7 @@ The equivalent of the above example for periodic systems would be::
   dx = periodic.delta(snap1.x, snap2.x, snap1.box_dimensions)
 
 .. note:: We assume the box dimensions are the same in both systems. We also make this assumption in all subsequent examples.
-          If the box size differs then then the correlation functions will produce erroneous results.
+          If the box size differs then the correlation functions will produce erroneous results.
 
 Self-overlap
 ------------
@@ -300,7 +302,7 @@ Intermediate scattering function
 
 The self intermediate scattering function (ISF) is defined as the Fourier transform of the self part of the `van Hove function <https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function>`_:
 
-.. math:: F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \left\langle \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)} \right\rangle
+.. math:: F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)}
 
 :math:`|\vec{q}|` is typically taken to be :math:`2\pi / \sigma`.
 
@@ -319,14 +321,17 @@ To compute this quantity we provide :func:`mdma.spatial.periodic.self_intermedia
 Averaging temporal correlation functions over trajectories
 ----------------------------------------------------------
 
-A common operation is to take some two-point correlation function, and find its average value in equilibrium (i.e. assuming time-translation invariance) e.g.\
+A common operation is to take some two-point correlation function, and find its average value in equilibrium (where time-translation invariance is recovered) i.e.\
 
-.. math:: \langle A(t) A(t') \rangle \to \langle A(t) A(t + \delta t) \rangle
+.. math:: \lim_{t \to \infty} \left \langle G(t, t') \rangle = \langle G(\delta t = t' - t) \right \rangle
 
-for some observable :math:`A(t)`.
-Evaluating this quantity over a trajectory strictly requires averaging over all the pairs of snapshots in the trajectory, although in practice a subset usually suffices.
+for some correlation function :math:`G(t, t')` and where :math:`\langle \cdots \rangle` indicates an ensemble average.
+The ensemble average equals the long-time average in equilibrium, so we can evaluate this for a long trajectory by sampling over all the pairs of snapshots in a trajectory (although in practice a subset usually suffices).
 
-Assuming we have loaded a trajectory into the variable :code:`trajectory` (see the `Reading and writing snapshots <#reading-and-writing-snapshots>`_ for examples showing how to do this).
+.. note:: In the literature on supercooled liquids a trajectory is conventionally taken to be *long-enough* for this procedure if it contains several decays of the time-correlation functions, e.g. if the ISF decays :math:`\mathcal{O}(10)` times.
+          In the latter example, by a "decay" we mean that the correlation function reaches :math:`F(\delta t) \le 1/e` from an initial value of :math:`F(\delta t = 0) = 1`, and the reference time is reset when this event occurs.
+
+Assuming we have loaded a trajectory into the variable :code:`trajectory` (see `Reading and writing snapshots <#reading-and-writing-snapshots>`_ for examples showing how to do this).
 We can obtain a quick estimate of what the correlation function looks like by only comparing with the first snapshot, i.e.::
 
   import numpy as np
@@ -343,14 +348,14 @@ The above example will typically feature a lot of noise because each value of :m
 In general, it is much better to perform the average via::
 
   import numpy as np
-  F = np.empty(len(trajectory))
+  F = np.zeros(len(trajectory))
   F[0] = 1
   for dt in range(1, len(trajectory)):
       for i in range(len(trajectory) - dt):
           j = i + dt
           snap1 = trajectory[i]
           snap2 = trajectory[j]
-          F[dt] = periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+          F[dt] += periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
       F[dt] /= len(trajectory) - dt
 
 This code snippet evaluates all :math:`m(m-1)/2` pairs of snapshots, where :math:`m` is the number of snapshots, and can be quite slow.
