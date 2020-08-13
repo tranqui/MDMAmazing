@@ -21,6 +21,14 @@ mdma.atom module
    :undoc-members:
    :show-inheritance:
 
+mdma.correlation module
+-----------------------
+
+.. automodule:: mdma.correlation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 mdma.mpi module
 ---------------
 

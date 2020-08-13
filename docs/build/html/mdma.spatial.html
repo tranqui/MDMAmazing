@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>mdma.spatial package &#8212; MDMAmazing v1.0.1-4 documentation</title>
+    <title>mdma.spatial package &#8212; MDMAmazing v1.0.1-6 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -18,7 +18,7 @@
     <link rel="prev" title="mdma.lammps package" href="mdma.lammps.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing v1.0.1-4 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.1-6 documentation</span></a></h1>
         <h2 class="heading"><span>mdma.spatial package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -112,12 +112,12 @@ where displacements are wrapped inside the box boundaries
 
 <dl class="function">
 <dt id="mdma.spatial.periodic.self_intermediate_scattering_function">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_intermediate_scattering_function</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions</em>, <em class="sig-param">q=6.283185307179586</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_intermediate_scattering_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_intermediate_scattering_function" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_intermediate_scattering_function</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions=None</em>, <em class="sig-param">q=6.283185307179586</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_intermediate_scattering_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_intermediate_scattering_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Self intermediate scattering function between two configurations of points.</p>
 <p>The correlation function is defined as the Fourier transform of the self part of the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function">van Hove function</a>:</p>
 <div class="math notranslate nohighlight">
-\[F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \left\langle \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)} \right\rangle\]</div>
+\[F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> is the wave vector of the Fourier transform.
 This implementation assumes isotropy, so the exponential reduces to a
 <a class="reference external" href="https://en.wikipedia.org/wiki/Sinc_function">sinc</a> function
@@ -126,9 +126,10 @@ and only the magnitude of the wavevector matters so <span class="math notranslat
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x1</strong> (<em>numpy.ndarray</em>) – An n by d array for first set of n points in a d-dimensional space.</p></li>
-<li><p><strong>x2</strong> (<em>numpy.ndarray</em>) – An n by d array for second set of n points in a d-dimensional space.</p></li>
-<li><p><strong>box</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
+<li><p><strong>x1</strong> (<em>snapshot</em><em> or </em><em>numpy.ndarray</em>) – Either a snapshot, or an n by d array for first set of n points in a d-dimensional space (in which case the box_dimensions must also be given).</p></li>
+<li><p><strong>x2</strong> (<em>snapshot</em><em> or </em><em>numpy.ndarray</em>) – Either a snapshot, or an n by d array for second set of n points in a d-dimensional space.</p></li>
+<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension if raw coordinates are given in x1 and x2.
+Leave this blank if you pass snapshots for x1 and x2.</p></li>
 <li><p><strong>q</strong> (<em>scalar</em>) – Magnitude of the wavevector, typically taken as <span class="math notranslate nohighlight">\(2\pi / \sigma\)</span>
 where <span class="math notranslate nohighlight">\(\sigma\)</span> is the typical particle size.</p></li>
 </ul>
@@ -145,7 +146,7 @@ where <span class="math notranslate nohighlight">\(\sigma\)</span> is the typica
 
 <dl class="function">
 <dt id="mdma.spatial.periodic.self_overlap">
-<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_overlap</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions</em>, <em class="sig-param">tol=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_overlap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mdma.spatial.periodic.</code><code class="sig-name descname">self_overlap</code><span class="sig-paren">(</span><em class="sig-param">x1</em>, <em class="sig-param">x2</em>, <em class="sig-param">box_dimensions=None</em>, <em class="sig-param">tol=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/spatial/periodic.html#self_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.spatial.periodic.self_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Self overlap between two configurations of points.</p>
 <p>Overlap is defined as:</p>
 <blockquote>
@@ -161,9 +162,10 @@ the (effective) particle diameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x1</strong> (<em>numpy.ndarray</em>) – An n by d array for first set of n points in a d-dimensional space.</p></li>
-<li><p><strong>x2</strong> (<em>numpy.ndarray</em>) – An n by d array for second set of n points in a d-dimensional space.</p></li>
-<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension.</p></li>
+<li><p><strong>x1</strong> (<em>snapshot</em><em> or </em><em>numpy.ndarray</em>) – Either a snapshot, or an n by d array for first set of n points in a d-dimensional space (in which case the box_dimensions must also be given).</p></li>
+<li><p><strong>x2</strong> (<em>snapshot</em><em> or </em><em>numpy.ndarray</em>) – Either a snapshot, or an n by d array for second set of n points in a d-dimensional space.</p></li>
+<li><p><strong>box_dimensions</strong> (<em>numpy.ndarray</em>) – A d-dimensional array giving the box width in each dimension if raw coordinates are given in x1 and x2.
+Leave this blank if you pass snapshots for x1 and x2.</p></li>
 <li><p><strong>tol</strong> (<em>bool</em>) – Tolerance to count an overlap (<span class="math notranslate nohighlight">\(\delta\)</span> in the above equation).</p></li>
 </ul>
 </dd>

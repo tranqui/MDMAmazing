@@ -291,8 +291,13 @@ where :math:`\Theta(\cdots)` is the `Heaviside step function <https://en.wikiped
 
 To compute this quantity we provide :func:`mdma.spatial.periodic.self_overlap`, which can be used via::
 
+  Q = periodic.self_overlap(snap1, snap2, tol=0.3)
+
+This can be called equivalently with the raw coordinate data, i.e.::
+
   Q = periodic.self_overlap(snap1, snap2.x, snap1.box_dimensions, tol=0.3)
 
+which is useful when you have data outside of a snapshot instance.
 Refer to the documentation of :func:`mdma.spatial.periodic.self_overlap` for descriptions of the arguments.
 
 .. todo:: Show how to calculate the overlap between two clusters (not periodic), which requires finding the optimal alignment.
@@ -311,9 +316,15 @@ The self intermediate scattering function (ISF) is defined as the Fourier transf
 
 To compute this quantity we provide :func:`mdma.spatial.periodic.self_intermediate_scattering_function`, which can be used via::
 
-  F = periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+  F = periodic.self_intermediate_scattering_function(snap1, snap2)
 
-.. warning:: The above example will give erroneous results in general, because the self-ISF function takes a fourth argument :math:`|\vec{q}|` which we have ignored.
+As before, this can be called equivalently with the raw coordinate data, i.e.::
+
+  F = periodic.self_overlap(snap1, snap2.x, snap1.box_dimensions, tol=0.3)
+
+which is useful when you have data outside of a snapshot instance.
+
+.. warning:: The above examples will give erroneous results in general, because the self-ISF function takes a fourth argument :math:`|\vec{q}|` which we have ignored.
              By default this function sets :math:`|\vec{q}| = 2\pi` if this is not specified, which implicitly assumes the effective diameter :math:`\sigma = 1`.
              In general you must pass the wavenumber explicitly to get reasonable results.
              Refer to the documentation :func:`mdma.spatial.periodic.self_intermediate_scattering_function` for descriptions of the additional arguments.
@@ -339,7 +350,7 @@ We can obtain a quick estimate of what the correlation function looks like by on
   snap1 = trajectory[0]
   for dt in range(len(trajectory)):
       snap2 = trajectory[dt]
-      F[dt] = periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+      F[dt] = periodic.self_intermediate_scattering_function(snap1, snap2)
 
 Again, we have assumed that the box dimensions and number of particles are constant throughout the trajectory.
 Plotting the variable :math:`F` at this point can give a rough idea of how it is varying.
@@ -355,10 +366,35 @@ In general, it is much better to perform the average via::
           j = i + dt
           snap1 = trajectory[i]
           snap2 = trajectory[j]
-          F[dt] += periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+          F[dt] += periodic.self_intermediate_scattering_function(snap1, snap2)
       F[dt] /= len(trajectory) - dt
 
-This code snippet evaluates all :math:`m(m-1)/2` pairs of snapshots, where :math:`m` is the number of snapshots, and can be quite slow.
+This code snippet evaluates :math:`F(\delta t)` over all :math:`m(m-1)/2` pairs of snapshots, where :math:`m` is the number of snapshots, and can be quite slow.
+A better approach is to take a subset of reference times for each :math:`\delta t` so that this average becomes :math:`\mathcal{O}(m)` rather than :math:`\mathcal{O}(m^2)`.
+When sampling a subset of reference points it is best to space them as far apart as much as possible, because adjacent snapshots (in time) will be highly correlated; to do this we use the function :func:`mdma.correlation.chunk_pairs` ::
+
+  import numpy as np
+  from mdma import correlation
+  F = np.zeros(len(trajectory))
+  F[0] = 1
+  for dt in range(1, len(trajectory)):
+      count = 0
+      for snap1, snap2 in correlation.chunk_pairs(trajectory, dt, max_samples=25):
+          F[dt] += periodic.self_intermediate_scattering_function(snap1, snap2)
+          count += 1
+      F[dt] /= count
+
+The above example will take a maximum of 25 samples for each value of :math:`\delta t` and thus involves :math:`\sim 25m` operations (though slightly fewer than this because there will not be 25 samples for the largest values of :math:`\delta t`).
+This example shows how you can start to build more sophisticated correlation functions, but if this is all you wish to do we provide :func:`mdma.correlation.two_point_time_average` with the same functionality::
+
+  from mdma import correlation
+  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25)
+
+is equivalent to the previous example and much more succinct.
+You can still pass additional arguments to the correlation function by name, e.g. if you want to set the wavenumber to :math:`2\pi / 5` (for effective particle diameters of :math:`\sigma = 5`) then you would change this to::
+
+  from mdma import correlation
+  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25, q=2*np.pi/5)
 
 .. note:: Replace :code:`self_intermediate_scattering_function` with the correlation function of your choice in the examples above.
 

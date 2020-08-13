@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Examples &#8212; MDMAmazing v1.0.1-4 documentation</title>
+    <title>Examples &#8212; MDMAmazing v1.0.1-6 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing v1.0.1-4 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.1-6 documentation</span></a></h1>
         <h2 class="heading"><span>Examples</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -314,10 +314,15 @@ If the box size differs then the correlation functions will produce erroneous re
 <p>where <span class="math notranslate nohighlight">\(\Theta(\cdots)\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Heaviside_step_function">Heaviside step function</a>, <span class="math notranslate nohighlight">\(\vec{x}_{\{1,2\}}^{(k)}\)</span> indicates the kth particle position in the each system and <span class="math notranslate nohighlight">\(\delta\)</span> is a small parameter that determines whether particles are sufficiently close to be considered to overlap.
 <span class="math notranslate nohighlight">\(\delta\)</span> is typically taken to be <span class="math notranslate nohighlight">\(0.3\sigma\)</span> where <span class="math notranslate nohighlight">\(\sigma\)</span> is the (effective) particle diameter.</p>
 <p>To compute this quantity we provide <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a>, which can be used via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_overlap</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This can be called equivalently with the raw coordinate data, i.e.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_overlap</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Refer to the documentation of <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a> for descriptions of the arguments.</p>
+<p>which is useful when you have data outside of a snapshot instance.
+Refer to the documentation of <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a> for descriptions of the arguments.</p>
 <div class="admonition-todo admonition" id="id6">
 <p class="admonition-title">Todo</p>
 <p>Show how to calculate the overlap between two clusters (not periodic), which requires finding the optimal alignment.</p>
@@ -338,12 +343,17 @@ If the box size differs then the correlation functions will produce erroneous re
 <p>Replace sinc implementation with a spherical Bessel function for arbitrary <span class="math notranslate nohighlight">\(d\)</span>.</p>
 </div>
 <p>To compute this quantity we provide <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_intermediate_scattering_function" title="mdma.spatial.periodic.self_intermediate_scattering_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_intermediate_scattering_function()</span></code></a>, which can be used via:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>As before, this can be called equivalently with the raw coordinate data, i.e.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_overlap</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which is useful when you have data outside of a snapshot instance.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The above example will give erroneous results in general, because the self-ISF function takes a fourth argument <span class="math notranslate nohighlight">\(|\vec{q}|\)</span> which we have ignored.
+<p>The above examples will give erroneous results in general, because the self-ISF function takes a fourth argument <span class="math notranslate nohighlight">\(|\vec{q}|\)</span> which we have ignored.
 By default this function sets <span class="math notranslate nohighlight">\(|\vec{q}| = 2\pi\)</span> if this is not specified, which implicitly assumes the effective diameter <span class="math notranslate nohighlight">\(\sigma = 1\)</span>.
 In general you must pass the wavenumber explicitly to get reasonable results.
 Refer to the documentation <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_intermediate_scattering_function" title="mdma.spatial.periodic.self_intermediate_scattering_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_intermediate_scattering_function()</span></code></a> for descriptions of the additional arguments.</p>
@@ -368,7 +378,7 @@ We can obtain a quick estimate of what the correlation function looks like by on
 <span class="n">snap1</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)):</span>
     <span class="n">snap2</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span>
-    <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+    <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Again, we have assumed that the box dimensions and number of particles are constant throughout the trajectory.
@@ -383,11 +393,37 @@ In general, it is much better to perform the average via:</p>
         <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">dt</span>
         <span class="n">snap1</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">snap2</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-        <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">+=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">snap1</span><span class="o">.</span><span class="n">box_dimensions</span><span class="p">)</span>
+        <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">+=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="p">)</span>
     <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span>
 </pre></div>
 </div>
-<p>This code snippet evaluates all <span class="math notranslate nohighlight">\(m(m-1)/2\)</span> pairs of snapshots, where <span class="math notranslate nohighlight">\(m\)</span> is the number of snapshots, and can be quite slow.</p>
+<p>This code snippet evaluates <span class="math notranslate nohighlight">\(F(\delta t)\)</span> over all <span class="math notranslate nohighlight">\(m(m-1)/2\)</span> pairs of snapshots, where <span class="math notranslate nohighlight">\(m\)</span> is the number of snapshots, and can be quite slow.
+A better approach is to take a subset of reference times for each <span class="math notranslate nohighlight">\(\delta t\)</span> so that this average becomes <span class="math notranslate nohighlight">\(\mathcal{O}(m)\)</span> rather than <span class="math notranslate nohighlight">\(\mathcal{O}(m^2)\)</span>.
+When sampling a subset of reference points it is best to space them as far apart as much as possible, because adjacent snapshots (in time) will be highly correlated; to do this we use the function <a class="reference internal" href="mdma.html#mdma.correlation.chunk_pairs" title="mdma.correlation.chunk_pairs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.correlation.chunk_pairs()</span></code></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">correlation</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
+<span class="n">F</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span> <span class="ow">in</span> <span class="n">correlation</span><span class="o">.</span><span class="n">chunk_pairs</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">max_samples</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+        <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">+=</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">(</span><span class="n">snap1</span><span class="p">,</span> <span class="n">snap2</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">F</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">/=</span> <span class="n">count</span>
+</pre></div>
+</div>
+<p>The above example will take a maximum of 25 samples for each value of <span class="math notranslate nohighlight">\(\delta t\)</span> and thus involves <span class="math notranslate nohighlight">\(\sim 25m\)</span> operations (though slightly fewer than this because there will not be 25 samples for the largest values of <span class="math notranslate nohighlight">\(\delta t\)</span>).
+This example shows how you can start to build more sophisticated correlation functions, but if this is all you wish to do we provide <a class="reference internal" href="mdma.html#mdma.correlation.two_point_time_average" title="mdma.correlation.two_point_time_average"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.correlation.two_point_time_average()</span></code></a> with the same functionality:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">correlation</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">correlation</span><span class="o">.</span><span class="n">two_point_time_average</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">,</span> <span class="n">max_samples</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to the previous example and much more succinct.
+You can still pass additional arguments to the correlation function by name, e.g. if you want to set the wavenumber to <span class="math notranslate nohighlight">\(2\pi / 5\)</span> (for effective particle diameters of <span class="math notranslate nohighlight">\(\sigma = 5\)</span>) then you would change this to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">correlation</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">correlation</span><span class="o">.</span><span class="n">two_point_time_average</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">,</span> <span class="n">max_samples</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Replace <code class="code docutils literal notranslate"><span class="pre">self_intermediate_scattering_function</span></code> with the correlation function of your choice in the examples above.</p>

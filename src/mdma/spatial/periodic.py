@@ -77,7 +77,7 @@ def pdist(x, box_dimensions):
         delta[:,:,c][delta[:,:,c] < -0.5*box_dimensions[c]] += box_dimensions[c]
     return squareform(numpy.linalg.norm(delta, axis=2))
 
-def self_overlap(x1, x2, box_dimensions, tol=0.3):
+def self_overlap(x1, x2, box_dimensions=None, tol=0.3):
     """ Self overlap between two configurations of points.
 
     Overlap is defined as:
@@ -93,27 +93,31 @@ def self_overlap(x1, x2, box_dimensions, tol=0.3):
     the (effective) particle diameter.
 
     Args:
-        x1 (numpy.ndarray):
-            An n by d array for first set of n points in a d-dimensional space.
-        x2 (numpy.ndarray):
-            An n by d array for second set of n points in a d-dimensional space.
+        x1 (snapshot or numpy.ndarray):
+            Either a snapshot, or an n by d array for first set of n points in a d-dimensional space (in which case the box_dimensions must also be given).
+        x2 (snapshot or numpy.ndarray):
+            Either a snapshot, or an n by d array for second set of n points in a d-dimensional space.
         box_dimensions (numpy.ndarray):
-            A d-dimensional array giving the box width in each dimension.
+            A d-dimensional array giving the box width in each dimension if raw coordinates are given in x1 and x2.
+            Leave this blank if you pass snapshots for x1 and x2.
         tol (bool):
             Tolerance to count an overlap (:math:`\delta` in the above equation).
     Returns:
         overlap (scalar):
             The self-overlap (:math:`Q` in the above equation).
     """
-    return numpy.average(distance(x1,x2,box_dimensions,True) < tol)
+    try:
+        return numpy.average(distance(x1.x, x2.x, x1.box_dimensions, True) < tol)
+    except:
+        return numpy.average(distance(x1, x2, box_dimensions, True) < tol)
 
-def self_intermediate_scattering_function(x1, x2, box_dimensions, q=2*numpy.pi):
+def self_intermediate_scattering_function(x1, x2, box_dimensions=None, q=2*numpy.pi):
     """ Self intermediate scattering function between two configurations of points.
 
     The correlation function is defined as the Fourier transform of the self part of the
     `van Hove function <https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function>`_:
 
-    .. math:: F(\\vec{x}_1, \\vec{x}_2; \\vec{q}) = \\frac{1}{N} \\left\\langle \sum_{k=1}^N \exp{\\left(i \\vec{q} \cdot \\left( \\vec{x}_1^{(k)} - \\vec{x}_2^{(k)} \\right) \\right)} \\right\\rangle
+    .. math:: F(\\vec{x}_1, \\vec{x}_2; \\vec{q}) = \\frac{1}{N} \sum_{k=1}^N \exp{\\left(i \\vec{q} \cdot \\left( \\vec{x}_1^{(k)} - \\vec{x}_2^{(k)} \\right) \\right)}
 
     where :math:`\mathbf{q}` is the wave vector of the Fourier transform.
     This implementation assumes isotropy, so the exponential reduces to a
@@ -122,12 +126,13 @@ def self_intermediate_scattering_function(x1, x2, box_dimensions, q=2*numpy.pi):
     :math:`|\\vec{q}|` is typically taken to be :math:`2\pi / \sigma`.
 
     Args:
-        x1 (numpy.ndarray):
-            An n by d array for first set of n points in a d-dimensional space.
-        x2 (numpy.ndarray):
-            An n by d array for second set of n points in a d-dimensional space.
-        box (numpy.ndarray):
-            A d-dimensional array giving the box width in each dimension.
+        x1 (snapshot or numpy.ndarray):
+            Either a snapshot, or an n by d array for first set of n points in a d-dimensional space (in which case the box_dimensions must also be given).
+        x2 (snapshot or numpy.ndarray):
+            Either a snapshot, or an n by d array for second set of n points in a d-dimensional space.
+        box_dimensions (numpy.ndarray):
+            A d-dimensional array giving the box width in each dimension if raw coordinates are given in x1 and x2.
+            Leave this blank if you pass snapshots for x1 and x2.
         q (scalar):
             Magnitude of the wavevector, typically taken as :math:`2\pi / \sigma`
             where :math:`\sigma` is the typical particle size.
@@ -136,4 +141,7 @@ def self_intermediate_scattering_function(x1, x2, box_dimensions, q=2*numpy.pi):
             The self-intermediate scattering function
             (:math:`F` in the above equation).
     """
-    return numpy.average(numpy.sinc((q/numpy.pi)*distance(x1,x2,box_dimensions,True)))
+    try:
+        return numpy.average(numpy.sinc((q/numpy.pi)*distance(x1.x, x2.x, x1.box_dimensions, True)))
+    except:
+        return numpy.average(numpy.sinc((q/numpy.pi)*distance(x1, x2, box_dimensions, True)))

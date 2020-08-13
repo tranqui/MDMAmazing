@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>mdma package &#8212; MDMAmazing v1.0.1-4 documentation</title>
+    <title>mdma package &#8212; MDMAmazing v1.0.1-6 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="mdma" href="modules.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing v1.0.1-4 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.1-6 documentation</span></a></h1>
         <h2 class="heading"><span>mdma package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -136,6 +136,226 @@ a simplified interface to this class.</p>
 <dt id="mdma.atom.write_trajectory">
 <code class="sig-prename descclassname">mdma.atom.</code><code class="sig-name descname">write_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">out=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='utf-8'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/atom.html#write_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.atom.write_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a configuration container to the disk.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mdma.correlation">
+<span id="mdma-correlation-module"></span><h2>mdma.correlation module<a class="headerlink" href="#module-mdma.correlation" title="Permalink to this headline">¶</a></h2>
+<p>Module giving helper functions for evaluating correlation functions.</p>
+<p>The main functions are:
+- pair_chunk: chunks data points into pairs for calculations involving multiple data points, e.g. correlations between snapshots in a trajectory.</p>
+<dl class="function">
+<dt id="mdma.correlation.chunk">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">chunk</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">n</em>, <em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#chunk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.chunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Break data up into (approximately) equal sized chunks for separate processing.</p>
+<p>The chunks are made as equal as possible but this is only possible exactly when the number of
+elements can be evenly divided by n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>container</em>) – data to divide</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of chunks to divide the data into</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – which entity to chunk for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>iterates through the different chunks</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>chunk (iterator)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunk</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">)))</span>
+<span class="go">0 [0, 1, 2, 3]</span>
+<span class="go">1 [4, 5, 6]</span>
+<span class="go">2 [7, 8, 9]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunk</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">)))</span>
+<span class="go">0 [0, 1, 2, 3]</span>
+<span class="go">1 [4, 5, 6, 7]</span>
+<span class="go">2 [8, 9, 10, 11]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mdma.correlation.chunk_indices">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">chunk_indices</code><span class="sig-paren">(</span><em class="sig-param">size</em>, <em class="sig-param">n</em>, <em class="sig-param">i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#chunk_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.chunk_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indices of data to divide a container into (approximately) equal sized chunks for separate processing.</p>
+<p>The chunks are made as equal as possible but this is only possible exactly when the number of
+elements can be evenly divided by n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> (<em>int</em>) – length of data to break up</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of chunks to divide the data into</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – which entity to chunk for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array containing indices for this chunk</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>indices</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">chunk_indices</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+<span class="go">0 [0, 1, 2, 3]</span>
+<span class="go">1 [4, 5, 6]</span>
+<span class="go">2 [7, 8, 9]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">chunk_indices</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+<span class="go">0 [0, 1, 2, 3]</span>
+<span class="go">1 [4, 5, 6, 7]</span>
+<span class="go">2 [8, 9, 10, 11]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mdma.correlation.chunk_pairs">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">chunk_pairs</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dt=1</em>, <em class="sig-param">max_samples=None</em>, <em class="sig-param">min_samples=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#chunk_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.chunk_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return pairs between data points in a sorted container.</p>
+<p>A helper function for computing properties which depend on multiple
+data points, e.g. correlations between organised data.</p>
+<p>If a maximum number of sample pairs is specified then the chosen
+pairs will be spread out as much as possible: this is intended to
+minimise the correlations between samples. For example, if the data
+corresponds to a trajectory in time and we are computing a short-time
+correlation function, we may specify a maximum number of samples to
+speed up calculation over a long trajectory. However, if all of the
+short time samples are taken from the start of the trajectory, these
+may not be independent due to the presence longer-time correlations.
+By spreading the pairs out we maximise the independence of the measured
+correlations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>container</em>) – samples with some sort of linear order e.g. a trajectory composed of snapshots of equal time separation.</p></li>
+<li><p><strong>dt</strong> (<em>int</em>) – distance between pairs inside the data</p></li>
+<li><p><strong>max_samples</strong> (<em>int</em>) – maximum number of pairs to return (for details see description above)</p></li>
+<li><p><strong>min_samples</strong> (<em>int</em>) – minimum number of pairs to return or else None will be returned (default=1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>collection of pairs of data points for analysis</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pairs (iterator)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunk_pairs</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)))</span>
+<span class="go">[(0, 1), (1, 2), (2, 3), (3, 4)]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunk_pairs</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">[(0, 2), (1, 3), (2, 4)]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunk_pairs</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunk_pairs</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">[(0, 2), (3, 5), (6, 8)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mdma.correlation.flatten">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flatten a list of lists into a single list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>container</em>) – a list of lists</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>flattened list</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+<span class="go">[1, 2, 3, 4, 5, 6]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mdma.correlation.one_point_time_average">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">one_point_time_average</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">func</em>, <em class="sig-param">max_samples=None</em>, <em class="sig-param">**func_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#one_point_time_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.one_point_time_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Average a one-point function over a trajectory (e.g. an observable or a spatial correlation function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trajectory</strong> (<em>container</em>) – container of snapshots forming the trajectory.</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – function to evaluate at each point in time (taking a single snapshots as its argument).</p></li>
+<li><p><strong>max_samples</strong> (<em>int</em>) – maximum snapshots to sample.</p></li>
+<li><p><strong>**func_kwargs</strong> – Additional keyword arguments are passed to the func call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The time averaged observable.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mdma.correlation.takespread">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">takespread</code><span class="sig-paren">(</span><em class="sig-param">sequence</em>, <em class="sig-param">num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#takespread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.takespread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evenly sample data points from a sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequence</strong> (<em>container</em>) – data points to sample</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – number of points to sample from sequence.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sampled data points</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>points (iterator)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">takespread</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">[0, 5]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">takespread</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
+<span class="go">[0, 4, 7]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mdma.correlation.two_point_time_average">
+<code class="sig-prename descclassname">mdma.correlation.</code><code class="sig-name descname">two_point_time_average</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">func</em>, <em class="sig-param">max_samples=None</em>, <em class="sig-param">initial_value=1</em>, <em class="sig-param">**func_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mdma/correlation.html#two_point_time_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mdma.correlation.two_point_time_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Average a two-point time correlation function over a trajectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trajectory</strong> (<em>container</em>) – ordered container of snapshots assumed to be arranged have equal time separation between adjacent snapshots (linear time).</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – correlation function to evaluate (taking two snapshots as its arguments), some general function <span class="math notranslate nohighlight">\(G(t' - t)\)</span>.</p></li>
+<li><p><strong>max_samples</strong> (<em>int</em>) – maximum number of pairs to sample over.</p></li>
+<li><p><strong>initial_value</strong> (<em>scalar</em>) – initial value for correlation function <span class="math notranslate nohighlight">\(G(0)\)</span> (default=1).</p></li>
+<li><p><strong>**func_kwargs</strong> – Additional keyword arguments are passed to the func call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The time-averaged correlation function <span class="math notranslate nohighlight">\(G(t' - t)\)</span>.
+Each element corresponds to a distinct <span class="math notranslate nohighlight">\(\delta t = t' - t\)</span> in steps of the time separation between adjacent snapshots.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
