@@ -402,10 +402,20 @@ The following is a minimal working example that calculates and plots an ISF for 
   from mdma import atom, correlation
   from mdma.spatial import periodic
 
+  # We have to load the entire trajectory into memory by casting to list(...)
+  # because the two-point correlators need to reference multiple snapshots.
   trajectory = list(atom.read_trajectory('my_trajectory.atom'))
-  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25, q=2*np.pi)
-  dt = [snap.time for snap in trajectory]
 
+  # Extract the allowable values of dt.
+  # (NB: these should be linear increments or the time-averaging in the next step will fail)
+  t0 = trajectory[0].time
+  dt = [snap.time - t0 for snap in trajectory]
+
+  # Calculate the ISF with a time-average to reduce noise.
+  sigma = 1 # set to the effective diameter for your system
+  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25, q=2*np.pi/sigma)
+
+  # Plot the function.
   import matplotlib.pyplot as plt
   plt.semilogx(dt, F)
   plt.xlabel('t')
