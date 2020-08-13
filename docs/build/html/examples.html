@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Examples &#8212; MDMAmazing v1.0.1 documentation</title>
+    <title>Examples &#8212; MDMAmazing v1.0.1-3 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing v1.0.1 documentation</span></a></h1>
+          <span>MDMAmazing v1.0.1-3 documentation</span></a></h1>
         <h2 class="heading"><span>Examples</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -54,8 +54,10 @@ The main modules for this are:</p>
 <p>If your desired file format is not in the above list, then you can create a new class by deriving from <a class="reference internal" href="mdma.html#mdma.snapshot.Snapshot" title="mdma.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot</span></code></a> following the templates above.
 If you are unsure how to do this, then feel free to submit a request that support for your file format be added to the <a class="reference external" href="https://github.com/tranqui/MDMAmazing/issues">GitHub issue tracker</a> or contact the <a class="reference external" href="index.html#author">author</a> directly with your request.</p>
 </div>
-<p>Each of the classes contain different information depending on the file format.
-Each of the above modules provides a <code class="code docutils literal notranslate"><span class="pre">read</span></code> function to read a single snapshot from a file (or an open filestream).</p>
+<p>Each of the classes contain different information depending on the file format.</p>
+<div class="section" id="reading-snapshots-from-the-disk">
+<h3>Reading snapshots from the disk<a class="headerlink" href="#reading-snapshots-from-the-disk" title="Permalink to this headline">¶</a></h3>
+<p>Each of the above modules provides a <code class="code docutils literal notranslate"><span class="pre">read</span></code> function to read a single snapshot from a file (or an open filestream).</p>
 <p>To read a single snapshot from the LAMMPS file <cite>my_snapshot.atom</cite> we run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span>
 <span class="n">snap</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;my_snapshot.atom&#39;</span><span class="p">)</span>
@@ -140,15 +142,49 @@ Consult the documentation for the specific module to learn what data is containe
 <p class="admonition-title">Warning</p>
 <p>Be careful when reading an entire trajectory into memory, as this can easily consume a large portion of available resources for large systems and/or long trajectories.</p>
 </div>
+<p>Another common situation is for the snapshots forming a trajectory to be stored in separate files.
+In this example we assume that there are files in the current directory labelled <cite>1.atom, 2.atom, 3.atom</cite> etc that sequentially describe a complete trajectory.
+We can obtain a list of all files in the current directory with the <cite>.atom</cite> extension using <a class="reference external" href="https://docs.python.org/3/library/glob.html">glob</a>, but these will not necessarily be in the correct order (the snapshot <cite>10.atom</cite> would come before <cite>2.atom</cite>) so to obtain the correct order we make use of the <a class="reference external" href="https://pypi.org/project/natsort/">natsort</a> module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">natsort</span> <span class="kn">import</span> <span class="n">natsorted</span>
+<span class="n">paths_in_order</span> <span class="o">=</span> <span class="n">natsorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.atom&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Now we can load the trajectory into memory via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trajectory</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths_in_order</span><span class="p">]</span>
+</pre></div>
+</div>
 <p>For other fileformats replace <code class="code docutils literal notranslate"><span class="pre">atom</span></code> in the above examples with any of the other modules listed at the start of this section. For example, try:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">xyz</span>
 <span class="n">trajectory</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="s1">&#39;my_trajectory.xyz&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>to read in a trajectory in XYZ format.</p>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>Show how to write files in each format.</p>
+</div>
+<div class="section" id="outputting-snapshots-to-the-console-or-writing-them-to-files">
+<h3>Outputting snapshots to the console or writing them to files<a class="headerlink" href="#outputting-snapshots-to-the-console-or-writing-them-to-files" title="Permalink to this headline">¶</a></h3>
+<p>To print the snapshot to the console in its native format we can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">snap</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which for simple applications can be combined with <a class="reference external" href="https://www.gnu.org/software/bash/manual/html_node/Redirections.html">BASH redirects</a> on Linux to output snapshot files.
+For more control over where the snapshot is written you can use the method <a class="reference internal" href="mdma.html#mdma.snapshot.Snapshot.write" title="mdma.snapshot.Snapshot.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot.write()</span></code></a>, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">snap</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;my_snapshot.atom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or equivalently we can pass an open file handle:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_snapshot.atom&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">snap</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The latter example is particularly useful for writing entire trajectories to a single file, because we can chain calls to <a class="reference internal" href="mdma.html#mdma.snapshot.Snapshot.write" title="mdma.snapshot.Snapshot.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mdma.snapshot.Snapshot.write()</span></code></a>, i.e.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_trajectory.atom&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="p">:</span>
+        <span class="n">snap</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If your data is not contained in a snapshot object (e.g. if you have the raw coordinates/box in numpy arrays) then you can use the functions <code class="code docutils literal notranslate"><span class="pre">write</span></code> or <code class="code docutils literal notranslate"><span class="pre">write_trajectory</span></code> inside the relevant snapshot module.
+Refer to the documentation inside your module for how to use these, e.g. for <a class="reference internal" href="mdma.html#module-mdma.atom" title="mdma.atom"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mdma.atom</span></code></a> refer to <a class="reference internal" href="mdma.html#mdma.atom.write" title="mdma.atom.write"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.atom.write()</span></code></a> and <a class="reference internal" href="mdma.html#mdma.atom.write_trajectory" title="mdma.atom.write_trajectory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mdma.atom.write_trajectory()</span></code></a>.</p>
 </div>
 </div>
 <div class="section" id="creating-and-running-a-lammps-simulation">
@@ -209,12 +245,12 @@ To read a snapshot previously stored as an atom file we can do:</p>
 </div>
 <div class="section" id="creating-and-running-a-dynamo-simulation">
 <h2>Creating and running a DynamO simulation<a class="headerlink" href="#creating-and-running-a-dynamo-simulation" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id2">
-<h3>Initialising and running the simulations<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Initialising and running the simulations<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>Coming soon.</p>
 </div>
-<div class="section" id="id3">
-<h3>Processing the results<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Processing the results<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>Suppose we have simulated a hard sphere system and produced a configuration file <cite>config.end.xml</cite> in the current directory.
 To read this file and convert it into the more flexible LAMMPS format we can try:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">dynamo</span><span class="p">,</span> <span class="n">atom</span>
@@ -278,7 +314,7 @@ If the box size differs then then the correlation functions will produce erroneo
 </pre></div>
 </div>
 <p>Refer to the documentation of <a class="reference internal" href="mdma.spatial.html#mdma.spatial.periodic.self_overlap" title="mdma.spatial.periodic.self_overlap"><code class="xref py py-func docutils literal notranslate"><span class="pre">mdma.spatial.periodic.self_overlap()</span></code></a> for descriptions of the arguments.</p>
-<div class="admonition-todo admonition" id="id5">
+<div class="admonition-todo admonition" id="id4">
 <p class="admonition-title">Todo</p>
 <p>Show how to calculate the overlap between two clusters (not periodic), which requires finding the optimal alignment.</p>
 </div>
@@ -293,7 +329,7 @@ If the box size differs then then the correlation functions will produce erroneo
 <p class="admonition-title">Note</p>
 <p>We assume isotropy and <span class="math notranslate nohighlight">\(d=3\)</span> so <span class="math notranslate nohighlight">\(\vec{q} \to |\vec{q}|\)</span>, and the exponential reduces to a <a class="reference external" href="https://en.wikipedia.org/wiki/Sinc_function">sinc</a> function.</p>
 </div>
-<div class="admonition-todo admonition" id="id6">
+<div class="admonition-todo admonition" id="id5">
 <p class="admonition-title">Todo</p>
 <p>Replace sinc implementation with a spherical Bessel function for arbitrary <span class="math notranslate nohighlight">\(d\)</span>.</p>
 </div>
@@ -347,7 +383,7 @@ In general, it is much better to perform the average via:</p>
 <p class="admonition-title">Note</p>
 <p>Replace <code class="code docutils literal notranslate"><span class="pre">self_intermediate_scattering_function</span></code> with the correlation function of your choice in the examples above.</p>
 </div>
-<div class="admonition-todo admonition" id="id8">
+<div class="admonition-todo admonition" id="id7">
 <p class="admonition-title">Todo</p>
 <p>Vectorise the above and create a canonical implementation that we can use instead of having to do the looping manually.</p>
 </div>

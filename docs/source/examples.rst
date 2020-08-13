@@ -19,6 +19,10 @@ The main modules for this are:
           If you are unsure how to do this, then feel free to submit a request that support for your file format be added to the `GitHub issue tracker <https://github.com/tranqui/MDMAmazing/issues>`_ or contact the `author <index.html#author>`_ directly with your request.
 
 Each of the classes contain different information depending on the file format.
+
+Reading snapshots from the disk
+-------------------------------
+
 Each of the above modules provides a :code:`read` function to read a single snapshot from a file (or an open filestream).
 
 To read a single snapshot from the LAMMPS file `my_snapshot.atom` we run::
@@ -103,6 +107,18 @@ The previous two examples are convenient for processing large trajectories becau
 
 .. warning:: Be careful when reading an entire trajectory into memory, as this can easily consume a large portion of available resources for large systems and/or long trajectories.
 
+Another common situation is for the snapshots forming a trajectory to be stored in separate files.
+In this example we assume that there are files in the current directory labelled `1.atom, 2.atom, 3.atom` etc that sequentially describe a complete trajectory.
+We can obtain a list of all files in the current directory with the `.atom` extension using `glob <https://docs.python.org/3/library/glob.html>`_, but these will not necessarily be in the correct order (the snapshot `10.atom` would come before `2.atom`) so to obtain the correct order we make use of the `natsort <https://pypi.org/project/natsort/>`_ module::
+
+  from glob import glob
+  from natsort import natsorted
+  paths_in_order = natsorted(glob('*.atom'))
+
+Now we can load the trajectory into memory via::
+
+  trajectory = [atom.read(path) for path in paths_in_order]
+
 For other fileformats replace :code:`atom` in the above examples with any of the other modules listed at the start of this section. For example, try::
 
   from mdma import xyz
@@ -110,7 +126,31 @@ For other fileformats replace :code:`atom` in the above examples with any of the
 
 to read in a trajectory in XYZ format.
 
-.. todo:: Show how to write files in each format.
+Outputting snapshots to the console or writing them to files
+------------------------------------------------------------
+
+To print the snapshot to the console in its native format we can use::
+
+  print(snap)
+
+which for simple applications can be combined with `BASH redirects <https://www.gnu.org/software/bash/manual/html_node/Redirections.html>`_ on Linux to output snapshot files.
+For more control over where the snapshot is written you can use the method :meth:`mdma.snapshot.Snapshot.write`, e.g.::
+
+  snap.write('my_snapshot.atom')
+
+Or equivalently we can pass an open file handle::
+
+  with open('my_snapshot.atom', 'w') as f:
+      snap.write(f)
+
+The latter example is particularly useful for writing entire trajectories to a single file, because we can chain calls to :meth:`mdma.snapshot.Snapshot.write`, i.e.::
+
+  with open('my_trajectory.atom', 'w') as f:
+      for snap in trajectory:
+          snap.write(f)
+
+If your data is not contained in a snapshot object (e.g. if you have the raw coordinates/box in numpy arrays) then you can use the functions :code:`write` or :code:`write_trajectory` inside the relevant snapshot module.
+Refer to the documentation inside your module for how to use these, e.g. for :mod:`mdma.atom` refer to :func:`mdma.atom.write` and :meth:`mdma.atom.write_trajectory`.
 
 
 Creating and running a LAMMPS simulation
