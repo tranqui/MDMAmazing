@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Examples &#8212; MDMAmazing v1.1.0-1 documentation</title>
+    <title>Examples &#8212; MDMAmazing v1.1.0-3 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>MDMAmazing v1.1.0-1 documentation</span></a></h1>
+          <span>MDMAmazing v1.1.0-3 documentation</span></a></h1>
         <h2 class="heading"><span>Examples</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -429,10 +429,20 @@ You can still pass additional arguments to the correlation function by name, e.g
 <span class="kn">from</span> <span class="nn">mdma</span> <span class="kn">import</span> <span class="n">atom</span><span class="p">,</span> <span class="n">correlation</span>
 <span class="kn">from</span> <span class="nn">mdma.spatial</span> <span class="kn">import</span> <span class="n">periodic</span>
 
+<span class="c1"># We have to load the entire trajectory into memory by casting to list(...)</span>
+<span class="c1"># because the two-point correlators need to reference multiple snapshots.</span>
 <span class="n">trajectory</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="s1">&#39;my_trajectory.atom&#39;</span><span class="p">))</span>
-<span class="n">F</span> <span class="o">=</span> <span class="n">correlation</span><span class="o">.</span><span class="n">two_point_time_average</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">,</span> <span class="n">max_samples</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="p">[</span><span class="n">snap</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="p">]</span>
 
+<span class="c1"># Extract the allowable values of dt.</span>
+<span class="c1"># (NB: these should be linear increments or the time-averaging in the next step will fail)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">time</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="p">[</span><span class="n">snap</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">t0</span> <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="p">]</span>
+
+<span class="c1"># Calculate the ISF with a time-average to reduce noise.</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># set to the effective diameter for your system</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">correlation</span><span class="o">.</span><span class="n">two_point_time_average</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">periodic</span><span class="o">.</span><span class="n">self_intermediate_scattering_function</span><span class="p">,</span> <span class="n">max_samples</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">sigma</span><span class="p">)</span>
+
+<span class="c1"># Plot the function.</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
@@ -447,7 +457,7 @@ You can still pass additional arguments to the correlation function by name, e.g
 </div>
 <div class="admonition-todo admonition" id="id9">
 <p class="admonition-title">Todo</p>
-<p>Vectorise the above and create a canonical implementation that we can use instead of having to do the looping manually.</p>
+<p>Vectorise the above.</p>
 </div>
 </div>
 </div>
