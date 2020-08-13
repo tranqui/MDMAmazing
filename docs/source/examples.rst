@@ -19,6 +19,10 @@ The main modules for this are:
           If you are unsure how to do this, then feel free to submit a request that support for your file format be added to the `GitHub issue tracker <https://github.com/tranqui/MDMAmazing/issues>`_ or contact the `author <index.html#author>`_ directly with your request.
 
 Each of the classes contain different information depending on the file format.
+
+Reading snapshots from the disk
+-------------------------------
+
 Each of the above modules provides a :code:`read` function to read a single snapshot from a file (or an open filestream).
 
 To read a single snapshot from the LAMMPS file `my_snapshot.atom` we run::
@@ -103,6 +107,18 @@ The previous two examples are convenient for processing large trajectories becau
 
 .. warning:: Be careful when reading an entire trajectory into memory, as this can easily consume a large portion of available resources for large systems and/or long trajectories.
 
+Another common situation is for the snapshots forming a trajectory to be stored in separate files.
+In this example we assume that there are files in the current directory labelled `1.atom, 2.atom, 3.atom` etc that sequentially describe a complete trajectory.
+We can obtain a list of all files in the current directory with the `.atom` extension using `glob <https://docs.python.org/3/library/glob.html>`_, but these will not necessarily be in the correct order (the snapshot `10.atom` would come before `2.atom`) so to obtain the correct order we make use of the `natsort <https://pypi.org/project/natsort/>`_ module::
+
+  from glob import glob
+  from natsort import natsorted
+  paths_in_order = natsorted(glob('*.atom'))
+
+Now we can load the trajectory into memory via::
+
+  trajectory = [atom.read(path) for path in paths_in_order]
+
 For other fileformats replace :code:`atom` in the above examples with any of the other modules listed at the start of this section. For example, try::
 
   from mdma import xyz
@@ -110,7 +126,31 @@ For other fileformats replace :code:`atom` in the above examples with any of the
 
 to read in a trajectory in XYZ format.
 
-.. todo:: Show how to write files in each format.
+Printing snapshots to the console or writing them to the disk
+-------------------------------------------------------------
+
+To print the snapshot to the console in its native format we can use::
+
+  print(snap)
+
+which for simple applications can be combined with `BASH redirects <https://www.gnu.org/software/bash/manual/html_node/Redirections.html>`_ on Linux to output snapshot files.
+For more control over where the snapshot is written you can use the method :meth:`mdma.snapshot.Snapshot.write`, e.g.::
+
+  snap.write('my_snapshot.atom')
+
+Or equivalently we can pass an open file handle::
+
+  with open('my_snapshot.atom', 'w') as f:
+      snap.write(f)
+
+The latter example is particularly useful for writing entire trajectories to a single file, because we can chain calls to :meth:`mdma.snapshot.Snapshot.write`, i.e.::
+
+  with open('my_trajectory.atom', 'w') as f:
+      for snap in trajectory:
+          snap.write(f)
+
+If your data is not contained in a snapshot object (e.g. if you have the raw coordinates/box in numpy arrays) then you can use the functions :code:`write` or :code:`write_trajectory` inside the relevant snapshot module.
+Refer to the documentation inside your module for how to use these, e.g. for :mod:`mdma.atom` refer to :func:`mdma.atom.write` and :meth:`mdma.atom.write_trajectory`.
 
 
 Creating and running a LAMMPS simulation
@@ -213,7 +253,9 @@ In all of the examples in subsequent sections this is assumed to have been impor
   from mdma.spatial import periodic
 
 We assume that two snapshots are loaded called :code:`snap1` and :code:`snap2`, that correspond to the two systems above.
-See the `first section <#reading-and-writing-snapshots>`_ for examples showing how to read snapshots.
+See `Reading and writing snapshots <#reading-and-writing-snapshots>`_ for examples showing how to read snapshots.
+
+.. todo:: Generalise correlation functions for NPT simulations where the box size will fluctuate between two points in time.
 
 Displacements
 -------------
@@ -235,7 +277,7 @@ The equivalent of the above example for periodic systems would be::
   dx = periodic.delta(snap1.x, snap2.x, snap1.box_dimensions)
 
 .. note:: We assume the box dimensions are the same in both systems. We also make this assumption in all subsequent examples.
-          If the box size differs then then the correlation functions will produce erroneous results.
+          If the box size differs then the correlation functions will produce erroneous results.
 
 Self-overlap
 ------------
@@ -249,8 +291,13 @@ where :math:`\Theta(\cdots)` is the `Heaviside step function <https://en.wikiped
 
 To compute this quantity we provide :func:`mdma.spatial.periodic.self_overlap`, which can be used via::
 
+  Q = periodic.self_overlap(snap1, snap2, tol=0.3)
+
+This can be called equivalently with the raw coordinate data, i.e.::
+
   Q = periodic.self_overlap(snap1, snap2.x, snap1.box_dimensions, tol=0.3)
 
+which is useful when you have data outside of a snapshot instance.
 Refer to the documentation of :func:`mdma.spatial.periodic.self_overlap` for descriptions of the arguments.
 
 .. todo:: Show how to calculate the overlap between two clusters (not periodic), which requires finding the optimal alignment.
@@ -260,7 +307,7 @@ Intermediate scattering function
 
 The self intermediate scattering function (ISF) is defined as the Fourier transform of the self part of the `van Hove function <https://en.wikipedia.org/wiki/Dynamic_structure_factor#The_van_Hove_Function>`_:
 
-.. math:: F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \left\langle \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)} \right\rangle
+.. math:: F(\vec{x}_1, \vec{x}_2; \vec{q}) = \frac{1}{N} \sum_{k=1}^N \exp{\left(i \vec{q} \cdot \left( \vec{x}_1^{(k)} - \vec{x}_2^{(k)} \right) \right)}
 
 :math:`|\vec{q}|` is typically taken to be :math:`2\pi / \sigma`.
 
@@ -269,9 +316,15 @@ The self intermediate scattering function (ISF) is defined as the Fourier transf
 
 To compute this quantity we provide :func:`mdma.spatial.periodic.self_intermediate_scattering_function`, which can be used via::
 
-  F = periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+  F = periodic.self_intermediate_scattering_function(snap1, snap2)
 
-.. warning:: The above example will give erroneous results in general, because the self-ISF function takes a fourth argument :math:`|\vec{q}|` which we have ignored.
+As before, this can be called equivalently with the raw coordinate data, i.e.::
+
+  F = periodic.self_overlap(snap1, snap2.x, snap1.box_dimensions, tol=0.3)
+
+which is useful when you have data outside of a snapshot instance.
+
+.. warning:: The above examples will give erroneous results in general, because the self-ISF function takes a fourth argument :math:`|\vec{q}|` which we have ignored.
              By default this function sets :math:`|\vec{q}| = 2\pi` if this is not specified, which implicitly assumes the effective diameter :math:`\sigma = 1`.
              In general you must pass the wavenumber explicitly to get reasonable results.
              Refer to the documentation :func:`mdma.spatial.periodic.self_intermediate_scattering_function` for descriptions of the additional arguments.
@@ -279,14 +332,17 @@ To compute this quantity we provide :func:`mdma.spatial.periodic.self_intermedia
 Averaging temporal correlation functions over trajectories
 ----------------------------------------------------------
 
-A common operation is to take some two-point correlation function, and find its average value in equilibrium (i.e. assuming time-translation invariance) e.g.\
+A common operation is to take some two-point correlation function, and find its average value in equilibrium (where time-translation invariance is recovered) i.e.\
 
-.. math:: \langle A(t) A(t') \rangle \to \langle A(t) A(t + \delta t) \rangle
+.. math:: \lim_{t \to \infty} \left \langle G(t, t') \rangle = \langle G(\delta t = t' - t) \right \rangle
 
-for some observable :math:`A(t)`.
-Evaluating this quantity over a trajectory strictly requires averaging over all the pairs of snapshots in the trajectory, although in practice a subset usually suffices.
+for some correlation function :math:`G(t, t')` and where :math:`\langle \cdots \rangle` indicates an ensemble average.
+The ensemble average equals the long-time average in equilibrium, so we can evaluate this for a long trajectory by sampling over all the pairs of snapshots in a trajectory (although in practice a subset usually suffices).
 
-Assuming we have loaded a trajectory into the variable :code:`trajectory` (see the `Reading and writing snapshots <#reading-and-writing-snapshots>`_ for examples showing how to do this).
+.. note:: In the literature on supercooled liquids a trajectory is conventionally taken to be *long-enough* for this procedure if it contains several decays of the time-correlation functions, e.g. if the ISF decays :math:`\mathcal{O}(10)` times.
+          In the latter example, by a "decay" we mean that the correlation function reaches :math:`F(\delta t) \le 1/e` from an initial value of :math:`F(\delta t = 0) = 1`, and the reference time is reset when this event occurs.
+
+Assuming we have loaded a trajectory into the variable :code:`trajectory` (see `Reading and writing snapshots <#reading-and-writing-snapshots>`_ for examples showing how to do this).
 We can obtain a quick estimate of what the correlation function looks like by only comparing with the first snapshot, i.e.::
 
   import numpy as np
@@ -294,7 +350,7 @@ We can obtain a quick estimate of what the correlation function looks like by on
   snap1 = trajectory[0]
   for dt in range(len(trajectory)):
       snap2 = trajectory[dt]
-      F[dt] = periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+      F[dt] = periodic.self_intermediate_scattering_function(snap1, snap2)
 
 Again, we have assumed that the box dimensions and number of particles are constant throughout the trajectory.
 Plotting the variable :math:`F` at this point can give a rough idea of how it is varying.
@@ -303,17 +359,42 @@ The above example will typically feature a lot of noise because each value of :m
 In general, it is much better to perform the average via::
 
   import numpy as np
-  F = np.empty(len(trajectory))
+  F = np.zeros(len(trajectory))
   F[0] = 1
   for dt in range(1, len(trajectory)):
       for i in range(len(trajectory) - dt):
           j = i + dt
           snap1 = trajectory[i]
           snap2 = trajectory[j]
-          F[dt] = periodic.self_intermediate_scattering_function(snap1.x, snap2.x, snap1.box_dimensions)
+          F[dt] += periodic.self_intermediate_scattering_function(snap1, snap2)
       F[dt] /= len(trajectory) - dt
 
-This code snippet evaluates all :math:`m(m-1)/2` pairs of snapshots, where :math:`m` is the number of snapshots, and can be quite slow.
+This code snippet evaluates :math:`F(\delta t)` over all :math:`m(m-1)/2` pairs of snapshots, where :math:`m` is the number of snapshots, and can be quite slow.
+A better approach is to take a subset of reference times for each :math:`\delta t` so that this average becomes :math:`\mathcal{O}(m)` rather than :math:`\mathcal{O}(m^2)`.
+When sampling a subset of reference points it is best to space them as far apart as much as possible, because adjacent snapshots (in time) will be highly correlated; to do this we use the function :func:`mdma.correlation.chunk_pairs` ::
+
+  import numpy as np
+  from mdma import correlation
+  F = np.zeros(len(trajectory))
+  F[0] = 1
+  for dt in range(1, len(trajectory)):
+      count = 0
+      for snap1, snap2 in correlation.chunk_pairs(trajectory, dt, max_samples=25):
+          F[dt] += periodic.self_intermediate_scattering_function(snap1, snap2)
+          count += 1
+      F[dt] /= count
+
+The above example will take a maximum of 25 samples for each value of :math:`\delta t` and thus involves :math:`\sim 25m` operations (though slightly fewer than this because there will not be 25 samples for the largest values of :math:`\delta t`).
+This example shows how you can start to build more sophisticated correlation functions, but if this is all you wish to do we provide :func:`mdma.correlation.two_point_time_average` with the same functionality::
+
+  from mdma import correlation
+  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25)
+
+is equivalent to the previous example and much more succinct.
+You can still pass additional arguments to the correlation function by name, e.g. if you want to set the wavenumber to :math:`2\pi / 5` (for effective particle diameters of :math:`\sigma = 5`) then you would change this to::
+
+  from mdma import correlation
+  F = correlation.two_point_time_average(trajectory, periodic.self_intermediate_scattering_function, max_samples=25, q=2*np.pi/5)
 
 .. note:: Replace :code:`self_intermediate_scattering_function` with the correlation function of your choice in the examples above.
 
