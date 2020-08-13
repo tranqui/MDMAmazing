@@ -416,7 +416,7 @@ This assumes you have `matplotlib <https://matplotlib.org>`_ installed for plott
 
 .. note:: Replace :code:`self_intermediate_scattering_function` with the correlation function of your choice in the examples above.
 
-.. todo:: Vectorise the above and create a canonical implementation that we can use instead of having to do the looping manually.
+.. todo:: Vectorise the above.
 
 
 Parallel analysis with MPI
