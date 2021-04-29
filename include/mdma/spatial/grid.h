@@ -191,6 +191,13 @@ namespace mdma
             }
         };
 
+        template <typename T>
+        constexpr T ipow(T num, unsigned int pow)
+        {
+            return (pow >= sizeof(unsigned int)*8) ? 0 :
+                pow == 0 ? 1 : num * ipow(num, pow-1);
+        }
+
         template <typename T, size_t SpatialDimensions>
         class PeriodicGrid : public details::GridBase<Cell<T,SpatialDimensions>, SpatialDimensions>
         {
@@ -202,7 +209,7 @@ namespace mdma
             using EigenIndex = details::EigenIndex<d>;
 
             // Number of nearest neighbours on a cubic lattice.
-            static constexpr size_t total_nearest_neighbours = std::pow(3,d)-1;
+            static constexpr size_t total_nearest_neighbours = ipow(3,d) - 1;
 
             template <typename Index>
             PeriodicGrid(const Index& dimensions) : Base(dimensions)

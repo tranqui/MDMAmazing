@@ -31,7 +31,7 @@ if '--with-pybind11' in sys.argv:
     ext_source = []
     for root,dirs,files in os.walk('src/pybind11'):
         ext_source += ['%s/%s' % (root,f) for f in files]
-        ext_path = [path.replace('src/pybind11', 'mdma').replace('.cc','') for path in ext_source]
+    ext_path = [path.replace('src/pybind11', 'mdma').replace('.cc','') for path in ext_source]
 
     ext_modules = [
         Extension(module_path, [source_path],
